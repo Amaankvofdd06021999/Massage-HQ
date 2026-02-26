@@ -1,0 +1,125 @@
+import type { BrandConfig } from "@/lib/types"
+
+// Koko Massage — Dark luxury theme (default)
+export const kokoDarkBrandConfig: BrandConfig = {
+  shopName: "Koko Massage",
+  tagline: "Where relaxation meets artistry",
+  logo: "/logo.svg",
+  logoIcon: "/logo-icon.svg",
+  primaryColor: "#FACC15",
+  primaryForeground: "#0A0A0F",
+  secondaryColor: "#141419",
+  accentColor: "#E94560",
+  bgPrimary: "#0A0A0F",
+  bgSecondary: "#141419",
+  bgTertiary: "#1E1E26",
+  borderColor: "#2A2A35",
+  textPrimary: "#F5F5F5",
+  textSecondary: "#A0A0B0",
+  textTertiary: "#6B6B7B",
+  accentGreen: "#4ADE80",
+  accentCoral: "#E94560",
+  accentYellow: "#FACC15",
+  accentBlue: "#60A5FA",
+  fontFamily: "Inter",
+  borderRadius: 0.75,
+  currency: "THB",
+  currencySymbol: "฿",
+  operatingHours: { open: "10:00", close: "22:00" },
+  socialLinks: {
+    instagram: "https://instagram.com/kokomassage",
+    line: "https://line.me/kokomassage",
+    facebook: "https://facebook.com/kokomassage",
+  },
+}
+
+// Koko Massage — Light theme
+export const kokoLightBrandConfig: BrandConfig = {
+  shopName: "Koko Massage",
+  tagline: "Where relaxation meets artistry",
+  logo: "/logo.svg",
+  logoIcon: "/logo-icon.svg",
+  primaryColor: "#B45309",       // amber-700 — 5.01:1 on white (WCAG AA ✓)
+  primaryForeground: "#FFFFFF",  // white on amber-700 — 5.01:1 (WCAG AA ✓)
+  secondaryColor: "#F9FAFB",
+  accentColor: "#E94560",
+  bgPrimary: "#FAFAFA",
+  bgSecondary: "#FFFFFF",
+  bgTertiary: "#F3F4F6",
+  borderColor: "#E5E7EB",
+  textPrimary: "#111827",
+  textSecondary: "#4B5563",
+  textTertiary: "#9CA3AF",
+  accentGreen: "#16A34A",
+  accentCoral: "#E94560",
+  accentYellow: "#B45309",       // amber-700 — consistent with primary
+  accentBlue: "#2563EB",
+  fontFamily: "Inter",
+  borderRadius: 0.75,
+  currency: "THB",
+  currencySymbol: "฿",
+  operatingHours: { open: "10:00", close: "22:00" },
+  socialLinks: {
+    instagram: "https://instagram.com/kokomassage",
+    line: "https://line.me/kokomassage",
+    facebook: "https://facebook.com/kokomassage",
+  },
+}
+
+// Backward-compat alias
+export const kokoBrandConfig = kokoDarkBrandConfig
+
+// Generate CSS custom properties from brand config
+export function brandConfigToCSSVars(config: BrandConfig): Record<string, string> {
+  return {
+    "--brand-primary": config.primaryColor,
+    "--brand-secondary": config.secondaryColor,
+    "--brand-accent": config.accentColor,
+    "--brand-bg-primary": config.bgPrimary,
+    "--brand-bg-secondary": config.bgSecondary,
+    "--brand-bg-tertiary": config.bgTertiary,
+    "--brand-border": config.borderColor,
+    "--brand-text-primary": config.textPrimary,
+    "--brand-text-secondary": config.textSecondary,
+    "--brand-text-tertiary": config.textTertiary,
+    "--brand-green": config.accentGreen,
+    "--brand-coral": config.accentCoral,
+    "--brand-yellow": config.accentYellow,
+    "--brand-blue": config.accentBlue,
+    "--brand-radius": `${config.borderRadius}rem`,
+    // shadcn/ui tokens
+    "--background": config.bgPrimary,
+    "--foreground": config.textPrimary,
+    "--card": config.bgSecondary,
+    "--card-foreground": config.textPrimary,
+    "--popover": config.bgSecondary,
+    "--popover-foreground": config.textPrimary,
+    "--primary": config.primaryColor,
+    "--primary-foreground": config.primaryForeground,
+    "--secondary": config.bgTertiary,
+    "--secondary-foreground": config.textPrimary,
+    "--muted": config.bgTertiary,
+    "--muted-foreground": config.textSecondary,
+    "--accent": config.bgTertiary,
+    "--accent-foreground": config.textPrimary,
+    "--destructive": config.accentCoral,
+    "--destructive-foreground": config.textPrimary,
+    "--border": config.borderColor,
+    "--input": config.bgTertiary,
+    "--ring": config.primaryColor,
+    "--chart-1": config.accentBlue,
+    "--chart-2": config.accentGreen,
+    "--chart-3": config.accentCoral,
+    "--chart-4": config.accentYellow,
+    "--chart-5": config.primaryColor,
+    "--sidebar": config.bgSecondary,
+    "--sidebar-foreground": config.textPrimary,
+    "--sidebar-primary": config.primaryColor,
+    "--sidebar-primary-foreground": config.primaryForeground,
+    "--sidebar-accent": config.bgTertiary,
+    "--sidebar-accent-foreground": config.textPrimary,
+    "--sidebar-border": config.borderColor,
+    "--sidebar-ring": config.primaryColor,
+    "--radius": `${config.borderRadius}rem`,
+  }
+}
