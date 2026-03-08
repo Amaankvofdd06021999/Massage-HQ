@@ -6,8 +6,10 @@ import { Clock, CheckCircle, Star, Sparkles, ChevronRight, AlertTriangle } from 
 import { StaffAvatar } from "@/components/shared/staff-avatar"
 import { RatingStars } from "@/components/shared/rating-stars"
 import { LateArrivalDialog } from "@/components/shared/late-arrival-dialog"
+import { TranslationChat } from "@/components/shared/translation-chat"
 import { bookings, staffMembers, formatPrice } from "@/lib/data/mock-data"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { useAuth } from "@/lib/auth/auth-context"
 import { cn } from "@/lib/utils"
 
 // Find the in-progress booking (simulated as b4)
@@ -246,6 +248,7 @@ function useElapsedMinutes(startTime: string, durationMinutes: number) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function SessionPage() {
   const { t } = useLanguage()
+  const { user } = useAuth()
   const router = useRouter()
   const [showReview, setShowReview] = useState(false)
   const [lateOpen, setLateOpen] = useState(false)
@@ -341,6 +344,16 @@ export default function SessionPage() {
           {isEndingSoon && (
             <p className="mt-3 text-center text-xs font-semibold text-brand-coral">{t("sessionEndingSoon")}</p>
           )}
+        </div>
+
+        {/* Translation Chat */}
+        <div className="mt-4 px-5">
+          <TranslationChat
+            bookingId={activeBooking.id}
+            userRole="customer"
+            userId={user?.id ?? ""}
+            userName={user?.name ?? "Customer"}
+          />
         </div>
 
         {/* Session Details */}

@@ -1,7 +1,7 @@
 "use client"
 
 import {
-  createContext, useContext, useState, useCallback, useEffect, type ReactNode,
+  createContext, useContext, useState, useCallback, useEffect, useMemo, type ReactNode,
 } from "react"
 import type {
   LoyaltyConfig, LoyaltyStamp, LoyaltyRedemption, LoyaltyPointRedemption, MassageType,
@@ -29,6 +29,8 @@ interface LoyaltyContextType {
   getStampCount: (customerId: string) => number
   canRedeemStamps: (customerId: string) => boolean
   redeemFreeSession: (customerId: string, serviceType: MassageType, bookingId?: string) => LoyaltyRedemption | null
+  // Config
+  updateConfig: (updates: Partial<LoyaltyConfig>) => void
   // Points
   calculatePoints: (amountSpent: number) => number
   getPointsBalance: (customerId: string, totalSpent: number) => number
@@ -55,22 +57,28 @@ function save<T>(key: string, value: T) {
 }
 
 export function LoyaltyProvider({ children }: { children: ReactNode }) {
-  const [config] = useState<LoyaltyConfig>(SEED_CONFIG)
+  const [config, setConfig] = useState<LoyaltyConfig>(SEED_CONFIG)
   const [stamps, setStamps] = useState<LoyaltyStamp[]>(SEED_STAMPS)
   const [redemptions, setRedemptions] = useState<LoyaltyRedemption[]>(SEED_REDEMPTIONS)
   const [pointRedemptions, setPointRedemptions] = useState<LoyaltyPointRedemption[]>(SEED_POINT_REDEMPTIONS)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
+    setConfig(load(CONFIG_KEY, SEED_CONFIG))
     setStamps(load(STAMPS_KEY, SEED_STAMPS))
     setRedemptions(load(REDEMPTIONS_KEY, SEED_REDEMPTIONS))
     setPointRedemptions(load(POINT_REDEMPTIONS_KEY, SEED_POINT_REDEMPTIONS))
     setReady(true)
   }, [])
 
+  useEffect(() => { if (ready) save(CONFIG_KEY, config) }, [config, ready])
   useEffect(() => { if (ready) save(STAMPS_KEY, stamps) }, [stamps, ready])
   useEffect(() => { if (ready) save(REDEMPTIONS_KEY, redemptions) }, [redemptions, ready])
   useEffect(() => { if (ready) save(POINT_REDEMPTIONS_KEY, pointRedemptions) }, [pointRedemptions, ready])
+
+  const updateConfig = useCallback((updates: Partial<LoyaltyConfig>) => {
+    setConfig((prev) => ({ ...prev, ...updates }))
+  }, [])
 
   const earnStamp = useCallback((customerId: string, bookingId: string, serviceType: MassageType) => {
     const stamp: LoyaltyStamp = {
@@ -173,6 +181,7 @@ export function LoyaltyProvider({ children }: { children: ReactNode }) {
   return (
     <LoyaltyContext.Provider value={{
       config, stamps, redemptions, pointRedemptions,
+      updateConfig,
       earnStamp, getStampsForCustomer, getStampCount,
       canRedeemStamps, redeemFreeSession,
       calculatePoints, getPointsBalance, canRedeemPoints,

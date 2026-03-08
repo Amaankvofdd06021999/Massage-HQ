@@ -41,6 +41,7 @@ const TYPE_COLORS: Record<MassageType, string> = {
   sports:        "bg-green-500/15 text-green-400",
   reflexology:   "bg-pink-500/15 text-pink-400",
   shiatsu:       "bg-cyan-500/15 text-cyan-400",
+  foot:          "bg-teal-500/15 text-teal-400",
 }
 
 function formatPrice(n: number) {
@@ -131,6 +132,7 @@ function ServiceModal({ initial, onSave, onClose }: {
     thai: t("massageThai"), swedish: t("massageSwedish"), "deep-tissue": t("massageDeepTissue"),
     aromatherapy: t("massageAromatherapy"), "hot-stone": t("massageHotStone"),
     sports: t("massageSports"), reflexology: t("massageReflexology"), shiatsu: t("massageShiatsu"),
+    foot: t("footMassage"),
   }
 
   const valid = draft.name.trim() && draft.description.trim() && draft.durations.length > 0
@@ -242,6 +244,7 @@ function AddOnModal({ initial, onSave, onClose }: {
     thai: t("massageThai"), swedish: t("massageSwedish"), "deep-tissue": t("massageDeepTissue"),
     aromatherapy: t("massageAromatherapy"), "hot-stone": t("massageHotStone"),
     sports: t("massageSports"), reflexology: t("massageReflexology"), shiatsu: t("massageShiatsu"),
+    foot: t("footMassage"),
   }
 
   const selectedTypes = Array.isArray(draft.applicableServices) ? draft.applicableServices : []

@@ -4,6 +4,7 @@ import type {
   CancellationPolicy, CancellationRecord, ClientNote, GiftCard,
   LoyaltyConfig, LoyaltyStamp, LoyaltyRedemption, LoyaltyPointRedemption,
   StaffMessage, PromoSessionUsage, BookingReminder, LateArrivalClaim,
+  MassageType, PurchasedPromotion, TipClaim,
 } from "@/lib/types"
 
 // ─── Staff ────────────────────────────────────────
@@ -12,7 +13,7 @@ export const staffMembers: StaffMember[] = [
     id: "s1", name: "Somchai Patel", nickname: "Joy",
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
     bio: "With over 12 years of experience in traditional Thai massage, Joy combines ancient techniques with modern therapeutic approaches for deep relaxation.",
-    specialties: ["thai", "deep-tissue", "sports"],
+    specialties: ["thai", "deep-tissue", "sports", "foot"],
     languages: ["thai", "english"],
     yearsExperience: 12, rating: 4.9, totalReviews: 342, pricePerHour: 1200,
     availability: {
@@ -92,7 +93,7 @@ export const staffMembers: StaffMember[] = [
     id: "s6", name: "Mei-Lin Chen", nickname: "Mei",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face",
     bio: "Mei combines traditional Chinese reflexology with modern wellness techniques. Her foot treatments are legendary among regulars.",
-    specialties: ["reflexology", "shiatsu", "aromatherapy"],
+    specialties: ["reflexology", "shiatsu", "aromatherapy", "foot"],
     languages: ["mandarin", "english", "thai"],
     yearsExperience: 9, rating: 4.75, totalReviews: 198, pricePerHour: 1100,
     availability: {
@@ -155,6 +156,19 @@ export const services: ServiceOption[] = [
     description: "Rhythmic finger pressure along meridian lines to restore energy balance and relieve pain.",
     durations: [{ minutes: 60, price: 1200 }, { minutes: 90, price: 1600 }],
     isPopular: false, isActive: true,
+  },
+  {
+    id: "srv9",
+    name: "Foot Massage",
+    type: "foot" as MassageType,
+    description: "Targeted pressure-point therapy focusing on feet and lower legs. Relieves tension, improves circulation, and promotes overall relaxation through reflexology zones.",
+    durations: [
+      { minutes: 30, price: 400 },
+      { minutes: 60, price: 700 },
+      { minutes: 90, price: 950 },
+    ],
+    isPopular: true,
+    isActive: true,
   },
 ]
 
@@ -320,21 +334,21 @@ export const customers: Customer[] = [
   {
     id: "c1", name: "Alex Chen", email: "alex@example.com", phone: "+66 81 234 5678",
     avatar: "https://images.unsplash.com/photo-1599566150163-29194dcabd9c?w=200&h=200&fit=crop&crop=face",
-    memberSince: "2025-06-15", totalBookings: 24, totalSpent: 28800,
+    memberSince: "2025-06-15", membershipNumber: "MEM-A7X2K9", totalBookings: 24, totalSpent: 28800,
     preferredStaff: ["s1", "s3"], preferredServices: ["thai", "shiatsu"],
     loyaltyPoints: 288, loyaltyStamps: 8, giftCardBalance: 2000, trialActive: false,
   },
   {
     id: "c2", name: "Sarah Kim", email: "sarah@example.com", phone: "+66 92 345 6789",
     avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=face",
-    memberSince: "2025-09-01", totalBookings: 15, totalSpent: 17500,
+    memberSince: "2025-09-01", membershipNumber: "MEM-B3P8M2", totalBookings: 15, totalSpent: 17500,
     preferredStaff: ["s2", "s6"], preferredServices: ["swedish", "aromatherapy"],
     loyaltyPoints: 175, loyaltyStamps: 5, giftCardBalance: 0, trialActive: true,
   },
   {
     id: "c3", name: "James Wong", email: "james@example.com", phone: "+66 83 456 7890",
     avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face",
-    memberSince: "2025-11-20", totalBookings: 8, totalSpent: 10400,
+    memberSince: "2025-11-20", membershipNumber: "MEM-C5R1N7", totalBookings: 8, totalSpent: 10400,
     preferredStaff: ["s3", "s5"], preferredServices: ["deep-tissue", "sports"],
     loyaltyPoints: 104, loyaltyStamps: 3, giftCardBalance: 500, trialActive: false,
   },
@@ -457,6 +471,15 @@ export function formatMassageType(type: string) {
   return type.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
 }
 
+export function generateMembershipNumber(): string {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+  let result = "MEM-"
+  for (let i = 0; i < 6; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  return result
+}
+
 // ─── Staff Blocked Dates ───────────────────────────
 export const staffBlockedDates: StaffBlockedDate[] = [
   { id: "bd1", staffId: "s1", from: "2026-03-10", to: "2026-03-14", reason: "vacation", note: "Songkran holiday" },
@@ -545,10 +568,15 @@ export const loyaltyConfig: LoyaltyConfig = {
   pointsPerSpend: 1,
   spendUnit: 100,
   stampsForFreeSession: 10,
-  freeSessionServices: ["thai", "swedish"],
+  freeSessionServices: ["thai", "swedish", "foot"],
   freeSessionMaxDuration: 60,
   pointRedemptionRate: 10, // 1 point = ฿10 discount
   isActive: true,
+  programActive: true,
+  stampEnabled: true,
+  pointsEnabled: true,
+  minRedemptionPoints: 50,
+  eligibleStampServices: ["thai", "swedish", "deep-tissue", "aromatherapy", "hot-stone", "sports", "reflexology", "shiatsu", "foot"],
 }
 
 export const loyaltyStamps: LoyaltyStamp[] = [
@@ -612,3 +640,163 @@ export const lateArrivalClaims: LateArrivalClaim[] = [
     customerNote: "Therapist arrived 15 minutes late", managerNote: "Approved - verified with staff",
   },
 ]
+
+// ─── Purchased Promotions ───────────────────────
+export const purchasedPromotions: PurchasedPromotion[] = [
+  {
+    id: "pp1",
+    customerId: "c1",
+    promotionId: "p1",
+    promotionTitle: "5-Session Thai Package",
+    purchasedAt: "2026-02-15",
+    paidAmount: 4500,
+    services: [
+      { serviceType: "thai", completed: true, bookingId: "b3", completedAt: "2026-02-20" },
+      { serviceType: "thai", completed: true, bookingId: "b5", completedAt: "2026-02-25" },
+      { serviceType: "thai", completed: false },
+      { serviceType: "thai", completed: false },
+      { serviceType: "thai", completed: false },
+    ],
+  },
+]
+
+// ─── Tip Claims ─────────────────────────────────
+export const tipClaims: TipClaim[] = []
+
+// ─── Translation Phrases ────────────────────────
+export const translationPhrases: Record<string, Record<string, string>> = {
+  english: {
+    "More pressure please": "More pressure please",
+    "Less pressure please": "Less pressure please",
+    "Is the temperature okay?": "Is the temperature okay?",
+    "Yes, it feels great": "Yes, it feels great",
+    "I have pain here": "I have pain here",
+    "Can you focus on my shoulders?": "Can you focus on my shoulders?",
+    "Can you focus on my back?": "Can you focus on my back?",
+    "Can you focus on my legs?": "Can you focus on my legs?",
+    "I'm allergic to nuts": "I'm allergic to nuts",
+    "Please use lighter oil": "Please use lighter oil",
+    "The room is too cold": "The room is too cold",
+    "The room is too warm": "The room is too warm",
+    "Thank you": "Thank you",
+    "How much time is left?": "How much time is left?",
+    "I need a break": "I need a break",
+    "That feels wonderful": "That feels wonderful",
+    "Can I have some water?": "Can I have some water?",
+    "I'm feeling relaxed": "I'm feeling relaxed",
+  },
+  thai: {
+    "More pressure please": "กดแรงขึ้นหน่อยค่ะ",
+    "Less pressure please": "กดเบาลงหน่อยค่ะ",
+    "Is the temperature okay?": "อุณหภูมิโอเคไหมคะ?",
+    "Yes, it feels great": "ค่ะ รู้สึกดีมากค่ะ",
+    "I have pain here": "เจ็บตรงนี้ค่ะ",
+    "Can you focus on my shoulders?": "ช่วยเน้นที่ไหล่หน่อยได้ไหมคะ?",
+    "Can you focus on my back?": "ช่วยเน้นที่หลังหน่อยได้ไหมคะ?",
+    "Can you focus on my legs?": "ช่วยเน้นที่ขาหน่อยได้ไหมคะ?",
+    "I'm allergic to nuts": "แพ้ถั่วค่ะ",
+    "Please use lighter oil": "ใช้น้ำมันเบาๆ หน่อยค่ะ",
+    "The room is too cold": "ห้องเย็นเกินไปค่ะ",
+    "The room is too warm": "ห้องร้อนเกินไปค่ะ",
+    "Thank you": "ขอบคุณค่ะ",
+    "How much time is left?": "เหลือเวลาอีกเท่าไหร่คะ?",
+    "I need a break": "ขอพักหน่อยค่ะ",
+    "That feels wonderful": "รู้สึกดีมากค่ะ",
+    "Can I have some water?": "ขอน้ำหน่อยได้ไหมคะ?",
+    "I'm feeling relaxed": "รู้สึกผ่อนคลายค่ะ",
+  },
+  japanese: {
+    "More pressure please": "もっと強くお願いします",
+    "Less pressure please": "もう少し弱くお願いします",
+    "Is the temperature okay?": "温度は大丈夫ですか？",
+    "Yes, it feels great": "はい、とても気持ちいいです",
+    "I have pain here": "ここが痛いです",
+    "Can you focus on my shoulders?": "肩を重点的にお願いします",
+    "Can you focus on my back?": "背中を重点的にお願いします",
+    "Can you focus on my legs?": "足を重点的にお願いします",
+    "I'm allergic to nuts": "ナッツアレルギーです",
+    "Please use lighter oil": "軽いオイルを使ってください",
+    "The room is too cold": "部屋が寒すぎます",
+    "The room is too warm": "部屋が暑すぎます",
+    "Thank you": "ありがとうございます",
+    "How much time is left?": "残り時間はどのくらいですか？",
+    "I need a break": "少し休憩をください",
+    "That feels wonderful": "とても気持ちいいです",
+    "Can I have some water?": "お水をいただけますか？",
+    "I'm feeling relaxed": "リラックスしています",
+  },
+  mandarin: {
+    "More pressure please": "请加大力度",
+    "Less pressure please": "请轻一点",
+    "Is the temperature okay?": "温度可以吗？",
+    "Yes, it feels great": "是的，感觉很好",
+    "I have pain here": "这里疼",
+    "Can you focus on my shoulders?": "可以重点按摩肩膀吗？",
+    "Can you focus on my back?": "可以重点按摩背部吗？",
+    "Can you focus on my legs?": "可以重点按摩腿部吗？",
+    "I'm allergic to nuts": "我对坚果过敏",
+    "Please use lighter oil": "请用清淡的精油",
+    "The room is too cold": "房间太冷了",
+    "The room is too warm": "房间太热了",
+    "Thank you": "谢谢",
+    "How much time is left?": "还剩多少时间？",
+    "I need a break": "我需要休息一下",
+    "That feels wonderful": "感觉太好了",
+    "Can I have some water?": "可以给我一杯水吗？",
+    "I'm feeling relaxed": "我感觉很放松",
+  },
+  korean: {
+    "More pressure please": "더 세게 해주세요",
+    "Less pressure please": "좀 더 약하게 해주세요",
+    "Is the temperature okay?": "온도 괜찮으세요?",
+    "Yes, it feels great": "네, 아주 좋아요",
+    "I have pain here": "여기가 아파요",
+    "Can you focus on my shoulders?": "어깨 위주로 해주세요",
+    "Can you focus on my back?": "등 위주로 해주세요",
+    "Can you focus on my legs?": "다리 위주로 해주세요",
+    "I'm allergic to nuts": "견과류 알레르기가 있어요",
+    "Please use lighter oil": "가벼운 오일을 사용해주세요",
+    "The room is too cold": "방이 너무 추워요",
+    "The room is too warm": "방이 너무 더워요",
+    "Thank you": "감사합니다",
+    "How much time is left?": "시간이 얼마나 남았나요?",
+    "I need a break": "잠깐 쉬어야 해요",
+    "That feels wonderful": "너무 좋아요",
+    "Can I have some water?": "물 좀 주시겠어요?",
+    "I'm feeling relaxed": "편안해졌어요",
+  },
+  german: {
+    "More pressure please": "Bitte mehr Druck",
+    "Less pressure please": "Bitte weniger Druck",
+    "Is the temperature okay?": "Ist die Temperatur in Ordnung?",
+    "Yes, it feels great": "Ja, es fühlt sich großartig an",
+    "I have pain here": "Hier habe ich Schmerzen",
+    "Can you focus on my shoulders?": "Können Sie sich auf meine Schultern konzentrieren?",
+    "Can you focus on my back?": "Können Sie sich auf meinen Rücken konzentrieren?",
+    "Can you focus on my legs?": "Können Sie sich auf meine Beine konzentrieren?",
+    "I'm allergic to nuts": "Ich bin allergisch gegen Nüsse",
+    "Please use lighter oil": "Bitte verwenden Sie leichteres Öl",
+    "The room is too cold": "Der Raum ist zu kalt",
+    "The room is too warm": "Der Raum ist zu warm",
+    "Thank you": "Danke schön",
+    "How much time is left?": "Wie viel Zeit ist noch übrig?",
+    "I need a break": "Ich brauche eine Pause",
+    "That feels wonderful": "Das fühlt sich wunderbar an",
+    "Can I have some water?": "Kann ich etwas Wasser haben?",
+    "I'm feeling relaxed": "Ich fühle mich entspannt",
+  },
+}
+
+export function mockTranslate(text: string, fromLang: string, toLang: string): string {
+  if (fromLang === toLang) return text
+  const fromPhrases = translationPhrases[fromLang]
+  const toPhrases = translationPhrases[toLang]
+  if (fromPhrases && toPhrases) {
+    for (const [engKey, localText] of Object.entries(fromPhrases)) {
+      if (localText.toLowerCase() === text.toLowerCase()) {
+        return toPhrases[engKey] || text
+      }
+    }
+  }
+  return `[${toLang}] ${text}`
+}

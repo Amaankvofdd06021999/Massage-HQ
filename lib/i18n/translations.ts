@@ -57,7 +57,7 @@ export const translations = {
     password: "Password",
     enterCredentials: "Enter your credentials to continue",
     orDemoAccess: "or demo access",
-    managerRole: "Massage Parlor Manager",
+    managerRole: "Manager Account",
     managerEmail: "manager@koko.com · Full admin access",
     customerRole: "Customer Account",
     customerEmail: "alex@example.com · Alex Chen",
@@ -229,6 +229,7 @@ export const translations = {
     massageSports: "Sports",
     massageReflexology: "Reflexology",
     massageShiatsu: "Shiatsu",
+    footMassage: "Foot Massage",
 
     // ── Admin Dashboard ───────────────────────────────────────────────────
     dashboard: "Dashboard",
@@ -625,6 +626,92 @@ export const translations = {
     submitRequest: "Submit Request",
     rejectionDetails: "Rejection Details",
     pendingTab: "Pending",
+
+    // ── Staff Reviews ───────────────────────────────────────────────────────
+    viewReviews: "View Reviews",
+    staffReviews: "Reviews",
+
+    // ── Loyalty Settings ────────────────────────────────────────────────────
+    loyaltySettings: "Loyalty Settings",
+    loyaltyMasterToggle: "Loyalty Program",
+    enableStamps: "Stamp Program",
+    enablePoints: "Points Program",
+    stampsForFree: "Stamps for free session",
+    maxFreeDuration: "Max free session duration",
+    eligibleServices: "Eligible services",
+    spendUnitAmount: "Spend unit amount",
+    minRedemption: "Minimum points to redeem",
+    loyaltyDisabled: "Loyalty program is not currently available",
+    programDisabled: "This program is currently disabled",
+
+    // ── Promotions (Extended) ───────────────────────────────────────────────
+    purchasePromotion: "Purchase",
+    myPromotions: "My Promotions",
+    activePromotionsLabel: "Active Promotions",
+    promotionActive: "Active",
+    promotionCompleted: "Completed",
+    sessionsCompletedCount: "sessions completed",
+    sessionsRemainingCount: "sessions remaining",
+    coveredByPromotion: "Covered by your promotion",
+    prepaid: "Prepaid",
+    noActivePromotions: "No active promotions",
+    purchaseSuccess: "Promotion purchased successfully",
+    membershipNumber: "Membership No.",
+    promotionDetails: "Promotion Details",
+    usedServices: "Used",
+    remainingServices: "Remaining",
+    customerPromotions: "Customer Promotions",
+
+    // ── Translation Chat ────────────────────────────────────────────────────
+    translationChat: "Translation Chat",
+    yourLanguage: "You speak",
+    theirLanguage: "They speak",
+    typeMessageChat: "Type a message...",
+    sendMessage: "Send",
+    voiceInput: "Voice",
+    selectLanguage: "Select language",
+    liveTranslation: "Live Translation",
+
+    // ── Calendar Views ──────────────────────────────────────────────────────
+    dailyView: "Day",
+    weeklyView: "Week",
+    monthlyView: "Month",
+    weekOf: "Week of",
+    totalBookingsThisMonth: "Total bookings this month",
+    monthlyRevenueLabel: "Revenue this month",
+
+    // ── Cancellation (Extended) ─────────────────────────────────────────────
+    refundBreakdown: "Refund Breakdown",
+    serviceCost: "Service cost",
+    cancellationFeeLabel: "Cancellation fee",
+    refundAmountLabel: "Refund amount",
+    customerFeedback: "Customer Feedback",
+    previousNotes: "Previous Notes",
+
+    // ── Membership ──────────────────────────────────────────────────────────
+    membershipId: "Membership ID",
+    searchByMembership: "Search by name, email, or membership ID",
+
+    // ── Tips ────────────────────────────────────────────────────────────────
+    tips: "Tips",
+    totalTipsCollected: "Total Collected",
+    tipsThisMonth: "This Month",
+    tipsPendingClaim: "Pending Claim",
+    tipsClaimed: "Claimed",
+    requestPayout: "Request Payout",
+    tipHistory: "Tip History",
+    tipHeld: "Held",
+    tipPaid: "Paid",
+    tipClaimPending: "Pending",
+    tipClaimApproved: "Approved",
+    tipClaimRejected: "Rejected",
+    tipClaims: "Tip Claims",
+    myTipClaims: "My Payout Requests",
+    noTipClaims: "No tip claims",
+
+    // ── Staff Session ───────────────────────────────────────────────────────
+    staffSession: "Session",
+    navSession: "Session",
   },
 
   th: {
@@ -683,7 +770,7 @@ export const translations = {
     password: "รหัสผ่าน",
     enterCredentials: "กรอกข้อมูลเพื่อดำเนินการต่อ",
     orDemoAccess: "หรือเข้าใช้งานแบบทดลอง",
-    managerRole: "ผู้จัดการสปา",
+    managerRole: "บัญชีผู้จัดการ",
     managerEmail: "manager@koko.com · สิทธิ์ผู้ดูแลระบบ",
     customerRole: "บัญชีลูกค้า",
     customerEmail: "alex@example.com · Alex Chen",
@@ -855,6 +942,7 @@ export const translations = {
     massageSports: "กีฬา",
     massageReflexology: "รีเฟล็กโซโลจี",
     massageShiatsu: "ชิอัตสึ",
+    footMassage: "นวดเท้า",
 
     // ── Admin Dashboard ───────────────────────────────────────────────────
     dashboard: "แดชบอร์ด",
@@ -1251,6 +1339,92 @@ export const translations = {
     submitRequest: "ส่งคำขอ",
     rejectionDetails: "รายละเอียดการปฏิเสธ",
     pendingTab: "รอดำเนินการ",
+
+    // ── Staff Reviews ───────────────────────────────────────────────────────
+    viewReviews: "ดูรีวิว",
+    staffReviews: "รีวิว",
+
+    // ── Loyalty Settings ────────────────────────────────────────────────────
+    loyaltySettings: "ตั้งค่าสมาชิก",
+    loyaltyMasterToggle: "โปรแกรมสมาชิก",
+    enableStamps: "โปรแกรมแสตมป์",
+    enablePoints: "โปรแกรมแต้ม",
+    stampsForFree: "แสตมป์สำหรับเซสชั่นฟรี",
+    maxFreeDuration: "ระยะเวลาเซสชั่นฟรีสูงสุด",
+    eligibleServices: "บริการที่มีสิทธิ์",
+    spendUnitAmount: "จำนวนหน่วยการใช้จ่าย",
+    minRedemption: "แต้มขั้นต่ำในการแลก",
+    loyaltyDisabled: "โปรแกรมสมาชิกยังไม่เปิดให้บริการ",
+    programDisabled: "โปรแกรมนี้ยังไม่เปิดให้บริการ",
+
+    // ── Promotions (Extended) ───────────────────────────────────────────────
+    purchasePromotion: "ซื้อ",
+    myPromotions: "โปรโมชั่นของฉัน",
+    activePromotionsLabel: "โปรโมชั่นที่ใช้งาน",
+    promotionActive: "ใช้งานอยู่",
+    promotionCompleted: "เสร็จสิ้น",
+    sessionsCompletedCount: "เซสชั่นที่เสร็จสิ้น",
+    sessionsRemainingCount: "เซสชั่นที่เหลือ",
+    coveredByPromotion: "ครอบคลุมโดยโปรโมชั่นของคุณ",
+    prepaid: "ชำระล่วงหน้า",
+    noActivePromotions: "ไม่มีโปรโมชั่นที่ใช้งาน",
+    purchaseSuccess: "ซื้อโปรโมชั่นสำเร็จ",
+    membershipNumber: "เลขสมาชิก",
+    promotionDetails: "รายละเอียดโปรโมชั่น",
+    usedServices: "ใช้แล้ว",
+    remainingServices: "คงเหลือ",
+    customerPromotions: "โปรโมชั่นลูกค้า",
+
+    // ── Translation Chat ────────────────────────────────────────────────────
+    translationChat: "แชทแปลภาษา",
+    yourLanguage: "คุณพูด",
+    theirLanguage: "เขาพูด",
+    typeMessageChat: "พิมพ์ข้อความ...",
+    sendMessage: "ส่ง",
+    voiceInput: "เสียง",
+    selectLanguage: "เลือกภาษา",
+    liveTranslation: "แปลภาษาสด",
+
+    // ── Calendar Views ──────────────────────────────────────────────────────
+    dailyView: "วัน",
+    weeklyView: "สัปดาห์",
+    monthlyView: "เดือน",
+    weekOf: "สัปดาห์ของ",
+    totalBookingsThisMonth: "การจองทั้งหมดเดือนนี้",
+    monthlyRevenueLabel: "รายได้เดือนนี้",
+
+    // ── Cancellation (Extended) ─────────────────────────────────────────────
+    refundBreakdown: "รายละเอียดการคืนเงิน",
+    serviceCost: "ค่าบริการ",
+    cancellationFeeLabel: "ค่าธรรมเนียมยกเลิก",
+    refundAmountLabel: "จำนวนเงินคืน",
+    customerFeedback: "ความคิดเห็นลูกค้า",
+    previousNotes: "บันทึกก่อนหน้า",
+
+    // ── Membership ──────────────────────────────────────────────────────────
+    membershipId: "รหัสสมาชิก",
+    searchByMembership: "ค้นหาตามชื่อ อีเมล หรือรหัสสมาชิก",
+
+    // ── Tips ────────────────────────────────────────────────────────────────
+    tips: "ทิป",
+    totalTipsCollected: "รวมที่เก็บได้",
+    tipsThisMonth: "เดือนนี้",
+    tipsPendingClaim: "รอเรียกร้อง",
+    tipsClaimed: "เรียกร้องแล้ว",
+    requestPayout: "ขอเบิกเงิน",
+    tipHistory: "ประวัติทิป",
+    tipHeld: "ค้างไว้",
+    tipPaid: "จ่ายแล้ว",
+    tipClaimPending: "รอดำเนินการ",
+    tipClaimApproved: "อนุมัติ",
+    tipClaimRejected: "ปฏิเสธ",
+    tipClaims: "คำร้องทิป",
+    myTipClaims: "คำร้องเบิกจ่ายของฉัน",
+    noTipClaims: "ไม่มีคำร้องทิป",
+
+    // ── Staff Session ───────────────────────────────────────────────────────
+    staffSession: "เซสชั่น",
+    navSession: "เซสชั่น",
   },
 } satisfies Record<Language, Record<string, string>>
 

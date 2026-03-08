@@ -3,11 +3,12 @@
 import { useState, useMemo } from "react"
 import {
   Calendar, ChevronLeft, ChevronRight, Clock, DollarSign,
-  CalendarDays, Sparkles
+  CalendarDays, Sparkles, ArrowUpRight
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth/auth-context"
 import { useBookings } from "@/lib/data/bookings-store"
+import { useTips } from "@/lib/data/tips-store"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { formatPrice, formatMassageType, staffMembers } from "@/lib/data/mock-data"
 import { StatusBadge, bookingStatusVariant } from "@/components/shared/status-badge"
@@ -37,7 +38,8 @@ function toDateString(date: Date): string {
 export default function StaffSchedulePage() {
   const { user } = useAuth()
   const { t } = useLanguage()
-  const { getBookingsForStaff } = useBookings()
+  const { getBookingsForStaff, bookings } = useBookings()
+  const { submitTipClaim, getClaimsForStaff } = useTips()
   const [selectedDate, setSelectedDate] = useState(new Date())
 
   const staffMember = staffMembers.find((s) => s.id === user?.id)
@@ -81,6 +83,28 @@ export default function StaffSchedulePage() {
         .reduce((sum, b) => sum + b.price, 0),
     [todayBookings]
   )
+
+  // Tips data
+  const staffBookings = useMemo(() => user ? bookings.filter(b => b.staffId === user.id) : [], [bookings, user])
+  const allTips = useMemo(() => staffBookings.filter(b => b.tip && b.tip > 0), [staffBookings])
+  const totalTips = useMemo(() => allTips.reduce((sum, b) => sum + (b.tip ?? 0), 0), [allTips])
+  const thisMonthTips = useMemo(
+    () =>
+      allTips
+        .filter(b => new Date(b.createdAt).getMonth() === new Date().getMonth())
+        .reduce((sum, b) => sum + (b.tip ?? 0), 0),
+    [allTips]
+  )
+  const claims = useMemo(() => user ? getClaimsForStaff(user.id) : [], [user, getClaimsForStaff])
+  const pendingClaimAmount = useMemo(
+    () => claims.filter(c => c.status === "pending").reduce((sum, c) => sum + c.amount, 0),
+    [claims]
+  )
+  const claimedAmount = useMemo(
+    () => claims.filter(c => c.status === "approved").reduce((sum, c) => sum + c.amount, 0),
+    [claims]
+  )
+  const heldAmount = totalTips - claimedAmount - pendingClaimAmount
 
   function navigateDay(offset: number) {
     setSelectedDate((prev) => {
@@ -232,6 +256,94 @@ export default function StaffSchedulePage() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+      </div>
+
+      {/* Tips Section */}
+      <div className="mt-8">
+        <div className="flex items-center justify-between">
+          <h2 className="flex items-center gap-2 text-lg font-bold text-brand-text-primary">
+            <DollarSign size={20} className="text-brand-green" />
+            {t("tips")}
+          </h2>
+          {heldAmount > 0 && (
+            <button
+              type="button"
+              onClick={() => user && submitTipClaim(user.id, user.name, heldAmount)}
+              className="flex items-center gap-1 rounded-xl bg-brand-green/15 px-3 py-1.5 text-xs font-semibold text-brand-green"
+            >
+              <ArrowUpRight size={14} />
+              {t("requestPayout")}
+            </button>
+          )}
+        </div>
+
+        {/* Tip stats */}
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="rounded-xl border border-brand-border bg-card p-3 text-center">
+            <p className="text-lg font-bold text-brand-text-primary">{formatPrice(totalTips)}</p>
+            <p className="text-[10px] text-brand-text-tertiary">{t("totalTipsCollected")}</p>
+          </div>
+          <div className="rounded-xl border border-brand-border bg-card p-3 text-center">
+            <p className="text-lg font-bold text-brand-text-primary">{formatPrice(thisMonthTips)}</p>
+            <p className="text-[10px] text-brand-text-tertiary">{t("tipsThisMonth")}</p>
+          </div>
+          <div className="rounded-xl border border-brand-border bg-card p-3 text-center">
+            <p className="text-lg font-bold text-brand-yellow">{formatPrice(heldAmount)}</p>
+            <p className="text-[10px] text-brand-text-tertiary">{t("tipsPendingClaim")}</p>
+          </div>
+          <div className="rounded-xl border border-brand-border bg-card p-3 text-center">
+            <p className="text-lg font-bold text-brand-green">{formatPrice(claimedAmount)}</p>
+            <p className="text-[10px] text-brand-text-tertiary">{t("tipsClaimed")}</p>
+          </div>
+        </div>
+
+        {/* Tip Claims */}
+        {claims.length > 0 && (
+          <div className="mt-4">
+            <h3 className="text-sm font-semibold text-brand-text-secondary">{t("myTipClaims")}</h3>
+            <div className="mt-2 space-y-2">
+              {claims.map((c) => (
+                <div key={c.id} className="flex items-center justify-between rounded-xl border border-brand-border bg-card px-4 py-3">
+                  <div>
+                    <p className="text-sm font-medium text-brand-text-primary">{formatPrice(c.amount)}</p>
+                    <p className="text-xs text-brand-text-tertiary">{new Date(c.requestedAt).toLocaleDateString()}</p>
+                  </div>
+                  <span className={cn(
+                    "rounded-full px-2.5 py-0.5 text-[10px] font-semibold",
+                    c.status === "approved" && "bg-brand-green/15 text-brand-green",
+                    c.status === "rejected" && "bg-brand-coral/15 text-brand-coral",
+                    c.status === "pending" && "bg-brand-yellow/15 text-brand-yellow"
+                  )}>
+                    {c.status === "approved" ? t("tipClaimApproved") : c.status === "rejected" ? t("tipClaimRejected") : t("tipClaimPending")}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Recent tips */}
+        {allTips.length > 0 && (
+          <div className="mt-4">
+            <h3 className="text-sm font-semibold text-brand-text-secondary">{t("tipHistory")}</h3>
+            <div className="mt-2 space-y-2">
+              {allTips.slice(0, 10).map((b) => (
+                <div key={b.id} className="flex items-center justify-between rounded-xl border border-brand-border bg-card px-4 py-3">
+                  <div>
+                    <p className="text-sm font-medium text-brand-text-primary">{b.customerName}</p>
+                    <p className="text-xs text-brand-text-tertiary">{b.date} - {b.serviceName}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-brand-green">+{formatPrice(b.tip ?? 0)}</p>
+                    <p className="text-[10px] text-brand-text-tertiary">
+                      {b.tipStatus === "claimed" ? t("tipsClaimed") : b.tipStatus === "paid" ? t("tipPaid") : t("tipHeld")}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

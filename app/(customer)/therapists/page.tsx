@@ -129,7 +129,7 @@ export default function StaffPage() {
         {filtered.map((staff) => (
           <Link
             key={staff.id}
-            href={`/staff/${staff.id}`}
+            href={`/therapists/${staff.id}`}
             className="flex gap-4 rounded-2xl border border-brand-border bg-card p-4 transition-all card-press"
           >
             <StaffAvatar

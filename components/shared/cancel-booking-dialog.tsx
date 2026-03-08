@@ -170,12 +170,27 @@ export function CancelBookingDialog({
               {isLate ? formatPrice(fee) : formatPrice(0)}
             </span>
           </div>
-          {isLate && (
-            <div className="mt-2 flex items-center justify-between border-t border-brand-border pt-2">
-              <span className="text-sm text-brand-text-secondary">{t("refundAmount")}</span>
-              <span className="font-semibold text-brand-text-primary">{formatPrice(refund)}</span>
+        </div>
+
+        {/* Refund Breakdown */}
+        <div className="mt-4 rounded-xl border border-brand-border bg-brand-bg-secondary p-4">
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-text-tertiary">{t("refundBreakdown")}</p>
+          <div className="mt-3 space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-brand-text-secondary">{t("serviceCost")}</span>
+              <span className="text-brand-text-primary">{formatPrice(booking.price)}</span>
             </div>
-          )}
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-brand-text-secondary">{t("cancellationFeeLabel")}</span>
+              <span className="text-brand-coral">-{formatPrice(fee)}</span>
+            </div>
+            <div className="border-t border-brand-border pt-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-brand-text-primary">{t("refundAmountLabel")}</span>
+                <span className="text-lg font-bold text-brand-green">{formatPrice(booking.price - fee)}</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Reason */}

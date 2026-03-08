@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect } from "react"
-import { Calendar, ClipboardList, Users, MessageSquare, User, Sun, Moon } from "lucide-react"
+import { Activity, Calendar, ClipboardList, Users, MessageSquare, User, Sun, Moon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ThemeProvider, useBrand } from "@/lib/theme/theme-provider"
 import { useAuth } from "@/lib/auth/auth-context"
@@ -20,6 +20,7 @@ function BottomNav() {
 
   const navItems = [
     { label: "Schedule", href: "/staff", icon: Calendar },
+    { label: "Session", href: "/staff/session", icon: Activity },
     { label: "Bookings", href: "/staff/bookings", icon: ClipboardList },
     { label: "Clients", href: "/staff/clients", icon: Users },
     { label: "Messages", href: "/staff/messages", icon: MessageSquare, badge: unreadCount },

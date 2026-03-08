@@ -3,10 +3,11 @@
 import { useState, useMemo, useCallback, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, Check, ChevronRight, Clock, Calendar, User, CreditCard, Package, Plus, DoorOpen, Clock3 } from "lucide-react"
+import { ArrowLeft, Check, ChevronRight, Clock, Calendar, User, CreditCard, Package, Plus, DoorOpen, Clock3, MessageSquare } from "lucide-react"
 import { StaffAvatar } from "@/components/shared/staff-avatar"
 import { RatingDisplay } from "@/components/shared/rating-stars"
 import { PillButton, PillButtonRow } from "@/components/shared/pill-button"
+import { StaffReviewsDialog } from "@/components/shared/staff-reviews-dialog"
 import { useLanguage } from "@/lib/i18n/language-context"
 import {
   staffMembers, generateTimeSlots,
@@ -14,9 +15,10 @@ import {
 } from "@/lib/data/mock-data"
 import { useServices } from "@/lib/data/services-store"
 import { useBookings } from "@/lib/data/bookings-store"
+import { usePromotions } from "@/lib/data/promotions-store"
 import { useAuth } from "@/lib/auth/auth-context"
 import { cn } from "@/lib/utils"
-import type { StaffMember, ServiceOption, MassageRoom, RoomType } from "@/lib/types"
+import type { StaffMember, ServiceOption, MassageRoom, RoomType, MassageType } from "@/lib/types"
 
 const ROOM_TYPE_COLORS: Record<RoomType, string> = {
   room:   "bg-blue-500/15 text-blue-400",
@@ -33,6 +35,7 @@ function BookingFlowInner() {
 
   const { services, addOns, getAddOnsForService, getActiveRooms } = useServices()
   const { createBooking } = useBookings()
+  const { hasActivePromotionForService } = usePromotions()
   const { user } = useAuth()
   const activeServices = services.filter((s) => s.isActive)
   const activeRooms = getActiveRooms()
@@ -64,6 +67,7 @@ function BookingFlowInner() {
   const [selectedTime, setSelectedTime] = useState<string | null>(searchParams.get("time"))
   const [selectedRoom, setSelectedRoom] = useState<MassageRoom | null>(null)
   const [isBooked, setIsBooked] = useState(false)
+  const [reviewStaff, setReviewStaff] = useState<StaffMember | null>(null)
 
   const dates = useMemo(() => {
     const result = []
@@ -113,6 +117,7 @@ function BookingFlowInner() {
   }, [selectedService, selectedDuration])
 
   const totalPrice = basePrice + addOnTotal
+  const activePromo = user ? hasActivePromotionForService(user.id, selectedService?.type as MassageType) : null
 
   function toggleAddOn(id: string) {
     setSelectedAddOnIds((prev) =>
@@ -149,12 +154,13 @@ function BookingFlowInner() {
       startTime: selectedTime,
       endTime: `${endH}:${endM}`,
       duration: selectedDuration + selectedAddOns.reduce((sum, a) => sum + a.extraMinutes, 0),
-      price: totalPrice,
+      price: activePromo ? 0 : totalPrice,
       status: "pending",
       roomId: selectedRoom?.id,
+      promotionId: activePromo?.id,
     })
     setIsBooked(true)
-  }, [selectedService, selectedStaff, selectedTime, selectedDuration, selectedAddOns, selectedRoom, selectedDate, dates, totalPrice, user, createBooking])
+  }, [selectedService, selectedStaff, selectedTime, selectedDuration, selectedAddOns, selectedRoom, selectedDate, dates, totalPrice, user, createBooking, activePromo])
 
   if (isBooked) {
     return (
@@ -388,7 +394,17 @@ function BookingFlowInner() {
                     <span className="text-xs text-brand-text-tertiary">{staff.yearsExperience}yr</span>
                   </div>
                 </div>
-                <p className="text-sm font-semibold text-brand-primary">{formatPrice(staff.pricePerHour)}/hr</p>
+                <div className="flex flex-col items-end gap-1">
+                  <p className="text-sm font-semibold text-brand-primary">{formatPrice(staff.pricePerHour)}/hr</p>
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); setReviewStaff(staff) }}
+                    className="flex items-center gap-1 rounded-lg border border-brand-border px-2 py-1 text-xs text-brand-text-secondary hover:bg-brand-bg-tertiary transition-colors"
+                  >
+                    <MessageSquare size={12} />
+                    {t("viewReviews")}
+                  </button>
+                </div>
               </button>
             ))}
           </div>
@@ -527,6 +543,13 @@ function BookingFlowInner() {
                 </>
               )}
 
+              {activePromo ? (
+                <div className="rounded-xl border border-brand-green/20 bg-brand-green/10 p-3 mb-3">
+                  <p className="text-sm font-semibold text-brand-green">{t("coveredByPromotion")}</p>
+                  <p className="text-xs text-brand-text-secondary">{activePromo.promotionTitle}</p>
+                </div>
+              ) : null}
+
               <div className="border-t border-brand-border pt-3 space-y-1.5">
                 {selectedAddOns.length > 0 && (
                   <div className="flex items-center justify-between text-sm">
@@ -542,7 +565,10 @@ function BookingFlowInner() {
                 )}
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-brand-text-primary">{t("total")}</span>
-                  <span className="text-xl font-bold text-brand-primary">{formatPrice(totalPrice)}</span>
+                  <span className={activePromo ? "line-through text-brand-text-tertiary" : ""}>
+                    {formatPrice(totalPrice)}
+                  </span>
+                  {activePromo && <span className="ml-2 text-lg font-bold text-brand-green">{formatPrice(0)}</span>}
                 </div>
               </div>
             </div>
@@ -578,6 +604,12 @@ function BookingFlowInner() {
           </button>
         </div>
       </div>
+
+      <StaffReviewsDialog
+        staff={reviewStaff}
+        open={!!reviewStaff}
+        onOpenChange={(open) => { if (!open) setReviewStaff(null) }}
+      />
     </div>
   )
 }

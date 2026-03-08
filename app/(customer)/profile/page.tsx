@@ -13,6 +13,7 @@ import { useAuth } from "@/lib/auth/auth-context"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { useLoyalty } from "@/lib/data/loyalty-store"
 import { useGiftCards } from "@/lib/data/giftcards-store"
+import { usePromotions } from "@/lib/data/promotions-store"
 import Image from "next/image"
 
 export default function ProfilePage() {
@@ -22,12 +23,14 @@ export default function ProfilePage() {
   const router = useRouter()
   const { getStampCount, getPointsBalance } = useLoyalty()
   const { getGiftCardsForCustomer } = useGiftCards()
+  const { getActivePromotionsForCustomer } = usePromotions()
 
   const customerData = customers.find((c) => c.id === user?.id) ?? customers[0]
   const stampCount = user ? getStampCount(user.id) : 0
   const pointsBalance = user ? getPointsBalance(user.id, customerData.totalSpent) : 0
   const myGiftCards = user ? getGiftCardsForCustomer(user.id) : []
   const giftCardBalance = myGiftCards.reduce((sum, gc) => sum + gc.currentBalance, 0)
+  const activePromos = user ? getActivePromotionsForCustomer(user.id) : []
 
   function handleSignOut() {
     logout()
@@ -84,6 +87,33 @@ export default function ProfilePage() {
           </p>
         </div>
       </div>
+
+      {/* Membership Number */}
+      {customerData && (
+        <div className="mt-4 px-5">
+          <div className="flex items-center gap-2 rounded-xl bg-brand-primary/10 px-4 py-2.5">
+            <CreditCard size={16} className="text-brand-primary" />
+            <span className="text-xs text-brand-text-secondary">{t("membershipNumber")}:</span>
+            <span className="text-sm font-bold text-brand-primary">{customerData.membershipNumber}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Active Promotions Banner */}
+      {activePromos.length > 0 && (
+        <Link href="/promotions/my" className="mx-5 mt-3 block">
+          <div className="flex items-center gap-3 rounded-xl border border-brand-green/20 bg-brand-green/10 p-3">
+            <Gift size={20} className="text-brand-green" />
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-brand-green">
+                {activePromos.length} {t("activePromotions")}
+              </p>
+              <p className="text-xs text-brand-text-secondary">{t("viewAll")}</p>
+            </div>
+            <ChevronRight size={16} className="text-brand-green" />
+          </div>
+        </Link>
+      )}
 
       {/* Stats */}
       <div className="mt-5 grid grid-cols-3 gap-3">

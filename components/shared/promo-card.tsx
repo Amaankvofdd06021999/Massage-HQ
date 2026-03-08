@@ -24,11 +24,13 @@ export function PromoCard({
   promo,
   compact = false,
   onClick,
+  onPurchase,
   className,
 }: {
   promo: Promotion
   compact?: boolean
   onClick?: () => void
+  onPurchase?: () => void
   className?: string
 }) {
   const colors = colorMap[promo.color]
@@ -95,6 +97,15 @@ export function PromoCard({
             />
           ))}
         </div>
+      )}
+      {onPurchase && (
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onPurchase() }}
+          className={cn("mt-4 w-full rounded-xl py-2.5 text-sm font-semibold transition-all", colors.badge)}
+        >
+          Purchase
+        </button>
       )}
     </button>
   )

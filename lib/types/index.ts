@@ -33,8 +33,8 @@ export interface BrandConfig {
 }
 
 // --- Staff / Therapist ---
-export type MassageType = "thai" | "swedish" | "deep-tissue" | "aromatherapy" | "hot-stone" | "sports" | "reflexology" | "shiatsu"
-export type Language = "english" | "thai" | "mandarin" | "japanese" | "korean"
+export type MassageType = "thai" | "swedish" | "deep-tissue" | "aromatherapy" | "hot-stone" | "sports" | "reflexology" | "shiatsu" | "foot"
+export type Language = "english" | "thai" | "mandarin" | "japanese" | "korean" | "german"
 export type DayOfWeek = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun"
 
 export interface StaffMember {
@@ -113,6 +113,7 @@ export interface Booking {
   rating?: number
   review?: string
   tip?: number
+  tipStatus?: "held" | "claimed" | "paid"
   createdAt: string
   // Extended fields
   cancellationFee?: number
@@ -170,6 +171,7 @@ export interface Customer {
   phone: string
   avatar: string
   memberSince: string
+  membershipNumber: string
   totalBookings: number
   totalSpent: number
   preferredStaff: string[]
@@ -322,6 +324,11 @@ export interface LoyaltyConfig {
   freeSessionMaxDuration: number
   pointRedemptionRate: number
   isActive: boolean
+  programActive: boolean
+  stampEnabled: boolean
+  pointsEnabled: boolean
+  minRedemptionPoints: number
+  eligibleStampServices: MassageType[]
 }
 
 export interface LoyaltyStamp {
@@ -373,6 +380,52 @@ export interface PromoSessionUsage {
   sessionNumber: number
   serviceType: MassageType
   usedAt: string
+}
+
+// --- Purchased Promotions ---
+export interface PurchasedPromotion {
+  id: string
+  customerId: string
+  promotionId: string
+  promotionTitle: string
+  purchasedAt: string
+  paidAmount: number
+  services: {
+    serviceType: MassageType
+    completed: boolean
+    bookingId?: string
+    completedAt?: string
+  }[]
+}
+
+// --- Tip Claims ---
+export type TipClaimStatus = "pending" | "approved" | "rejected"
+
+export interface TipClaim {
+  id: string
+  staffId: string
+  staffName: string
+  amount: number
+  status: TipClaimStatus
+  requestedAt: string
+  resolvedAt?: string
+  resolvedBy?: string
+}
+
+// --- Translation Chat ---
+export type ChatLanguage = "english" | "thai" | "mandarin" | "japanese" | "korean" | "german"
+
+export interface TranslationMessage {
+  id: string
+  bookingId: string
+  senderId: string
+  senderRole: "customer" | "staff"
+  senderName: string
+  originalText: string
+  translatedText: string
+  fromLang: ChatLanguage
+  toLang: ChatLanguage
+  timestamp: string
 }
 
 // --- Navigation ---

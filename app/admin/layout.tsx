@@ -6,7 +6,7 @@ import { useEffect } from "react"
 import {
   LayoutDashboard, Calendar, BookOpen, Users, Tag,
   Palette, ChevronLeft, ChevronRight, Menu, X, Sun, Moon, LogOut, Sparkles, Star,
-  Scale, MessageSquare,
+  Scale, MessageSquare, Heart, DollarSign,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ThemeProvider, useBrand } from "@/lib/theme/theme-provider"
@@ -30,8 +30,10 @@ function AdminSidebar({ collapsed, setCollapsed }: { collapsed: boolean; setColl
     { label: t("navReviews"), href: "/admin/reviews", icon: Star },
     { label: t("navServices"), href: "/admin/services", icon: Sparkles },
     { label: t("navPromotions"), href: "/admin/promotions", icon: Tag },
+    { label: t("loyaltySettings"), href: "/admin/loyalty", icon: Heart },
     { label: t("navCustomers"), href: "/admin/customers", icon: Users },
     { label: t("navClaims"), href: "/admin/claims", icon: Scale },
+    { label: t("tipClaims"), href: "/admin/tips", icon: DollarSign },
     { label: t("messages"), href: "/admin/messages", icon: MessageSquare },
     { label: t("navBrandSettings"), href: "/admin/settings", icon: Palette },
   ]
@@ -160,8 +162,10 @@ function MobileHeader() {
     { label: t("navReviews"), href: "/admin/reviews", icon: Star },
     { label: t("navServices"), href: "/admin/services", icon: Sparkles },
     { label: t("navPromotions"), href: "/admin/promotions", icon: Tag },
+    { label: t("loyaltySettings"), href: "/admin/loyalty", icon: Heart },
     { label: t("navCustomers"), href: "/admin/customers", icon: Users },
     { label: t("navClaims"), href: "/admin/claims", icon: Scale },
+    { label: t("tipClaims"), href: "/admin/tips", icon: DollarSign },
     { label: t("messages"), href: "/admin/messages", icon: MessageSquare },
     { label: t("navBrandSettings"), href: "/admin/settings", icon: Palette },
   ]

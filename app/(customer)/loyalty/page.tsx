@@ -110,6 +110,21 @@ export default function LoyaltyPage() {
     })),
   ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
+  if (!config.programActive) {
+    return (
+      <div className="px-5 pb-8 pt-12">
+        <div className="flex items-center gap-2">
+          <Trophy size={20} className="text-brand-yellow" />
+          <h1 className="text-2xl font-bold text-brand-text-primary">{t("loyaltyProgram")}</h1>
+        </div>
+        <div className="mt-6 rounded-2xl border border-dashed border-brand-border bg-brand-bg-secondary p-8 text-center">
+          <Trophy size={32} className="mx-auto text-brand-text-tertiary" />
+          <p className="mt-3 text-sm text-brand-text-secondary">{t("loyaltyDisabled")}</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="px-5 pb-8 pt-12">
       {/* Page header */}
@@ -122,28 +137,32 @@ export default function LoyaltyPage() {
       </p>
 
       {/* Section 1: Stamp Card */}
-      <div className="mt-6">
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-brand-text-tertiary">
-          {t("loyaltyStamps")}
-        </h2>
-        <LoyaltyStampCard
-          stampCount={stampCount}
-          stampsNeeded={stampsNeeded}
-          onRedeem={canRedeem ? handleStampRedeem : undefined}
-        />
-      </div>
+      {config.stampEnabled && (
+        <div className="mt-6">
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-brand-text-tertiary">
+            {t("loyaltyStamps")}
+          </h2>
+          <LoyaltyStampCard
+            stampCount={stampCount}
+            stampsNeeded={stampsNeeded}
+            onRedeem={canRedeem ? handleStampRedeem : undefined}
+          />
+        </div>
+      )}
 
       {/* Section 2: Points Balance */}
-      <div className="mt-6">
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-brand-text-tertiary">
-          {t("loyaltyPointsLabel")}
-        </h2>
-        <LoyaltyPointsDisplay
-          pointsBalance={pointsBalance}
-          pointRedemptionRate={config.pointRedemptionRate}
-          onRedeem={handlePointsRedeem}
-        />
-      </div>
+      {config.pointsEnabled && (
+        <div className="mt-6">
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-brand-text-tertiary">
+            {t("loyaltyPointsLabel")}
+          </h2>
+          <LoyaltyPointsDisplay
+            pointsBalance={pointsBalance}
+            pointRedemptionRate={config.pointRedemptionRate}
+            onRedeem={handlePointsRedeem}
+          />
+        </div>
+      )}
 
       <Separator className="my-6 bg-brand-border" />
 
