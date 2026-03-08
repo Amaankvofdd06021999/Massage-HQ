@@ -102,6 +102,7 @@ export const translations = {
     sessionsUsedOf: "of",
     sessionsUsed: "used",
     sessionsRemaining: "remaining",
+    myActivePromotions: "My Active Promotions",
 
     // ── Profile Page ──────────────────────────────────────────────────────
     memberSince: "Member since",
@@ -815,6 +816,7 @@ export const translations = {
     sessionsUsedOf: "จาก",
     sessionsUsed: "ใช้แล้ว",
     sessionsRemaining: "คงเหลือ",
+    myActivePromotions: "โปรโมชั่นที่ใช้งานอยู่",
 
     // ── Profile Page ──────────────────────────────────────────────────────
     memberSince: "สมาชิกตั้งแต่",

@@ -430,7 +430,7 @@ export default function AdminCalendarPage() {
                 {Array.from({ length: firstDayOffset }, (_, i) => (
                   <div
                     key={`empty-${i}`}
-                    className="min-h-[90px] border-b border-r border-brand-border bg-brand-bg-secondary/30 last:border-r-0"
+                    className="min-h-[110px] border-b border-r border-brand-border bg-brand-bg-secondary/30 last:border-r-0"
                   />
                 ))}
 
@@ -456,7 +456,7 @@ export default function AdminCalendarPage() {
                       type="button"
                       onClick={() => goToDay(dayDate)}
                       className={cn(
-                        "min-h-[90px] border-b border-r border-brand-border p-2 text-left transition-colors hover:bg-brand-bg-tertiary",
+                        "min-h-[110px] border-b border-r border-brand-border p-2 text-left transition-colors hover:bg-brand-bg-tertiary",
                         colIndex === 6 && "border-r-0",
                         isToday && "bg-brand-primary/5"
                       )}
@@ -478,15 +478,21 @@ export default function AdminCalendarPage() {
                           </span>
                         )}
                       </div>
-                      {dots.length > 0 && (
-                        <div className="mt-1.5 flex gap-1">
-                          {dots.map((status) => (
+                      {dayBks.length > 0 && (
+                        <div className="mt-1 flex flex-col gap-0.5">
+                          {dayBks.slice(0, 3).map((bk) => (
                             <div
-                              key={status}
-                              className={cn("h-1.5 w-1.5 rounded-full", statusDotColors[status])}
-                              title={`${statusCounts[status]} ${status}`}
-                            />
+                              key={bk.id}
+                              className={cn("rounded px-1 py-0.5 text-[9px] leading-tight truncate", statusStyles[bk.status])}
+                            >
+                              <span className="font-semibold">{bk.staffName.split(" ")[0]}</span>
+                              {" · "}
+                              <span>{bk.customerName.split(" ")[0]}</span>
+                            </div>
                           ))}
+                          {dayBks.length > 3 && (
+                            <span className="text-[9px] text-brand-text-tertiary pl-1">+{dayBks.length - 3} more</span>
+                          )}
                         </div>
                       )}
                     </button>

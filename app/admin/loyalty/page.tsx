@@ -82,14 +82,14 @@ export default function AdminLoyaltyPage() {
             type="button"
             onClick={() => setLocalConfig({ ...localConfig, programActive: !localConfig.programActive })}
             className={cn(
-              "relative h-7 w-12 rounded-full transition-colors",
-              localConfig.programActive ? "bg-brand-green" : "bg-brand-border"
+              "relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full transition-colors",
+              localConfig.programActive ? "bg-brand-green" : "bg-brand-text-tertiary/30"
             )}
           >
             <span
               className={cn(
-                "absolute top-0.5 h-6 w-6 rounded-full bg-white transition-transform",
-                localConfig.programActive ? "translate-x-5" : "translate-x-0.5"
+                "pointer-events-none block h-5 w-5 rounded-full bg-white shadow-md ring-0 transition-transform",
+                localConfig.programActive ? "translate-x-6" : "translate-x-1"
               )}
             />
           </button>
@@ -114,14 +114,14 @@ export default function AdminLoyaltyPage() {
                 type="button"
                 onClick={() => setLocalConfig({ ...localConfig, stampEnabled: !localConfig.stampEnabled })}
                 className={cn(
-                  "relative h-7 w-12 rounded-full transition-colors",
-                  localConfig.stampEnabled ? "bg-brand-green" : "bg-brand-border"
+                  "relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full transition-colors",
+                  localConfig.stampEnabled ? "bg-brand-green" : "bg-brand-text-tertiary/30"
                 )}
               >
                 <span
                   className={cn(
-                    "absolute top-0.5 h-6 w-6 rounded-full bg-white transition-transform",
-                    localConfig.stampEnabled ? "translate-x-5" : "translate-x-0.5"
+                    "pointer-events-none block h-5 w-5 rounded-full bg-white shadow-md ring-0 transition-transform",
+                    localConfig.stampEnabled ? "translate-x-6" : "translate-x-1"
                   )}
                 />
               </button>
@@ -187,14 +187,14 @@ export default function AdminLoyaltyPage() {
                 type="button"
                 onClick={() => setLocalConfig({ ...localConfig, pointsEnabled: !localConfig.pointsEnabled })}
                 className={cn(
-                  "relative h-7 w-12 rounded-full transition-colors",
-                  localConfig.pointsEnabled ? "bg-brand-green" : "bg-brand-border"
+                  "relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full transition-colors",
+                  localConfig.pointsEnabled ? "bg-brand-green" : "bg-brand-text-tertiary/30"
                 )}
               >
                 <span
                   className={cn(
-                    "absolute top-0.5 h-6 w-6 rounded-full bg-white transition-transform",
-                    localConfig.pointsEnabled ? "translate-x-5" : "translate-x-0.5"
+                    "pointer-events-none block h-5 w-5 rounded-full bg-white shadow-md ring-0 transition-transform",
+                    localConfig.pointsEnabled ? "translate-x-6" : "translate-x-1"
                   )}
                 />
               </button>

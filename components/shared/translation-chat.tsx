@@ -12,6 +12,7 @@ interface TranslationChatProps {
   userRole: "customer" | "staff"
   userId: string
   userName: string
+  alwaysOpen?: boolean
 }
 
 interface ChatMessage {
@@ -92,13 +93,13 @@ const THERAPIST_REPLIES: Record<string, string[]> = {
   ],
 }
 
-export function TranslationChat({ bookingId, userRole, userId, userName }: TranslationChatProps) {
+export function TranslationChat({ bookingId, userRole, userId, userName, alwaysOpen }: TranslationChatProps) {
   const { t } = useLanguage()
   const [myLang, setMyLang] = useState<ChatLanguage>("english")
   const [theirLang, setTheirLang] = useState<ChatLanguage>("thai")
   const [input, setInput] = useState("")
   const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(alwaysOpen ?? false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const storageKey = `koko-chat-${bookingId}`
 
@@ -170,7 +171,7 @@ export function TranslationChat({ bookingId, userRole, userId, userName }: Trans
     }
   }, [myLang])
 
-  if (!isOpen) {
+  if (!isOpen && !alwaysOpen) {
     return (
       <button
         type="button"
@@ -189,20 +190,22 @@ export function TranslationChat({ bookingId, userRole, userId, userName }: Trans
   }
 
   return (
-    <div className="rounded-2xl border border-brand-border bg-card overflow-hidden">
+    <div className={cn("rounded-2xl border border-brand-border bg-card overflow-hidden", alwaysOpen && "flex flex-col h-full border-0 rounded-none")}>
       {/* Header */}
       <div className="flex items-center justify-between border-b border-brand-border bg-brand-bg-secondary px-4 py-3">
         <div className="flex items-center gap-2">
           <Globe size={18} className="text-brand-blue" />
           <span className="text-sm font-semibold text-brand-text-primary">{t("liveTranslation")}</span>
         </div>
-        <button
-          type="button"
-          onClick={() => setIsOpen(false)}
-          className="text-xs text-brand-text-secondary hover:text-brand-text-primary"
-        >
-          {t("cancel")}
-        </button>
+        {!alwaysOpen && (
+          <button
+            type="button"
+            onClick={() => setIsOpen(false)}
+            className="text-xs text-brand-text-secondary hover:text-brand-text-primary"
+          >
+            {t("cancel")}
+          </button>
+        )}
       </div>
 
       {/* Language selectors */}
@@ -235,7 +238,7 @@ export function TranslationChat({ bookingId, userRole, userId, userName }: Trans
       </div>
 
       {/* Messages */}
-      <div className="flex flex-col gap-2 p-4" style={{ maxHeight: "300px", overflowY: "auto" }}>
+      <div className={cn("flex flex-col gap-2 p-4 overflow-y-auto", alwaysOpen ? "flex-1" : "max-h-[300px]")}>
         {messages.length === 0 && (
           <p className="py-6 text-center text-xs text-brand-text-tertiary">{t("typeMessage")}</p>
         )}

@@ -66,7 +66,7 @@ function AdminSidebar({ collapsed, setCollapsed }: { collapsed: boolean; setColl
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 space-y-1 p-2">
+      <nav className="flex-1 space-y-1 overflow-y-auto p-2">
         {navItems.map((item) => {
           const isActive = pathname === item.href
           const Icon = item.icon
@@ -222,7 +222,7 @@ function MobileHeader() {
               </div>
             )}
 
-            <nav className="mt-4 flex-1 space-y-1">
+            <nav className="mt-4 flex-1 space-y-1 overflow-y-auto">
               {navItems.map((item) => {
                 const isActive = pathname === item.href
                 const Icon = item.icon
@@ -245,7 +245,7 @@ function MobileHeader() {
               })}
             </nav>
 
-            <div className="mt-4 border-t border-brand-border pt-3 space-y-1">
+            <div className="shrink-0 border-t border-brand-border pt-3 space-y-1">
               <Link
                 href="/"
                 onClick={() => setOpen(false)}

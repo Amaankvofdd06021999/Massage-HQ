@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { Clock, CheckCircle, Star, Sparkles, ChevronRight, AlertTriangle } from "lucide-react"
+import { Clock, CheckCircle, Star, Sparkles, ChevronRight, AlertTriangle, Globe, X } from "lucide-react"
 import { StaffAvatar } from "@/components/shared/staff-avatar"
 import { RatingStars } from "@/components/shared/rating-stars"
 import { LateArrivalDialog } from "@/components/shared/late-arrival-dialog"
@@ -252,6 +252,7 @@ export default function SessionPage() {
   const router = useRouter()
   const [showReview, setShowReview] = useState(false)
   const [lateOpen, setLateOpen] = useState(false)
+  const [chatOpen, setChatOpen] = useState(false)
   const [submitted, setSubmitted] = useState<{ rating: number; tip: number } | null>(null)
 
   const elapsed = useElapsedMinutes(
@@ -346,16 +347,6 @@ export default function SessionPage() {
           )}
         </div>
 
-        {/* Translation Chat */}
-        <div className="mt-4 px-5">
-          <TranslationChat
-            bookingId={activeBooking.id}
-            userRole="customer"
-            userId={user?.id ?? ""}
-            userName={user?.name ?? "Customer"}
-          />
-        </div>
-
         {/* Session Details */}
         <div className="mb-5 rounded-3xl border border-brand-border bg-card p-5">
           <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-brand-text-tertiary">{t("sessionDetails")}</p>
@@ -411,6 +402,45 @@ export default function SessionPage() {
           open={lateOpen}
           onOpenChange={setLateOpen}
         />
+      )}
+
+      {/* Floating Translation Chat Button */}
+      {activeBooking && !chatOpen && (
+        <button
+          type="button"
+          onClick={() => setChatOpen(true)}
+          className="fixed bottom-24 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-brand-blue text-white shadow-lg shadow-brand-blue/30 transition-transform active:scale-90"
+        >
+          <Globe size={24} />
+        </button>
+      )}
+
+      {/* Translation Chat Popup */}
+      {activeBooking && chatOpen && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-background/95 backdrop-blur-sm">
+          <div className="flex items-center justify-between border-b border-brand-border bg-card px-5 py-3">
+            <div className="flex items-center gap-2">
+              <Globe size={18} className="text-brand-blue" />
+              <span className="text-sm font-bold text-brand-text-primary">{t("liveTranslation")}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setChatOpen(false)}
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-bg-tertiary text-brand-text-secondary"
+            >
+              <X size={18} />
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto p-4">
+            <TranslationChat
+              bookingId={activeBooking.id}
+              userRole="customer"
+              userId={user?.id ?? ""}
+              userName={user?.name ?? "Customer"}
+              alwaysOpen
+            />
+          </div>
+        </div>
       )}
     </>
   )
