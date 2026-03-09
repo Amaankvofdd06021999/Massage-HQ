@@ -47,29 +47,26 @@ export default function LoginPage() {
       <div className="relative w-full max-w-sm">
 
         {/* Language toggle */}
-        <div className="mb-4 flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={() => setLanguage("en")}
-            className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors ${
-              language === "en"
-                ? "bg-[#FACC15]/20 text-[#FACC15]"
-                : "text-[#6B6B7B] hover:text-[#A0A0B0]"
-            }`}
-          >
-            EN
-          </button>
-          <button
-            type="button"
-            onClick={() => setLanguage("th")}
-            className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors ${
-              language === "th"
-                ? "bg-[#FACC15]/20 text-[#FACC15]"
-                : "text-[#6B6B7B] hover:text-[#A0A0B0]"
-            }`}
-          >
-            TH
-          </button>
+        <div className="mb-4 flex justify-end gap-1.5">
+          {([
+            { code: "en" as const, label: "EN" },
+            { code: "th" as const, label: "TH" },
+            { code: "ko" as const, label: "KO" },
+            { code: "ja" as const, label: "JA" },
+          ]).map((lang) => (
+            <button
+              key={lang.code}
+              type="button"
+              onClick={() => setLanguage(lang.code)}
+              className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors ${
+                language === lang.code
+                  ? "bg-[#FACC15]/20 text-[#FACC15]"
+                  : "text-[#6B6B7B] hover:text-[#A0A0B0]"
+              }`}
+            >
+              {lang.label}
+            </button>
+          ))}
         </div>
 
         {/* Brand */}

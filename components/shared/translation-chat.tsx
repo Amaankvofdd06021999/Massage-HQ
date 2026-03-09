@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { Globe, Mic, Send } from "lucide-react"
+import { Globe, Mic, Send, ArrowLeftRight, ChevronDown, MessageCircle } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { cn } from "@/lib/utils"
 import { translationPhrases, mockTranslate } from "@/lib/data/mock-data"
@@ -26,14 +26,81 @@ interface ChatMessage {
   timestamp: string
 }
 
-const LANGUAGES: { value: ChatLanguage; label: string }[] = [
-  { value: "english", label: "English" },
-  { value: "thai", label: "Thai" },
-  { value: "japanese", label: "Japanese" },
-  { value: "mandarin", label: "Mandarin" },
-  { value: "korean", label: "Korean" },
-  { value: "german", label: "German" },
-]
+const LANG_FLAGS: Record<ChatLanguage, string> = {
+  english: "EN",
+  thai: "TH",
+  japanese: "JP",
+  mandarin: "CN",
+  korean: "KR",
+  german: "DE",
+}
+
+const LANG_LABELS: Record<ChatLanguage, string> = {
+  english: "English",
+  thai: "ไทย",
+  japanese: "日本語",
+  mandarin: "中文",
+  korean: "한국어",
+  german: "Deutsch",
+}
+
+const ALL_LANGUAGES: ChatLanguage[] = ["english", "thai", "japanese", "mandarin", "korean", "german"]
+
+// Quick phrases grouped by category
+const QUICK_PHRASES: Record<string, { key: string; phrases: Record<ChatLanguage, string> }[]> = {
+  pressure: [
+    {
+      key: "more-pressure",
+      phrases: { english: "More pressure please", thai: "กดแรงขึ้นหน่อยค่ะ", japanese: "もっと強くお願いします", mandarin: "请加大力度", korean: "더 세게 해주세요", german: "Bitte mehr Druck" },
+    },
+    {
+      key: "less-pressure",
+      phrases: { english: "Less pressure please", thai: "กดเบาลงหน่อยค่ะ", japanese: "もう少し弱くお願いします", mandarin: "请轻一点", korean: "좀 더 약하게 해주세요", german: "Bitte weniger Druck" },
+    },
+  ],
+  focus: [
+    {
+      key: "focus-shoulders",
+      phrases: { english: "Can you focus on my shoulders?", thai: "ช่วยเน้นที่ไหล่หน่อยได้ไหมคะ?", japanese: "肩を重点的にお願いします", mandarin: "可以重点按摩肩膀吗？", korean: "어깨 위주로 해주세요", german: "Können Sie sich auf meine Schultern konzentrieren?" },
+    },
+    {
+      key: "focus-back",
+      phrases: { english: "Can you focus on my back?", thai: "ช่วยเน้นที่หลังหน่อยได้ไหมคะ?", japanese: "背中を重点的にお願いします", mandarin: "可以重点按摩背部吗？", korean: "등 위주로 해주세요", german: "Können Sie sich auf meinen Rücken konzentrieren?" },
+    },
+    {
+      key: "pain-here",
+      phrases: { english: "I have pain here", thai: "เจ็บตรงนี้ค่ะ", japanese: "ここが痛いです", mandarin: "这里疼", korean: "여기가 아파요", german: "Hier habe ich Schmerzen" },
+    },
+  ],
+  comfort: [
+    {
+      key: "feels-great",
+      phrases: { english: "That feels wonderful", thai: "รู้สึกดีมากค่ะ", japanese: "とても気持ちいいです", mandarin: "感觉太好了", korean: "너무 좋아요", german: "Das fühlt sich wunderbar an" },
+    },
+    {
+      key: "too-cold",
+      phrases: { english: "The room is too cold", thai: "ห้องเย็นเกินไปค่ะ", japanese: "部屋が寒すぎます", mandarin: "房间太冷了", korean: "방이 너무 추워요", german: "Der Raum ist zu kalt" },
+    },
+    {
+      key: "water",
+      phrases: { english: "Can I have some water?", thai: "ขอน้ำหน่อยได้ไหมคะ?", japanese: "お水をいただけますか？", mandarin: "可以给我一杯水吗？", korean: "물 좀 주시겠어요?", german: "Kann ich etwas Wasser haben?" },
+    },
+  ],
+  general: [
+    {
+      key: "thank-you",
+      phrases: { english: "Thank you", thai: "ขอบคุณค่ะ", japanese: "ありがとうございます", mandarin: "谢谢", korean: "감사합니다", german: "Danke schön" },
+    },
+    {
+      key: "time-left",
+      phrases: { english: "How much time is left?", thai: "เหลือเวลาอีกเท่าไหร่คะ?", japanese: "残り時間はどのくらいですか？", mandarin: "还剩多少时间？", korean: "시간이 얼마나 남았나요?", german: "Wie viel Zeit ist noch übrig?" },
+    },
+    {
+      key: "need-break",
+      phrases: { english: "I need a break", thai: "ขอพักหน่อยค่ะ", japanese: "少し休憩をください", mandarin: "我需要休息一下", korean: "잠깐 쉬어야 해요", german: "Ich brauche eine Pause" },
+    },
+  ],
+}
 
 // Mock therapist auto-replies
 const THERAPIST_REPLIES: Record<string, string[]> = {
@@ -47,44 +114,44 @@ const THERAPIST_REPLIES: Record<string, string[]> = {
     "Is the temperature comfortable?",
   ],
   thai: [
-    "\u0E44\u0E14\u0E49\u0E40\u0E25\u0E22\u0E04\u0E48\u0E30 \u0E08\u0E30\u0E1B\u0E23\u0E31\u0E1A\u0E41\u0E23\u0E07\u0E01\u0E14\u0E43\u0E2B\u0E49\u0E19\u0E30\u0E04\u0E30",
-    "\u0E15\u0E2D\u0E19\u0E19\u0E35\u0E49\u0E23\u0E39\u0E49\u0E2A\u0E36\u0E01\u0E22\u0E31\u0E07\u0E44\u0E07\u0E1A\u0E49\u0E32\u0E07\u0E04\u0E30?",
-    "\u0E1A\u0E2D\u0E01\u0E44\u0E14\u0E49\u0E40\u0E25\u0E22\u0E19\u0E30\u0E04\u0E30\u0E16\u0E49\u0E32\u0E15\u0E49\u0E2D\u0E07\u0E01\u0E32\u0E23\u0E2D\u0E30\u0E44\u0E23",
-    "\u0E40\u0E2B\u0E25\u0E37\u0E2D\u0E40\u0E27\u0E25\u0E32\u0E2D\u0E35\u0E01\u0E1B\u0E23\u0E30\u0E21\u0E32\u0E13 30 \u0E19\u0E32\u0E17\u0E35\u0E04\u0E48\u0E30",
-    "\u0E08\u0E30\u0E40\u0E19\u0E49\u0E19\u0E1A\u0E23\u0E34\u0E40\u0E27\u0E13\u0E19\u0E31\u0E49\u0E19\u0E43\u0E2B\u0E49\u0E19\u0E30\u0E04\u0E30",
-    "\u0E44\u0E14\u0E49\u0E40\u0E25\u0E22\u0E04\u0E48\u0E30 \u0E44\u0E21\u0E48\u0E21\u0E35\u0E1B\u0E31\u0E0D\u0E2B\u0E32",
-    "\u0E2D\u0E38\u0E13\u0E2B\u0E20\u0E39\u0E21\u0E34\u0E2A\u0E1A\u0E32\u0E22\u0E14\u0E35\u0E44\u0E2B\u0E21\u0E04\u0E30?",
+    "ได้เลยค่ะ จะปรับแรงกดให้นะคะ",
+    "ตอนนี้รู้สึกยังไงบ้างคะ?",
+    "บอกได้เลยนะคะถ้าต้องการอะไร",
+    "เหลือเวลาอีกประมาณ 30 นาทีค่ะ",
+    "จะเน้นบริเวณนั้นให้นะคะ",
+    "ได้เลยค่ะ ไม่มีปัญหา",
+    "อุณหภูมิสบายดีไหมคะ?",
   ],
   japanese: [
-    "\u3082\u3061\u308D\u3093\u3001\u5727\u3092\u8ABF\u6574\u3057\u307E\u3059\u3002",
-    "\u4ECA\u306F\u3069\u3046\u611F\u3058\u307E\u3059\u304B\uFF1F",
-    "\u4F55\u304B\u5FC5\u8981\u306A\u3082\u306E\u304C\u3042\u308C\u3070\u304A\u77E5\u3089\u305B\u304F\u3060\u3055\u3044\u3002",
-    "\u6B8B\u308A\u7D0430\u5206\u3067\u3059\u3002",
-    "\u305D\u306E\u90E8\u5206\u306B\u96C6\u4E2D\u3057\u307E\u3059\u3002",
-    "\u306F\u3044\u3001\u554F\u984C\u3042\u308A\u307E\u305B\u3093\u3002",
-    "\u6E29\u5EA6\u306F\u5FEB\u9069\u3067\u3059\u304B\uFF1F",
+    "もちろん、圧を調整します。",
+    "今はどう感じますか？",
+    "何か必要なものがあればお知らせください。",
+    "残り約30分です。",
+    "その部分に集中します。",
+    "はい、問題ありません。",
+    "温度は快適ですか？",
   ],
   mandarin: [
-    "\u597D\u7684\uFF0C\u6211\u6765\u8C03\u6574\u529B\u5EA6\u3002",
-    "\u73B0\u5728\u611F\u89C9\u600E\u4E48\u6837\uFF1F",
-    "\u6709\u4EC0\u4E48\u9700\u8981\u8BF7\u544A\u8BC9\u6211\u3002",
-    "\u8FD8\u5269\u5927\u7EA630\u5206\u949F\u3002",
-    "\u6211\u4F1A\u91CD\u70B9\u6309\u6469\u90A3\u4E2A\u90E8\u4F4D\u3002",
-    "\u597D\u7684\uFF0C\u6CA1\u95EE\u9898\u3002",
-    "\u6E29\u5EA6\u8212\u9002\u5417\uFF1F",
+    "好的，我来调整力度。",
+    "现在感觉怎么样？",
+    "有什么需要请告诉我。",
+    "还剩大约30分钟。",
+    "我会重点按摩那个部位。",
+    "好的，没问题。",
+    "温度舒适吗？",
   ],
   korean: [
-    "\uB124, \uC555\uB825\uC744 \uC870\uC808\uD560\uAC8C\uC694.",
-    "\uC9C0\uAE08 \uAE30\uBD84\uC774 \uC5B4\uB5A0\uC138\uC694?",
-    "\uD544\uC694\uD55C \uAC83\uC774 \uC788\uC73C\uBA74 \uB9D0\uC500\uD574\uC8FC\uC138\uC694.",
-    "\uC57D 30\uBD84 \uC815\uB3C4 \uB0A8\uC558\uC5B4\uC694.",
-    "\uADF8 \uBD80\uC704\uC5D0 \uC9D1\uC911\uD560\uAC8C\uC694.",
-    "\uB124, \uBB38\uC81C\uC5C6\uC5B4\uC694.",
-    "\uC628\uB3C4\uAC00 \uD3B8\uC548\uD558\uC2E0\uAC00\uC694?",
+    "네, 압력을 조절할게요.",
+    "지금 기분이 어떠세요?",
+    "필요한 것이 있으면 말씀해주세요.",
+    "약 30분 정도 남았어요.",
+    "그 부위에 집중할게요.",
+    "네, 문제없어요.",
+    "온도가 편안하신가요?",
   ],
   german: [
-    "Nat\u00FCrlich, ich passe den Druck an.",
-    "Wie f\u00FChlt sich das jetzt an?",
+    "Natürlich, ich passe den Druck an.",
+    "Wie fühlt sich das jetzt an?",
     "Lassen Sie mich wissen, wenn Sie etwas brauchen.",
     "Wir haben noch etwa 30 Minuten.",
     "Ich werde mich auf diesen Bereich konzentrieren.",
@@ -100,13 +167,20 @@ export function TranslationChat({ bookingId, userRole, userId, userName, alwaysO
   const [input, setInput] = useState("")
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isOpen, setIsOpen] = useState(alwaysOpen ?? false)
+  const [showQuickPhrases, setShowQuickPhrases] = useState(true)
+  const [showMyLangPicker, setShowMyLangPicker] = useState(false)
+  const [showTheirLangPicker, setShowTheirLangPicker] = useState(false)
+  const [isRecording, setIsRecording] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const storageKey = `koko-chat-${bookingId}`
 
   // Load messages from localStorage
   useEffect(() => {
     const stored = localStorage.getItem(storageKey)
-    if (stored) setMessages(JSON.parse(stored))
+    if (stored) {
+      setMessages(JSON.parse(stored))
+      setShowQuickPhrases(false)
+    }
   }, [storageKey])
 
   // Save messages to localStorage
@@ -121,15 +195,15 @@ export function TranslationChat({ bookingId, userRole, userId, userName, alwaysO
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
-  const handleSend = useCallback(() => {
-    if (!input.trim()) return
+  const sendMessageText = useCallback((text: string) => {
+    if (!text.trim()) return
 
-    const translated = mockTranslate(input.trim(), myLang, theirLang)
+    const translated = mockTranslate(text.trim(), myLang, theirLang)
     const newMsg: ChatMessage = {
       id: `msg-${Date.now()}`,
       senderRole: userRole,
       senderName: userName,
-      originalText: input.trim(),
+      originalText: text.trim(),
       translatedText: translated,
       fromLang: myLang,
       toLang: theirLang,
@@ -138,8 +212,9 @@ export function TranslationChat({ bookingId, userRole, userId, userName, alwaysO
 
     setMessages((prev) => [...prev, newMsg])
     setInput("")
+    setShowQuickPhrases(false)
 
-    // Simulate auto-reply from the other party after 1.5s
+    // Simulate auto-reply
     const otherRole = userRole === "customer" ? "staff" : "customer"
     const otherName = userRole === "customer" ? "Therapist" : "Customer"
     const replies = THERAPIST_REPLIES[theirLang] || THERAPIST_REPLIES.english
@@ -159,17 +234,34 @@ export function TranslationChat({ bookingId, userRole, userId, userName, alwaysO
       }
       setMessages((prev) => [...prev, reply])
     }, 1500)
-  }, [input, myLang, theirLang, userRole, userName])
+  }, [myLang, theirLang, userRole, userName])
+
+  const handleSend = useCallback(() => {
+    sendMessageText(input)
+  }, [input, sendMessageText])
+
+  const handleQuickPhrase = useCallback((phrase: Record<ChatLanguage, string>) => {
+    sendMessageText(phrase[myLang])
+  }, [myLang, sendMessageText])
 
   const handleVoice = useCallback(() => {
-    // Simulate voice input with a random phrase
-    const phrases = translationPhrases[myLang]
-    if (phrases) {
-      const keys = Object.values(phrases)
-      const randomPhrase = keys[Math.floor(Math.random() * keys.length)]
-      setInput(randomPhrase)
-    }
+    setIsRecording(true)
+    // Simulate voice recording → transcription
+    setTimeout(() => {
+      const phrases = translationPhrases[myLang]
+      if (phrases) {
+        const keys = Object.values(phrases)
+        const randomPhrase = keys[Math.floor(Math.random() * keys.length)]
+        setInput(randomPhrase)
+      }
+      setIsRecording(false)
+    }, 1200)
   }, [myLang])
+
+  const swapLanguages = useCallback(() => {
+    setMyLang(theirLang)
+    setTheirLang(myLang)
+  }, [myLang, theirLang])
 
   if (!isOpen && !alwaysOpen) {
     return (
@@ -191,57 +283,125 @@ export function TranslationChat({ bookingId, userRole, userId, userName, alwaysO
 
   return (
     <div className={cn("rounded-2xl border border-brand-border bg-card overflow-hidden", alwaysOpen && "flex flex-col h-full border-0 rounded-none")}>
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-brand-border bg-brand-bg-secondary px-4 py-3">
+      {/* Header with language selector */}
+      <div className="border-b border-brand-border bg-brand-bg-secondary px-3 py-2.5">
         <div className="flex items-center gap-2">
-          <Globe size={18} className="text-brand-blue" />
-          <span className="text-sm font-semibold text-brand-text-primary">{t("liveTranslation")}</span>
-        </div>
-        {!alwaysOpen && (
+          <Globe size={16} className="shrink-0 text-brand-blue" />
+
+          {/* My Language */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => { setShowMyLangPicker(!showMyLangPicker); setShowTheirLangPicker(false) }}
+              className="flex items-center gap-1 rounded-lg bg-brand-primary/10 px-2.5 py-1.5 text-xs font-semibold text-brand-primary transition-colors hover:bg-brand-primary/20"
+            >
+              {LANG_FLAGS[myLang]}
+              <ChevronDown size={12} />
+            </button>
+            {showMyLangPicker && (
+              <div className="absolute left-0 top-full z-20 mt-1 rounded-xl border border-brand-border bg-card py-1 shadow-lg min-w-[140px]">
+                {ALL_LANGUAGES.map((lang) => (
+                  <button
+                    key={lang}
+                    type="button"
+                    onClick={() => { setMyLang(lang); setShowMyLangPicker(false) }}
+                    className={cn(
+                      "flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors hover:bg-brand-bg-tertiary",
+                      myLang === lang ? "text-brand-primary font-semibold" : "text-brand-text-primary"
+                    )}
+                  >
+                    <span className="font-semibold w-6">{LANG_FLAGS[lang]}</span>
+                    {LANG_LABELS[lang]}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Swap Button */}
           <button
             type="button"
-            onClick={() => setIsOpen(false)}
-            className="text-xs text-brand-text-secondary hover:text-brand-text-primary"
+            onClick={swapLanguages}
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-brand-border text-brand-text-tertiary transition-all hover:bg-brand-bg-tertiary hover:text-brand-primary active:scale-90"
+            title={t("swapLanguages")}
           >
-            {t("cancel")}
+            <ArrowLeftRight size={12} />
           </button>
-        )}
-      </div>
 
-      {/* Language selectors */}
-      <div className="flex items-center gap-2 border-b border-brand-border px-4 py-2">
-        <div className="flex-1">
-          <label className="text-[10px] uppercase tracking-wider text-brand-text-tertiary">{t("yourLanguage")}</label>
-          <select
-            value={myLang}
-            onChange={(e) => setMyLang(e.target.value as ChatLanguage)}
-            className="mt-0.5 w-full rounded-lg border border-brand-border bg-brand-bg-secondary px-2 py-1.5 text-sm text-brand-text-primary"
-          >
-            {LANGUAGES.map((lang) => (
-              <option key={lang.value} value={lang.value}>{lang.label}</option>
-            ))}
-          </select>
-        </div>
-        <div className="mt-4 text-brand-text-tertiary">{"\u2194"}</div>
-        <div className="flex-1">
-          <label className="text-[10px] uppercase tracking-wider text-brand-text-tertiary">{t("theirLanguage")}</label>
-          <select
-            value={theirLang}
-            onChange={(e) => setTheirLang(e.target.value as ChatLanguage)}
-            className="mt-0.5 w-full rounded-lg border border-brand-border bg-brand-bg-secondary px-2 py-1.5 text-sm text-brand-text-primary"
-          >
-            {LANGUAGES.map((lang) => (
-              <option key={lang.value} value={lang.value}>{lang.label}</option>
-            ))}
-          </select>
+          {/* Their Language */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => { setShowTheirLangPicker(!showTheirLangPicker); setShowMyLangPicker(false) }}
+              className="flex items-center gap-1 rounded-lg bg-brand-bg-tertiary px-2.5 py-1.5 text-xs font-semibold text-brand-text-secondary transition-colors hover:bg-brand-border"
+            >
+              {LANG_FLAGS[theirLang]}
+              <ChevronDown size={12} />
+            </button>
+            {showTheirLangPicker && (
+              <div className="absolute left-0 top-full z-20 mt-1 rounded-xl border border-brand-border bg-card py-1 shadow-lg min-w-[140px]">
+                {ALL_LANGUAGES.map((lang) => (
+                  <button
+                    key={lang}
+                    type="button"
+                    onClick={() => { setTheirLang(lang); setShowTheirLangPicker(false) }}
+                    className={cn(
+                      "flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors hover:bg-brand-bg-tertiary",
+                      theirLang === lang ? "text-brand-primary font-semibold" : "text-brand-text-primary"
+                    )}
+                  >
+                    <span className="font-semibold w-6">{LANG_FLAGS[lang]}</span>
+                    {LANG_LABELS[lang]}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="flex-1" />
+
+          {!alwaysOpen && (
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className="text-xs text-brand-text-secondary hover:text-brand-text-primary"
+            >
+              {t("cancel")}
+            </button>
+          )}
         </div>
       </div>
 
       {/* Messages */}
-      <div className={cn("flex flex-col gap-2 p-4 overflow-y-auto", alwaysOpen ? "flex-1" : "max-h-[300px]")}>
-        {messages.length === 0 && (
+      <div
+        className={cn("flex flex-col gap-2 p-4 overflow-y-auto", alwaysOpen ? "flex-1" : "max-h-[300px]")}
+        onClick={() => { setShowMyLangPicker(false); setShowTheirLangPicker(false) }}
+      >
+        {messages.length === 0 && !showQuickPhrases && (
           <p className="py-6 text-center text-xs text-brand-text-tertiary">{t("typeMessage")}</p>
         )}
+
+        {/* Quick Phrases */}
+        {messages.length === 0 && showQuickPhrases && (
+          <div className="space-y-3">
+            <p className="text-center text-xs text-brand-text-tertiary mb-2">{t("quickPhrases")}</p>
+            {Object.entries(QUICK_PHRASES).map(([, phrases]) => (
+              <div key={phrases[0].key} className="flex flex-wrap gap-1.5">
+                {phrases.map((phrase) => (
+                  <button
+                    key={phrase.key}
+                    type="button"
+                    onClick={() => handleQuickPhrase(phrase.phrases)}
+                    className="rounded-full border border-brand-border bg-brand-bg-tertiary/50 px-3 py-1.5 text-xs text-brand-text-secondary transition-colors hover:border-brand-primary/30 hover:bg-brand-primary/5 hover:text-brand-primary active:scale-95"
+                  >
+                    {phrase.phrases[myLang]}
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+
         {messages.map((msg) => {
           const isMe = msg.senderRole === userRole
           return (
@@ -268,31 +428,66 @@ export function TranslationChat({ bookingId, userRole, userId, userName, alwaysO
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Quick phrases toggle when there are messages */}
+      {messages.length > 0 && (
+        <div className="border-t border-brand-border px-3 pt-2">
+          <button
+            type="button"
+            onClick={() => setShowQuickPhrases(!showQuickPhrases)}
+            className="flex items-center gap-1.5 text-xs text-brand-text-tertiary hover:text-brand-primary transition-colors"
+          >
+            <MessageCircle size={12} />
+            {t("quickPhrases")}
+            <ChevronDown size={10} className={cn("transition-transform", showQuickPhrases && "rotate-180")} />
+          </button>
+          {showQuickPhrases && (
+            <div className="mt-2 pb-2 flex flex-wrap gap-1.5 max-h-[100px] overflow-y-auto">
+              {Object.values(QUICK_PHRASES).flat().map((phrase) => (
+                <button
+                  key={phrase.key}
+                  type="button"
+                  onClick={() => handleQuickPhrase(phrase.phrases)}
+                  className="rounded-full border border-brand-border bg-brand-bg-tertiary/50 px-2.5 py-1 text-[11px] text-brand-text-secondary transition-colors hover:border-brand-primary/30 hover:text-brand-primary active:scale-95"
+                >
+                  {phrase.phrases[myLang]}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Input area */}
       <div className="flex items-center gap-2 border-t border-brand-border px-3 py-2">
         <button
           type="button"
           onClick={handleVoice}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-brand-border text-brand-text-secondary hover:bg-brand-bg-tertiary transition-colors"
+          disabled={isRecording}
+          className={cn(
+            "flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all",
+            isRecording
+              ? "bg-brand-coral text-white animate-pulse scale-110"
+              : "border border-brand-border text-brand-text-secondary hover:bg-brand-bg-tertiary hover:text-brand-primary"
+          )}
           title={t("voiceInput")}
         >
-          <Mic size={16} />
+          <Mic size={18} />
         </button>
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter") handleSend() }}
-          placeholder={t("typeMessage")}
-          className="flex-1 rounded-xl border border-brand-border bg-brand-bg-secondary px-3 py-2 text-sm text-brand-text-primary placeholder:text-brand-text-tertiary focus:border-brand-primary focus:outline-none"
+          placeholder={isRecording ? t("listening") : t("typeMessage")}
+          className="flex-1 rounded-xl border border-brand-border bg-brand-bg-secondary px-3 py-2.5 text-sm text-brand-text-primary placeholder:text-brand-text-tertiary focus:border-brand-primary focus:outline-none"
         />
         <button
           type="button"
           onClick={handleSend}
           disabled={!input.trim()}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-primary text-brand-primary-foreground disabled:opacity-50 transition-colors"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-primary text-brand-primary-foreground disabled:opacity-40 transition-all active:scale-90"
         >
-          <Send size={16} />
+          <Send size={18} />
         </button>
       </div>
     </div>

@@ -210,31 +210,27 @@ export default function StaffProfilePage() {
           <div className="flex items-center gap-3 px-4 py-3.5">
             <Languages size={18} className="text-brand-text-tertiary" />
             <span className="flex-1 text-sm text-brand-text-primary">{t("chooseLanguage")}</span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setLanguage("en")}
-                className={cn(
-                  "rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
-                  language === "en"
-                    ? "bg-brand-primary text-primary-foreground"
-                    : "border border-brand-border text-brand-text-secondary hover:bg-brand-bg-tertiary"
-                )}
-              >
-                EN
-              </button>
-              <button
-                type="button"
-                onClick={() => setLanguage("th")}
-                className={cn(
-                  "rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
-                  language === "th"
-                    ? "bg-brand-primary text-primary-foreground"
-                    : "border border-brand-border text-brand-text-secondary hover:bg-brand-bg-tertiary"
-                )}
-              >
-                TH
-              </button>
+            <div className="flex flex-wrap gap-1.5">
+              {([
+                { code: "en" as const, label: "EN" },
+                { code: "th" as const, label: "TH" },
+                { code: "ko" as const, label: "KO" },
+                { code: "ja" as const, label: "JA" },
+              ]).map((lang) => (
+                <button
+                  key={lang.code}
+                  type="button"
+                  onClick={() => setLanguage(lang.code)}
+                  className={cn(
+                    "rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
+                    language === lang.code
+                      ? "bg-brand-primary text-primary-foreground"
+                      : "border border-brand-border text-brand-text-secondary hover:bg-brand-bg-tertiary"
+                  )}
+                >
+                  {lang.label}
+                </button>
+              ))}
             </div>
           </div>
         </div>

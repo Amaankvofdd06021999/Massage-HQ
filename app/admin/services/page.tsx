@@ -4,8 +4,9 @@ import { useState } from "react"
 import {
   Plus, Pencil, Trash2, X, ToggleLeft, ToggleRight,
   Sparkles, Package, ChevronDown, ChevronUp, Clock, BadgeDollarSign,
-  DoorOpen, Users, Layers,
+  DoorOpen, Users, Layers, ImageIcon,
 } from "lucide-react"
+import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { useServices } from "@/lib/data/services-store"
 import { useLanguage } from "@/lib/i18n/language-context"
@@ -329,7 +330,7 @@ function AddOnModal({ initial, onSave, onClose }: {
 
 type RoomDraft = {
   name: string; type: RoomType; capacity: number
-  floor: string; description: string; isActive: boolean
+  floor: string; description: string; image: string; isActive: boolean
 }
 
 function RoomModal({ initial, onSave, onClose }: {
@@ -344,6 +345,7 @@ function RoomModal({ initial, onSave, onClose }: {
     capacity: initial?.capacity ?? 1,
     floor: initial?.floor ?? "",
     description: initial?.description ?? "",
+    image: initial?.image ?? "",
     isActive: initial?.isActive ?? true,
   })
 
@@ -417,6 +419,21 @@ function RoomModal({ initial, onSave, onClose }: {
             <textarea value={draft.description} onChange={(e) => setField("description", e.target.value)} rows={2}
               placeholder="Any features or notes for this space…"
               className="w-full rounded-xl border border-brand-border bg-brand-bg-tertiary px-3 py-2.5 text-sm text-brand-text-primary outline-none focus:border-brand-primary/50 placeholder-brand-text-tertiary resize-none" />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs font-medium text-brand-text-secondary">{t("roomImage")} ({t("optional")})</label>
+            <div className="flex items-center gap-2">
+              <ImageIcon size={14} className="shrink-0 text-brand-text-tertiary" />
+              <input value={draft.image} onChange={(e) => setField("image", e.target.value)}
+                placeholder="https://example.com/room-photo.jpg"
+                className="w-full rounded-xl border border-brand-border bg-brand-bg-tertiary px-3 py-2.5 text-sm text-brand-text-primary outline-none focus:border-brand-primary/50 placeholder-brand-text-tertiary" />
+            </div>
+            {draft.image && (
+              <div className="relative mt-2 h-32 w-full overflow-hidden rounded-xl border border-brand-border">
+                <img src={draft.image} alt="Room preview" className="h-full w-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
+              </div>
+            )}
           </div>
 
           <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-brand-border bg-brand-bg-tertiary px-3 py-2.5">
@@ -545,35 +562,44 @@ function RoomCard({ room, onEdit, onDelete, onToggle }: {
     couple: t("roomTypeCouple"),
   }
   return (
-    <div className={cn("flex items-start gap-3 rounded-2xl border bg-card p-4 transition-opacity", room.isActive ? "border-brand-border" : "border-brand-border opacity-60")}>
-      <div className={cn("mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", ROOM_TYPE_COLORS[room.type])}>
-        {rt?.icon}
-      </div>
-
-      <div className="flex-1 min-w-0">
-        <div className="flex flex-wrap items-center gap-2 mb-0.5">
-          <h3 className="text-sm font-semibold text-brand-text-primary">{room.name}</h3>
-          <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold", ROOM_TYPE_COLORS[room.type])}>
-            {roomTypeLabels[room.type]}
-          </span>
-          {room.capacity > 1 && (
-            <span className="flex items-center gap-1 rounded-full bg-brand-bg-tertiary px-2 py-0.5 text-[10px] text-brand-text-secondary">
-              <Users size={9} /> {room.capacity}
-            </span>
-          )}
-          {!room.isActive && <span className="rounded-full bg-brand-text-tertiary/20 px-2 py-0.5 text-[10px] font-medium text-brand-text-tertiary">{t("inactive")}</span>}
+    <div className={cn("overflow-hidden rounded-2xl border bg-card transition-opacity", room.isActive ? "border-brand-border" : "border-brand-border opacity-60")}>
+      {room.image && (
+        <div className="relative h-32 w-full">
+          <img src={room.image} alt={room.name} className="h-full w-full object-cover" />
         </div>
-        {room.floor && <p className="text-[10px] text-brand-text-tertiary mb-0.5">{room.floor}</p>}
-        {room.description && <p className="text-xs text-brand-text-secondary line-clamp-2">{room.description}</p>}
-      </div>
+      )}
+      <div className={cn("flex items-start gap-3 p-4", !room.image && "")}>
+        {!room.image && (
+          <div className={cn("mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", ROOM_TYPE_COLORS[room.type])}>
+            {rt?.icon}
+          </div>
+        )}
 
-      <div className="flex shrink-0 items-center gap-1">
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-2 mb-0.5">
+            <h3 className="text-sm font-semibold text-brand-text-primary">{room.name}</h3>
+            <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-semibold", ROOM_TYPE_COLORS[room.type])}>
+              {roomTypeLabels[room.type]}
+            </span>
+            {room.capacity > 1 && (
+              <span className="flex items-center gap-1 rounded-full bg-brand-bg-tertiary px-2 py-0.5 text-[10px] text-brand-text-secondary">
+                <Users size={9} /> {room.capacity}
+              </span>
+            )}
+            {!room.isActive && <span className="rounded-full bg-brand-text-tertiary/20 px-2 py-0.5 text-[10px] font-medium text-brand-text-tertiary">{t("inactive")}</span>}
+          </div>
+          {room.floor && <p className="text-[10px] text-brand-text-tertiary mb-0.5">{room.floor}</p>}
+          {room.description && <p className="text-xs text-brand-text-secondary line-clamp-2">{room.description}</p>}
+        </div>
+
+        <div className="flex shrink-0 items-center gap-1">
         <button type="button" onClick={onToggle} title={room.isActive ? t("inactive") : t("active")}
           className="flex h-8 w-8 items-center justify-center rounded-lg text-brand-text-tertiary hover:bg-brand-bg-tertiary transition-colors">
           {room.isActive ? <ToggleRight size={18} className="text-brand-primary" /> : <ToggleLeft size={18} />}
         </button>
         <button type="button" onClick={onEdit} className="flex h-8 w-8 items-center justify-center rounded-lg text-brand-text-tertiary hover:bg-brand-bg-tertiary transition-colors"><Pencil size={14} /></button>
         <button type="button" onClick={onDelete} className="flex h-8 w-8 items-center justify-center rounded-lg text-brand-text-tertiary hover:bg-destructive/10 hover:text-destructive transition-colors"><Trash2 size={14} /></button>
+      </div>
       </div>
     </div>
   )

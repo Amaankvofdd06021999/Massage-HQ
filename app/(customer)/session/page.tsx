@@ -431,7 +431,7 @@ export default function SessionPage() {
               <X size={18} />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 flex flex-col overflow-hidden">
             <TranslationChat
               bookingId={activeBooking.id}
               userRole="customer"

@@ -37,6 +37,20 @@ export type MassageType = "thai" | "swedish" | "deep-tissue" | "aromatherapy" | 
 export type Language = "english" | "thai" | "mandarin" | "japanese" | "korean" | "german"
 export type DayOfWeek = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun"
 
+export interface StaffEducation {
+  institution: string
+  qualification: string
+  year: number
+}
+
+export type HighlightIcon = "massage" | "star" | "repeat" | "globe" | "award" | "heart" | "zap" | "trophy"
+
+export interface StaffHighlight {
+  icon: HighlightIcon
+  label: string
+  value: string
+}
+
 export interface StaffMember {
   id: string
   name: string
@@ -53,6 +67,8 @@ export interface StaffMember {
   isAvailableToday: boolean
   isFeatured: boolean
   certifications: string[]
+  education: StaffEducation[]
+  highlights: StaffHighlight[]
   gallery: string[]
 }
 
@@ -87,6 +103,7 @@ export interface MassageRoom {
   capacity: number        // 1 = single, 2 = couples
   floor?: string          // "Ground", "1st Floor", etc.
   description?: string
+  image?: string           // URL to room/bed photo
   isActive: boolean
 }
 
@@ -163,6 +180,25 @@ export interface Promotion {
   applicableServices?: MassageType[]
 }
 
+// --- Customer Preferences ---
+export type PressurePreference = "light" | "medium" | "firm" | "deep"
+
+export type PainArea =
+  | "neck" | "shoulders" | "upper-back" | "lower-back"
+  | "arms" | "hands" | "hips" | "legs" | "knees" | "feet"
+
+export type HealthCondition =
+  | "office-syndrome" | "sports-injury" | "chronic-pain"
+  | "stress-anxiety" | "insomnia" | "poor-circulation"
+  | "muscle-tension" | "post-surgery" | "pregnancy"
+
+export interface MassagePreferences {
+  pressurePreference: PressurePreference
+  painAreas: PainArea[]
+  conditions: HealthCondition[]
+  injuries: string[]
+}
+
 // --- Customers ---
 export interface Customer {
   id: string
@@ -181,6 +217,7 @@ export interface Customer {
   giftCardBalance: number
   trialActive: boolean
   notes?: string
+  massagePreferences?: MassagePreferences
 }
 
 // --- Trial Rotation ---

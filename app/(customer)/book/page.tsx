@@ -18,13 +18,49 @@ import { useBookings } from "@/lib/data/bookings-store"
 import { usePromotions } from "@/lib/data/promotions-store"
 import { useAuth } from "@/lib/auth/auth-context"
 import { cn } from "@/lib/utils"
-import type { StaffMember, ServiceOption, MassageRoom, RoomType, MassageType } from "@/lib/types"
+import type { StaffMember, ServiceOption, MassageRoom, RoomType, MassageType, HealthCondition, PainArea } from "@/lib/types"
+import { customers } from "@/lib/data/mock-data"
+import { Sparkles, Gift, Wallet } from "lucide-react"
+import { useGiftCards } from "@/lib/data/giftcards-store"
 
 const ROOM_TYPE_COLORS: Record<RoomType, string> = {
   room:   "bg-blue-500/15 text-blue-400",
   bed:    "bg-green-500/15 text-green-400",
   suite:  "bg-yellow-500/15 text-yellow-400",
   couple: "bg-pink-500/15 text-pink-400",
+}
+
+const CONDITION_RECOMMENDATIONS: Record<HealthCondition, MassageType[]> = {
+  "office-syndrome": ["deep-tissue", "shiatsu", "thai"],
+  "sports-injury": ["sports", "deep-tissue"],
+  "chronic-pain": ["deep-tissue", "thai", "shiatsu"],
+  "stress-anxiety": ["swedish", "aromatherapy", "hot-stone"],
+  "insomnia": ["swedish", "aromatherapy"],
+  "poor-circulation": ["reflexology", "foot", "thai"],
+  "muscle-tension": ["deep-tissue", "sports", "thai"],
+  "post-surgery": ["swedish", "aromatherapy"],
+  "pregnancy": ["swedish", "aromatherapy"],
+}
+
+const PAIN_AREA_RECOMMENDATIONS: Partial<Record<PainArea, MassageType[]>> = {
+  "neck": ["deep-tissue", "shiatsu", "thai"],
+  "shoulders": ["deep-tissue", "shiatsu", "sports"],
+  "upper-back": ["deep-tissue", "thai", "shiatsu"],
+  "lower-back": ["deep-tissue", "thai"],
+  "feet": ["reflexology", "foot"],
+  "legs": ["sports", "reflexology", "foot"],
+  "knees": ["sports", "reflexology"],
+}
+
+function getRecommendedTypes(conditions: HealthCondition[], painAreas: PainArea[]): Set<MassageType> {
+  const types = new Set<MassageType>()
+  for (const c of conditions) {
+    for (const t of CONDITION_RECOMMENDATIONS[c] ?? []) types.add(t)
+  }
+  for (const a of painAreas) {
+    for (const t of PAIN_AREA_RECOMMENDATIONS[a] ?? []) types.add(t)
+  }
+  return types
 }
 
 function BookingFlowInner() {
@@ -36,9 +72,19 @@ function BookingFlowInner() {
   const { services, addOns, getAddOnsForService, getActiveRooms } = useServices()
   const { createBooking } = useBookings()
   const { hasActivePromotionForService } = usePromotions()
+  const { getGiftCardsForCustomer } = useGiftCards()
   const { user } = useAuth()
   const activeServices = services.filter((s) => s.isActive)
   const activeRooms = getActiveRooms()
+
+  const customerData = customers.find((c) => c.id === user?.id) ?? customers[0]
+  const prefs = customerData.massagePreferences
+  const recommendedTypes = useMemo(
+    () => prefs ? getRecommendedTypes(prefs.conditions, prefs.painAreas) : new Set<MassageType>(),
+    [prefs]
+  )
+  const myGiftCards = user ? getGiftCardsForCustomer(user.id) : []
+  const giftCardBalance = myGiftCards.reduce((sum, gc) => sum + gc.currentBalance, 0)
 
   const roomTypeLabels: Record<RoomType, string> = {
     room: t("roomTypePrivate"),
@@ -68,6 +114,7 @@ function BookingFlowInner() {
   const [selectedRoom, setSelectedRoom] = useState<MassageRoom | null>(null)
   const [isBooked, setIsBooked] = useState(false)
   const [reviewStaff, setReviewStaff] = useState<StaffMember | null>(null)
+  const [useGiftCard, setUseGiftCard] = useState(false)
 
   const dates = useMemo(() => {
     const result = []
@@ -105,6 +152,15 @@ function BookingFlowInner() {
     () => addOns.filter((a) => selectedAddOnIds.includes(a.id)),
     [addOns, selectedAddOnIds]
   )
+
+  const sortedServices = useMemo(() => {
+    if (recommendedTypes.size === 0) return activeServices
+    return [...activeServices].sort((a, b) => {
+      const aRec = recommendedTypes.has(a.type) ? 1 : 0
+      const bRec = recommendedTypes.has(b.type) ? 1 : 0
+      return bRec - aRec
+    })
+  }, [activeServices, recommendedTypes])
 
   const addOnTotal = useMemo(
     () => selectedAddOns.reduce((sum, a) => sum + a.price, 0),
@@ -179,7 +235,21 @@ function BookingFlowInner() {
             + {selectedAddOns.map((a) => a.name).join(", ")}
           </p>
         )}
-        <p className="mt-4 text-xl font-bold text-brand-primary">{formatPrice(totalPrice)}</p>
+        {activePromo ? (
+          <div className="mt-4">
+            <p className="text-sm text-brand-green font-semibold">{t("coveredByPromotion")}</p>
+            <p className="text-xs text-brand-text-tertiary">{activePromo.promotionTitle}</p>
+            <p className="mt-1 text-xl font-bold text-brand-green">{formatPrice(0)}</p>
+          </div>
+        ) : useGiftCard && giftCardBalance > 0 ? (
+          <div className="mt-4">
+            <p className="text-sm line-through text-brand-text-tertiary">{formatPrice(totalPrice)}</p>
+            <p className="text-xs text-brand-blue">{t("giftCardDeduction")}: -{formatPrice(Math.min(giftCardBalance, totalPrice))}</p>
+            <p className="mt-1 text-xl font-bold text-brand-primary">{formatPrice(Math.max(0, totalPrice - giftCardBalance))}</p>
+          </div>
+        ) : (
+          <p className="mt-4 text-xl font-bold text-brand-primary">{formatPrice(totalPrice)}</p>
+        )}
         <p className="mt-3 rounded-xl bg-brand-yellow/10 border border-brand-yellow/30 px-4 py-2.5 text-xs text-brand-yellow">
           {t("pendingApprovalNote")}
         </p>
@@ -243,16 +313,25 @@ function BookingFlowInner() {
         <div className="mt-6 px-5 page-transition">
           <h2 className="text-lg font-bold text-brand-text-primary">{t("chooseAService")}</h2>
           <p className="mt-1 text-sm text-brand-text-secondary">{t("selectMassageType")}</p>
+          {/* Recommendation banner */}
+          {recommendedTypes.size > 0 && (
+            <div className="mt-3 flex items-center gap-2 rounded-xl bg-brand-primary/10 border border-brand-primary/20 px-3 py-2">
+              <Sparkles size={14} className="shrink-0 text-brand-primary" />
+              <p className="text-xs text-brand-text-secondary">{t("recommendedForYou")}</p>
+            </div>
+          )}
+
           <div className="mt-4 flex flex-col gap-3">
-            {activeServices.map((svc) => {
+            {sortedServices.map((svc) => {
               const isSelected = selectedService?.id === svc.id
               const svcAddOns = getAddOnsForService(svc.type)
+              const isRecommended = recommendedTypes.has(svc.type)
               return (
                 <div
                   key={svc.id}
                   className={cn(
                     "rounded-2xl border transition-all",
-                    isSelected ? "border-brand-primary bg-brand-primary/5" : "border-brand-border bg-card"
+                    isSelected ? "border-brand-primary bg-brand-primary/5" : isRecommended ? "border-brand-primary/30 bg-brand-primary/[0.02]" : "border-brand-border bg-card"
                   )}
                 >
                   <button
@@ -269,6 +348,12 @@ function BookingFlowInner() {
                             </div>
                           )}
                           <p className="font-semibold text-brand-text-primary">{svc.name}</p>
+                          {isRecommended && !isSelected && (
+                            <span className="flex items-center gap-1 rounded-full bg-brand-primary/15 px-2 py-0.5 text-[10px] font-semibold text-brand-primary">
+                              <Sparkles size={10} />
+                              {t("recommended")}
+                            </span>
+                          )}
                         </div>
                         <p className="mt-1 text-xs text-brand-text-tertiary">{svc.description}</p>
                       </div>
@@ -465,21 +550,28 @@ function BookingFlowInner() {
                     type="button"
                     onClick={() => setSelectedRoom(selectedRoom?.id === room.id ? null : room)}
                     className={cn(
-                      "rounded-2xl border p-3.5 text-left transition-all card-press",
+                      "overflow-hidden rounded-2xl border text-left transition-all card-press",
                       selectedRoom?.id === room.id
                         ? "border-brand-primary bg-brand-primary/5"
                         : "border-brand-border bg-card"
                     )}
                   >
-                    <div className={cn("mb-1.5 inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[10px] font-semibold", ROOM_TYPE_COLORS[room.type])}>
-                      {roomTypeLabels[room.type]}
-                    </div>
-                    <p className="text-sm font-semibold text-brand-text-primary leading-tight">{room.name}</p>
-                    {room.floor && <p className="mt-0.5 text-[10px] text-brand-text-tertiary">{room.floor}</p>}
-                    {room.description && <p className="mt-1 text-xs text-brand-text-secondary line-clamp-2">{room.description}</p>}
-                    {room.capacity > 1 && (
-                      <p className="mt-1 text-[10px] text-brand-text-tertiary">{t("upToGuests")} {room.capacity} {t("guests")}</p>
+                    {room.image && (
+                      <div className="relative h-24 w-full">
+                        <img src={room.image} alt={room.name} className="h-full w-full object-cover" />
+                      </div>
                     )}
+                    <div className="p-3.5">
+                      <div className={cn("mb-1.5 inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-[10px] font-semibold", ROOM_TYPE_COLORS[room.type])}>
+                        {roomTypeLabels[room.type]}
+                      </div>
+                      <p className="text-sm font-semibold text-brand-text-primary leading-tight">{room.name}</p>
+                      {room.floor && <p className="mt-0.5 text-[10px] text-brand-text-tertiary">{room.floor}</p>}
+                      {room.description && <p className="mt-1 text-xs text-brand-text-secondary line-clamp-2">{room.description}</p>}
+                      {room.capacity > 1 && (
+                        <p className="mt-1 text-[10px] text-brand-text-tertiary">{t("upToGuests")} {room.capacity} {t("guests")}</p>
+                      )}
+                    </div>
                   </button>
                 ))}
               </div>
@@ -543,32 +635,80 @@ function BookingFlowInner() {
                 </>
               )}
 
+              {/* Promotion deduction */}
               {activePromo ? (
-                <div className="rounded-xl border border-brand-green/20 bg-brand-green/10 p-3 mb-3">
-                  <p className="text-sm font-semibold text-brand-green">{t("coveredByPromotion")}</p>
-                  <p className="text-xs text-brand-text-secondary">{activePromo.promotionTitle}</p>
+                <div className="rounded-xl border border-brand-green/20 bg-brand-green/10 p-3">
+                  <div className="flex items-center gap-2">
+                    <Gift size={14} className="text-brand-green" />
+                    <p className="text-sm font-semibold text-brand-green">{t("coveredByPromotion")}</p>
+                  </div>
+                  <p className="mt-0.5 text-xs text-brand-text-secondary">{activePromo.promotionTitle}</p>
                 </div>
               ) : null}
 
+              {/* Gift card option */}
+              {!activePromo && giftCardBalance > 0 && (
+                <div className="rounded-xl border border-brand-blue/20 bg-brand-blue/10 p-3">
+                  <button
+                    type="button"
+                    onClick={() => setUseGiftCard(!useGiftCard)}
+                    className="flex w-full items-center gap-2 text-left"
+                  >
+                    <div className={cn(
+                      "flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors",
+                      useGiftCard
+                        ? "border-brand-blue bg-brand-blue text-white"
+                        : "border-brand-border"
+                    )}>
+                      {useGiftCard && <Check size={10} />}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <Wallet size={14} className="text-brand-blue" />
+                        <p className="text-sm font-semibold text-brand-blue">{t("useGiftCardBalance")}</p>
+                      </div>
+                      <p className="mt-0.5 text-xs text-brand-text-secondary">
+                        {t("availableBalance")}: {formatPrice(giftCardBalance)}
+                      </p>
+                    </div>
+                  </button>
+                </div>
+              )}
+
               <div className="border-t border-brand-border pt-3 space-y-1.5">
-                {selectedAddOns.length > 0 && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-brand-text-secondary">{t("baseprice")}</span>
-                    <span className="text-brand-text-primary">{formatPrice(basePrice)}</span>
-                  </div>
-                )}
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-brand-text-secondary">{t("baseprice")}</span>
+                  <span className="text-brand-text-primary">{formatPrice(basePrice)}</span>
+                </div>
                 {addOnTotal > 0 && (
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-brand-text-secondary">{t("addons")}</span>
                     <span className="text-brand-text-primary">+{formatPrice(addOnTotal)}</span>
                   </div>
                 )}
-                <div className="flex items-center justify-between">
+                {activePromo && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-brand-green">{t("promoDiscount")}</span>
+                    <span className="font-medium text-brand-green">-{formatPrice(totalPrice)}</span>
+                  </div>
+                )}
+                {!activePromo && useGiftCard && giftCardBalance > 0 && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-brand-blue">{t("giftCardDeduction")}</span>
+                    <span className="font-medium text-brand-blue">-{formatPrice(Math.min(giftCardBalance, totalPrice))}</span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between pt-1">
                   <span className="font-semibold text-brand-text-primary">{t("total")}</span>
-                  <span className={activePromo ? "line-through text-brand-text-tertiary" : ""}>
-                    {formatPrice(totalPrice)}
+                  <span className="text-lg font-bold text-brand-primary">
+                    {formatPrice(
+                      activePromo
+                        ? 0
+                        : useGiftCard
+                        ? Math.max(0, totalPrice - giftCardBalance)
+                        : totalPrice
+                    )}
                   </span>
-                  {activePromo && <span className="ml-2 text-lg font-bold text-brand-green">{formatPrice(0)}</span>}
                 </div>
               </div>
             </div>

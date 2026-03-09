@@ -280,29 +280,26 @@ function LanguageTab() {
         <div className="flex items-center gap-3">
           <Languages size={20} className="text-brand-text-tertiary" />
           <span className="flex-1 text-sm font-medium text-brand-text-primary">{t("chooseLanguage")}</span>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setLanguage("en")}
-              className={`rounded-xl px-4 py-2 text-sm font-semibold transition-colors ${
-                language === "en"
-                  ? "bg-brand-primary text-primary-foreground"
-                  : "border border-brand-border text-brand-text-secondary hover:bg-brand-bg-tertiary"
-              }`}
-            >
-              {t("english")}
-            </button>
-            <button
-              type="button"
-              onClick={() => setLanguage("th")}
-              className={`rounded-xl px-4 py-2 text-sm font-semibold transition-colors ${
-                language === "th"
-                  ? "bg-brand-primary text-primary-foreground"
-                  : "border border-brand-border text-brand-text-secondary hover:bg-brand-bg-tertiary"
-              }`}
-            >
-              {t("thai")}
-            </button>
+          <div className="flex flex-wrap gap-2">
+            {([
+              { code: "en" as const, label: t("english") },
+              { code: "th" as const, label: t("thai") },
+              { code: "ko" as const, label: t("korean") },
+              { code: "ja" as const, label: t("japanese") },
+            ]).map((lang) => (
+              <button
+                key={lang.code}
+                type="button"
+                onClick={() => setLanguage(lang.code)}
+                className={`rounded-xl px-4 py-2 text-sm font-semibold transition-colors ${
+                  language === lang.code
+                    ? "bg-brand-primary text-primary-foreground"
+                    : "border border-brand-border text-brand-text-secondary hover:bg-brand-bg-tertiary"
+                }`}
+              >
+                {lang.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>

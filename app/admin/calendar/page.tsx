@@ -326,10 +326,12 @@ export default function AdminCalendarPage() {
                 const ds = toDateStr(d)
                 const isToday = ds === todayStr
                 return (
-                  <div
+                  <button
+                    type="button"
                     key={ds}
+                    onClick={() => goToDay(d)}
                     className={cn(
-                      "border-r border-brand-border p-3 text-center last:border-r-0",
+                      "border-r border-brand-border p-3 text-center last:border-r-0 hover:bg-brand-primary/10 transition-colors cursor-pointer",
                       isToday && "bg-brand-primary/5"
                     )}
                   >
@@ -344,7 +346,7 @@ export default function AdminCalendarPage() {
                     >
                       {d.getDate()}
                     </p>
-                  </div>
+                  </button>
                 )
               })}
             </div>
@@ -358,9 +360,10 @@ export default function AdminCalendarPage() {
                 return (
                   <div
                     key={ds}
+                    onClick={() => goToDay(d)}
                     className={cn(
-                      "min-h-[200px] border-r border-brand-border p-2 last:border-r-0",
-                      isToday && "bg-brand-primary/5"
+                      "min-h-[200px] border-r border-brand-border p-2 last:border-r-0 cursor-pointer hover:bg-brand-primary/5 transition-colors",
+                      isToday && "bg-brand-primary/10"
                     )}
                   >
                     {dayBks.length === 0 && (

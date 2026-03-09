@@ -23,6 +23,16 @@ export const staffMembers: StaffMember[] = [
     },
     isAvailableToday: true, isFeatured: true,
     certifications: ["Thai Healing Alliance", "Sports Massage Diploma"],
+    education: [
+      { institution: "Wat Po Thai Traditional Massage School", qualification: "Advanced Thai Massage", year: 2014 },
+      { institution: "Chiang Mai Sports Massage Academy", qualification: "Sports Therapy Diploma", year: 2016 },
+    ],
+    highlights: [
+      { icon: "massage", label: "Total Massages", value: "15,000+" },
+      { icon: "repeat", label: "Client Return Rate", value: "98%" },
+      { icon: "trophy", label: "Best Thai Therapist 2024", value: "Winner" },
+      { icon: "zap", label: "Techniques Mastered", value: "6" },
+    ],
     gallery: [],
   },
   {
@@ -39,6 +49,16 @@ export const staffMembers: StaffMember[] = [
     },
     isAvailableToday: true, isFeatured: true,
     certifications: ["CIDESCO Diploma", "Aromatherapy Association"],
+    education: [
+      { institution: "CIDESCO International Beauty School", qualification: "CIDESCO Diploma", year: 2016 },
+      { institution: "Thailand Aromatherapy Institute", qualification: "Certified Aromatherapist", year: 2018 },
+    ],
+    highlights: [
+      { icon: "heart", label: "Custom Oil Blends", value: "20+" },
+      { icon: "star", label: "Average Rating", value: "4.8★" },
+      { icon: "award", label: "Bangkok Wellness Guide 2025", value: "Featured" },
+      { icon: "globe", label: "Languages Spoken", value: "3" },
+    ],
     gallery: [],
   },
   {
@@ -55,6 +75,16 @@ export const staffMembers: StaffMember[] = [
     },
     isAvailableToday: false, isFeatured: true,
     certifications: ["Japan Shiatsu Association", "ITEC Level 4"],
+    education: [
+      { institution: "Japan Shiatsu College, Tokyo", qualification: "Licensed Shiatsu Practitioner", year: 2010 },
+      { institution: "ITEC London", qualification: "Level 4 Holistic Massage", year: 2012 },
+    ],
+    highlights: [
+      { icon: "massage", label: "Total Sessions", value: "20,000+" },
+      { icon: "star", label: "Highest Rated", value: "4.95★" },
+      { icon: "trophy", label: "Former Instructor", value: "Japan Shiatsu College" },
+      { icon: "zap", label: "Therapists Trained", value: "50+" },
+    ],
     gallery: [],
   },
   {
@@ -71,6 +101,16 @@ export const staffMembers: StaffMember[] = [
     },
     isAvailableToday: true, isFeatured: false,
     certifications: ["Hot Stone Therapy Certificate"],
+    education: [
+      { institution: "Chulalongkorn University", qualification: "Wellness Studies Certificate", year: 2018 },
+      { institution: "Bali International Spa Academy", qualification: "Hot Stone Therapy Specialist", year: 2019 },
+    ],
+    highlights: [
+      { icon: "heart", label: "Volcanic Basalt Specialist", value: "Certified" },
+      { icon: "star", label: "Customer Satisfaction", value: "96%" },
+      { icon: "globe", label: "Languages for Clients", value: "3" },
+      { icon: "repeat", label: "Returning Clients", value: "180+" },
+    ],
     gallery: [],
   },
   {
@@ -87,6 +127,16 @@ export const staffMembers: StaffMember[] = [
     },
     isAvailableToday: true, isFeatured: false,
     certifications: ["Sports Massage Level 5", "Rehabilitation Therapy"],
+    education: [
+      { institution: "National Sports University of Thailand", qualification: "Sports Science & Massage", year: 2014 },
+      { institution: "Melbourne Institute of Rehabilitation", qualification: "Advanced Rehab Therapy", year: 2017 },
+    ],
+    highlights: [
+      { icon: "trophy", label: "Professional Athletes Treated", value: "200+" },
+      { icon: "massage", label: "Sports Massage Sessions", value: "12,000+" },
+      { icon: "award", label: "Thai National Football Team", value: "Former Therapist" },
+      { icon: "zap", label: "Injury Recovery Rate", value: "94%" },
+    ],
     gallery: [],
   },
   {
@@ -103,6 +153,16 @@ export const staffMembers: StaffMember[] = [
     },
     isAvailableToday: true, isFeatured: false,
     certifications: ["Chinese Reflexology Association", "TCM Foundations"],
+    education: [
+      { institution: "Beijing TCM University", qualification: "Reflexology Program", year: 2015 },
+      { institution: "Shanghai Wellness Academy", qualification: "Holistic Foot Therapy", year: 2017 },
+    ],
+    highlights: [
+      { icon: "massage", label: "Foot Therapy Sessions", value: "10,000+" },
+      { icon: "zap", label: "Reflexology Traditions", value: "8 Mastered" },
+      { icon: "award", label: "TCM Certified", value: "Foundations" },
+      { icon: "heart", label: "Client Satisfaction", value: "97%" },
+    ],
     gallery: [],
   },
 ]
@@ -337,6 +397,12 @@ export const customers: Customer[] = [
     memberSince: "2025-06-15", membershipNumber: "MEM-A7X2K9", totalBookings: 24, totalSpent: 28800,
     preferredStaff: ["s1", "s3"], preferredServices: ["thai", "shiatsu"],
     loyaltyPoints: 288, loyaltyStamps: 8, giftCardBalance: 2000, trialActive: false,
+    massagePreferences: {
+      pressurePreference: "firm",
+      painAreas: ["lower-back", "shoulders", "neck"],
+      conditions: ["office-syndrome", "muscle-tension"],
+      injuries: ["L4-L5 disc sensitivity"],
+    },
   },
   {
     id: "c2", name: "Sarah Kim", email: "sarah@example.com", phone: "+66 92 345 6789",
@@ -344,6 +410,12 @@ export const customers: Customer[] = [
     memberSince: "2025-09-01", membershipNumber: "MEM-B3P8M2", totalBookings: 15, totalSpent: 17500,
     preferredStaff: ["s2", "s6"], preferredServices: ["swedish", "aromatherapy"],
     loyaltyPoints: 175, loyaltyStamps: 5, giftCardBalance: 0, trialActive: true,
+    massagePreferences: {
+      pressurePreference: "light",
+      painAreas: ["neck", "upper-back"],
+      conditions: ["stress-anxiety", "insomnia"],
+      injuries: [],
+    },
   },
   {
     id: "c3", name: "James Wong", email: "james@example.com", phone: "+66 83 456 7890",
@@ -351,6 +423,12 @@ export const customers: Customer[] = [
     memberSince: "2025-11-20", membershipNumber: "MEM-C5R1N7", totalBookings: 8, totalSpent: 10400,
     preferredStaff: ["s3", "s5"], preferredServices: ["deep-tissue", "sports"],
     loyaltyPoints: 104, loyaltyStamps: 3, giftCardBalance: 500, trialActive: false,
+    massagePreferences: {
+      pressurePreference: "deep",
+      painAreas: ["shoulders", "legs", "knees"],
+      conditions: ["sports-injury", "chronic-pain"],
+      injuries: ["Right rotator cuff surgery recovery"],
+    },
   },
 ]
 

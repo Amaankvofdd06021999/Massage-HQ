@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import {
   Calendar, Star, Gift, Settings, HelpCircle,
   ChevronRight, LogOut, Shield, Bell, CreditCard, Languages,
-  Stamp, Wallet
+  Stamp, Wallet, Activity, AlertTriangle, Gauge,
 } from "lucide-react"
 import { customers, formatPrice } from "@/lib/data/mock-data"
 import { useBrand } from "@/lib/theme/theme-provider"
@@ -147,6 +147,94 @@ export default function ProfilePage() {
         </div>
       </Link>
 
+      {/* Massage Preferences */}
+      <div className="mt-6">
+        <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-brand-text-tertiary">
+          {t("massagePreferences")}
+        </h2>
+        <div className="rounded-2xl border border-brand-border bg-card p-4 space-y-4">
+          {/* Pressure Preference */}
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Gauge size={14} className="text-brand-text-tertiary" />
+              <p className="text-xs font-semibold text-brand-text-secondary">{t("pressureLevel")}</p>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {([
+                { key: "light" as const, label: t("pressureLight") },
+                { key: "medium" as const, label: t("pressureMedium") },
+                { key: "firm" as const, label: t("pressureFirm") },
+                { key: "deep" as const, label: t("pressureDeep") },
+              ]).map((p) => (
+                <span
+                  key={p.key}
+                  className={`rounded-full px-3 py-1 text-xs font-medium ${
+                    customerData.massagePreferences?.pressurePreference === p.key
+                      ? "bg-brand-primary text-primary-foreground"
+                      : "bg-brand-bg-tertiary text-brand-text-tertiary"
+                  }`}
+                >
+                  {p.label}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Pain Areas */}
+          {customerData.massagePreferences?.painAreas && customerData.massagePreferences.painAreas.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Activity size={14} className="text-brand-coral" />
+                <p className="text-xs font-semibold text-brand-text-secondary">{t("painAreas")}</p>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {customerData.massagePreferences.painAreas.map((area) => (
+                  <span key={area} className="rounded-full bg-brand-coral/10 px-3 py-1 text-xs font-medium text-brand-coral">
+                    {area.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Conditions */}
+          {customerData.massagePreferences?.conditions && customerData.massagePreferences.conditions.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <AlertTriangle size={14} className="text-brand-yellow" />
+                <p className="text-xs font-semibold text-brand-text-secondary">{t("healthConditions")}</p>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {customerData.massagePreferences.conditions.map((cond) => (
+                  <span key={cond} className="rounded-full bg-brand-yellow/10 px-3 py-1 text-xs font-medium text-brand-yellow">
+                    {cond.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Injuries */}
+          {customerData.massagePreferences?.injuries && customerData.massagePreferences.injuries.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <AlertTriangle size={14} className="text-brand-coral" />
+                <p className="text-xs font-semibold text-brand-text-secondary">{t("injuries")}</p>
+              </div>
+              <div className="flex flex-col gap-1">
+                {customerData.massagePreferences.injuries.map((inj, i) => (
+                  <p key={i} className="text-xs text-brand-text-secondary">&bull; {inj}</p>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {!customerData.massagePreferences && (
+            <p className="text-xs text-brand-text-tertiary">{t("noPreferencesSet")}</p>
+          )}
+        </div>
+      </div>
+
       {/* Language Setting */}
       <div className="mt-6">
         <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-brand-text-tertiary">
@@ -156,29 +244,26 @@ export default function ProfilePage() {
           <div className="flex items-center gap-3 px-4 py-3.5">
             <Languages size={18} className="text-brand-text-tertiary" />
             <span className="flex-1 text-sm text-brand-text-primary">{t("chooseLanguage")}</span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setLanguage("en")}
-                className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                  language === "en"
-                    ? "bg-brand-primary text-primary-foreground"
-                    : "border border-brand-border text-brand-text-secondary hover:bg-brand-bg-tertiary"
-                }`}
-              >
-                EN
-              </button>
-              <button
-                type="button"
-                onClick={() => setLanguage("th")}
-                className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                  language === "th"
-                    ? "bg-brand-primary text-primary-foreground"
-                    : "border border-brand-border text-brand-text-secondary hover:bg-brand-bg-tertiary"
-                }`}
-              >
-                TH
-              </button>
+            <div className="flex flex-wrap gap-1.5">
+              {([
+                { code: "en" as const, label: "EN" },
+                { code: "th" as const, label: "TH" },
+                { code: "ko" as const, label: "KO" },
+                { code: "ja" as const, label: "JA" },
+              ]).map((lang) => (
+                <button
+                  key={lang.code}
+                  type="button"
+                  onClick={() => setLanguage(lang.code)}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                    language === lang.code
+                      ? "bg-brand-primary text-primary-foreground"
+                      : "border border-brand-border text-brand-text-secondary hover:bg-brand-bg-tertiary"
+                  }`}
+                >
+                  {lang.label}
+                </button>
+              ))}
             </div>
           </div>
         </div>

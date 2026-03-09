@@ -2,7 +2,11 @@
 
 import { use, useState, useMemo } from "react"
 import Link from "next/link"
-import { ArrowLeft, Calendar, Clock, Globe, Award, Star, ChevronRight } from "lucide-react"
+import {
+  ArrowLeft, Calendar, Clock, Globe, Award, Star, ChevronRight,
+  GraduationCap, Heart, Zap, Trophy, Repeat, HandHeart,
+} from "lucide-react"
+import type { HighlightIcon } from "@/lib/types"
 import { StaffAvatar } from "@/components/shared/staff-avatar"
 import { RatingStars, RatingDisplay } from "@/components/shared/rating-stars"
 import { StatusBadge } from "@/components/shared/status-badge"
@@ -12,6 +16,17 @@ import {
   staffMembers, services, bookings, generateTimeSlots,
   formatPrice, formatMassageType,
 } from "@/lib/data/mock-data"
+
+const highlightIcons: Record<HighlightIcon, typeof Star> = {
+  massage: HandHeart,
+  star: Star,
+  repeat: Repeat,
+  globe: Globe,
+  award: Award,
+  heart: Heart,
+  zap: Zap,
+  trophy: Trophy,
+}
 
 export default function StaffProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -109,6 +124,50 @@ export default function StaffProfilePage({ params }: { params: Promise<{ id: str
                 {cert}
               </span>
             ))}
+          </div>
+        )}
+
+        {/* Highlights */}
+        {staff.highlights.length > 0 && (
+          <div className="mt-6">
+            <h2 className="text-sm font-semibold text-brand-text-primary">{t("highlights")}</h2>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {staff.highlights.map((h, i) => {
+                const Icon = highlightIcons[h.icon]
+                return (
+                  <div key={i} className="flex items-center gap-3 rounded-xl border border-brand-border bg-card p-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-primary/10">
+                      <Icon size={16} className="text-brand-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-brand-text-tertiary">{h.label}</p>
+                      <p className="text-sm font-semibold text-brand-text-primary">{h.value}</p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Education & Training */}
+        {staff.education.length > 0 && (
+          <div className="mt-6">
+            <h2 className="text-sm font-semibold text-brand-text-primary">{t("educationTraining")}</h2>
+            <div className="mt-3 flex flex-col gap-2">
+              {staff.education.map((edu, i) => (
+                <div key={i} className="flex items-start gap-3 rounded-xl border border-brand-border bg-card p-3">
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-blue/10">
+                    <GraduationCap size={14} className="text-brand-blue" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-brand-text-primary">{edu.qualification}</p>
+                    <p className="text-xs text-brand-text-secondary">{edu.institution}</p>
+                    <p className="mt-0.5 text-[10px] text-brand-text-tertiary">{edu.year}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
