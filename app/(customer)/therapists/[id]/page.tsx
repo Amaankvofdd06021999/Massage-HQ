@@ -76,7 +76,7 @@ export default function StaffProfilePage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="pb-8">
+    <div className="pb-24">
       {/* Header */}
       <div className="relative">
         <div className="h-32 bg-gradient-to-b from-brand-primary/10 to-transparent" />

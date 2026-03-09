@@ -458,37 +458,39 @@ export function TranslationChat({ bookingId, userRole, userId, userName, alwaysO
       )}
 
       {/* Input area */}
-      <div className="flex items-center gap-2 border-t border-brand-border px-3 py-2">
-        <button
-          type="button"
-          onClick={handleVoice}
-          disabled={isRecording}
-          className={cn(
-            "flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all",
-            isRecording
-              ? "bg-brand-coral text-white animate-pulse scale-110"
-              : "border border-brand-border text-brand-text-secondary hover:bg-brand-bg-tertiary hover:text-brand-primary"
-          )}
-          title={t("voiceInput")}
-        >
-          <Mic size={18} />
-        </button>
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Enter") handleSend() }}
-          placeholder={isRecording ? t("listening") : t("typeMessage")}
-          className="flex-1 rounded-xl border border-brand-border bg-brand-bg-secondary px-3 py-2.5 text-sm text-brand-text-primary placeholder:text-brand-text-tertiary focus:border-brand-primary focus:outline-none"
-        />
-        <button
-          type="button"
-          onClick={handleSend}
-          disabled={!input.trim()}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-primary text-brand-primary-foreground disabled:opacity-40 transition-all active:scale-90"
-        >
-          <Send size={18} />
-        </button>
+      <div className="border-t border-brand-border bg-brand-bg-secondary/50 px-4 py-3">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleVoice}
+            disabled={isRecording}
+            className={cn(
+              "flex h-12 w-12 shrink-0 items-center justify-center rounded-full transition-all",
+              isRecording
+                ? "bg-brand-coral text-white animate-pulse scale-110"
+                : "bg-brand-primary/15 text-brand-primary hover:bg-brand-primary/25"
+            )}
+            title={t("voiceInput")}
+          >
+            <Mic size={20} />
+          </button>
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") handleSend() }}
+            placeholder={isRecording ? t("listening") : t("typeMessage")}
+            className="flex-1 rounded-xl border border-brand-border bg-card px-4 py-3 text-sm text-brand-text-primary placeholder:text-brand-text-tertiary focus:border-brand-primary focus:outline-none"
+          />
+          <button
+            type="button"
+            onClick={handleSend}
+            disabled={!input.trim()}
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-primary text-brand-primary-foreground disabled:opacity-40 transition-all active:scale-90"
+          >
+            <Send size={18} />
+          </button>
+        </div>
       </div>
     </div>
   )

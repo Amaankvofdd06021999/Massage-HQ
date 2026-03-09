@@ -80,7 +80,7 @@ export default function StaffSessionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-8">
+    <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="border-b border-brand-border bg-card px-5 py-4">
         <div className="flex items-center gap-2">

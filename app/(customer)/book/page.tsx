@@ -254,13 +254,13 @@ function BookingFlowInner() {
           {t("pendingApprovalNote")}
         </p>
         <Link
-          href="/"
-          className="mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-8 py-3 text-sm font-semibold text-primary-foreground"
+          href="/bookings"
+          className="mt-8 inline-flex w-full max-w-xs items-center justify-center gap-2 rounded-full bg-brand-yellow px-8 py-3.5 text-sm font-bold text-black"
         >
-          {t("backToHome")}
-        </Link>
-        <Link href="/bookings" className="mt-3 text-sm text-brand-primary">
           {t("viewMyBookings")}
+        </Link>
+        <Link href="/" className="mt-3 text-sm text-brand-text-secondary">
+          {t("backToHome")}
         </Link>
       </div>
     )
@@ -460,12 +460,14 @@ function BookingFlowInner() {
           </p>
           <div className="mt-4 flex flex-col gap-3">
             {filteredStaff.map((staff) => (
-              <button
+              <div
                 key={staff.id}
-                type="button"
+                role="button"
+                tabIndex={0}
                 onClick={() => setSelectedStaff(staff)}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setSelectedStaff(staff) }}
                 className={cn(
-                  "flex gap-3 rounded-2xl border p-4 text-left transition-all card-press",
+                  "flex gap-3 rounded-2xl border p-4 text-left transition-all card-press cursor-pointer",
                   selectedStaff?.id === staff.id
                     ? "border-brand-primary bg-brand-primary/5"
                     : "border-brand-border bg-card"
@@ -490,7 +492,7 @@ function BookingFlowInner() {
                     {t("viewReviews")}
                   </button>
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         </div>

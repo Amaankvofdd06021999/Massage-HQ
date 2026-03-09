@@ -163,7 +163,7 @@ function TodayAvailability() {
   const available = staffMembers.filter((s) => s.isAvailableToday)
 
   return (
-    <section className="px-5 py-4 pb-8">
+    <section className="px-5 py-4 pb-24">
       <h2 className="text-lg font-bold text-brand-text-primary">{t("availableToday")}</h2>
       <p className="mt-0.5 text-xs text-brand-text-tertiary">
         {available.length} {t("therapistsReadyToServe")}

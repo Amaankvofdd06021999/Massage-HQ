@@ -36,7 +36,7 @@ export default function BookingsPage() {
   const packages = promotions.filter((p) => p.type === "package" && p.sessions)
 
   return (
-    <div className="px-5 pb-8 pt-12">
+    <div className="px-5 pb-24 pt-12">
       <div className="flex items-center gap-2">
         <Calendar size={20} className="text-brand-primary" />
         <h1 className="text-2xl font-bold text-brand-text-primary">{t("myBookings")}</h1>

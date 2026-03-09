@@ -111,7 +111,7 @@ export default function StaffClientDetailPage() {
   ]
 
   return (
-    <div className="px-5 pb-8 pt-12">
+    <div className="px-5 pb-24 pt-12">
       {/* Back Button */}
       <button
         type="button"

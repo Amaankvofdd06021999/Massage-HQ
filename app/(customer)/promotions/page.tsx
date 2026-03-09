@@ -56,7 +56,7 @@ export default function PromotionsPage() {
   const filtered = filter === "all" ? promotions : promotions.filter((p) => p.type === filter)
 
   return (
-    <div className="px-5 pb-8 pt-12">
+    <div className="px-5 pb-24 pt-12">
       <div className="flex items-center gap-2">
         <Sparkles size={20} className="text-brand-coral" />
         <h1 className="text-2xl font-bold text-brand-text-primary">{t("promotions")}</h1>

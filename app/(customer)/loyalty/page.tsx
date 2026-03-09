@@ -112,7 +112,7 @@ export default function LoyaltyPage() {
 
   if (!config.programActive) {
     return (
-      <div className="px-5 pb-8 pt-12">
+      <div className="px-5 pb-24 pt-12">
         <div className="flex items-center gap-2">
           <Trophy size={20} className="text-brand-yellow" />
           <h1 className="text-2xl font-bold text-brand-text-primary">{t("loyaltyProgram")}</h1>
@@ -126,7 +126,7 @@ export default function LoyaltyPage() {
   }
 
   return (
-    <div className="px-5 pb-8 pt-12">
+    <div className="px-5 pb-24 pt-12">
       {/* Page header */}
       <div className="flex items-center gap-2">
         <Trophy size={20} className="text-brand-yellow" />

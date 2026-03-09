@@ -127,7 +127,7 @@ export default function GiftCardsPage() {
   }
 
   return (
-    <div className="px-5 pb-8 pt-12">
+    <div className="px-5 pb-24 pt-12">
       {/* Page header */}
       <div className="flex items-center gap-2">
         <Gift size={20} className="text-brand-primary" />

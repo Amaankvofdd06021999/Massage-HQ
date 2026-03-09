@@ -75,7 +75,7 @@ export default function StaffPage() {
   }
 
   return (
-    <div className="px-5 pb-8 pt-12">
+    <div className="px-5 pb-24 pt-12">
       <h1 className="text-2xl font-bold text-brand-text-primary">{t("ourTherapists")}</h1>
       <p className="mt-1 text-sm text-brand-text-secondary">{staffMembers.length} {t("expertTherapists")}</p>
 

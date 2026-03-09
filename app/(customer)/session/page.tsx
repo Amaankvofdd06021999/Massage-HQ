@@ -291,7 +291,7 @@ export default function SessionPage() {
 
   return (
     <>
-      <div className="min-h-dvh bg-background px-5 pb-10 pt-12">
+      <div className="min-h-dvh bg-background px-5 pb-24 pt-12">
         {/* Header */}
         <div className="mb-6 text-center">
           <div className="inline-flex items-center gap-2 rounded-full bg-brand-green/10 px-4 py-1.5">
@@ -409,7 +409,7 @@ export default function SessionPage() {
         <button
           type="button"
           onClick={() => setChatOpen(true)}
-          className="fixed bottom-24 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-brand-blue text-white shadow-lg shadow-brand-blue/30 transition-transform active:scale-90"
+          className="fixed bottom-24 right-5 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-brand-blue text-white shadow-lg shadow-brand-blue/30 transition-transform active:scale-90"
         >
           <Globe size={24} />
         </button>
@@ -417,7 +417,7 @@ export default function SessionPage() {
 
       {/* Translation Chat Popup */}
       {activeBooking && chatOpen && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-background/95 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[60] flex flex-col bg-background/95 backdrop-blur-sm">
           <div className="flex items-center justify-between border-b border-brand-border bg-card px-5 py-3">
             <div className="flex items-center gap-2">
               <Globe size={18} className="text-brand-blue" />

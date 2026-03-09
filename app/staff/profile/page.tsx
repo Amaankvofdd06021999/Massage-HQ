@@ -70,7 +70,7 @@ export default function StaffProfilePage() {
   }
 
   return (
-    <div className="px-5 pb-8 pt-12">
+    <div className="px-5 pb-24 pt-12">
       {/* Profile Header */}
       <div className="flex items-center gap-4">
         <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full ring-2 ring-brand-primary/30 bg-brand-bg-tertiary">

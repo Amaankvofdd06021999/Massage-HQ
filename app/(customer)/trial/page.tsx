@@ -19,7 +19,7 @@ export default function TrialPage() {
   const progress = (trial.completedSessions / trial.totalSessions) * 100
 
   return (
-    <div className="px-5 pb-8 pt-12">
+    <div className="px-5 pb-24 pt-12">
       <div className="flex items-center gap-2">
         <Sparkles size={20} className="text-brand-blue" />
         <h1 className="text-2xl font-bold text-brand-text-primary">{t("discoveryTrial")}</h1>

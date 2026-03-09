@@ -91,7 +91,7 @@ export default function StaffBookingsPage() {
   }
 
   return (
-    <div className="px-5 pb-8 pt-12">
+    <div className="px-5 pb-24 pt-12">
       {/* Page Header */}
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-primary/15">
