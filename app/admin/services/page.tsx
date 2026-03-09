@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import {
   Plus, Pencil, Trash2, X, ToggleLeft, ToggleRight,
   Sparkles, Package, ChevronDown, ChevronUp, Clock, BadgeDollarSign,
-  DoorOpen, Users, Layers, ImageIcon,
+  DoorOpen, Users, Layers, ImageIcon, Upload, Loader2,
 } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
@@ -353,6 +353,29 @@ function RoomModal({ initial, onSave, onClose }: {
     setDraft((p) => ({ ...p, [k]: v }))
   }
 
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [uploading, setUploading] = useState(false)
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append("file", file)
+      const res = await fetch("/api/upload", { method: "POST", body: fd })
+      const data = await res.json()
+      if (res.ok) {
+        setField("image", data.url)
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ""
+    }
+  }
+
   const roomTypeLabels: Record<RoomType, string> = {
     room: t("roomTypePrivate"),
     bed: t("roomTypeOpenBed"),
@@ -429,9 +452,19 @@ function RoomModal({ initial, onSave, onClose }: {
                 placeholder="https://example.com/room-photo.jpg"
                 className="w-full rounded-xl border border-brand-border bg-brand-bg-tertiary px-3 py-2.5 text-sm text-brand-text-primary outline-none focus:border-brand-primary/50 placeholder-brand-text-tertiary" />
             </div>
+            <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading}
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-brand-border bg-brand-bg-tertiary py-3 text-sm text-brand-text-secondary hover:border-brand-primary/50 hover:text-brand-primary transition-colors disabled:opacity-50">
+              {uploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+              {uploading ? t("uploading") : t("uploadFromDevice")}
+            </button>
+            <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleFileUpload} />
             {draft.image && (
               <div className="relative mt-2 h-32 w-full overflow-hidden rounded-xl border border-brand-border">
                 <img src={draft.image} alt="Room preview" className="h-full w-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
+                <button type="button" onClick={() => setField("image", "")}
+                  className="absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors">
+                  <X size={12} />
+                </button>
               </div>
             )}
           </div>
@@ -565,7 +598,7 @@ function RoomCard({ room, onEdit, onDelete, onToggle }: {
     <div className={cn("overflow-hidden rounded-2xl border bg-card transition-opacity", room.isActive ? "border-brand-border" : "border-brand-border opacity-60")}>
       {room.image && (
         <div className="relative h-32 w-full">
-          <img src={room.image} alt={room.name} className="h-full w-full object-cover" />
+          <img src={room.image} alt={room.name} className="h-full w-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
         </div>
       )}
       <div className={cn("flex items-start gap-3 p-4", !room.image && "")}>

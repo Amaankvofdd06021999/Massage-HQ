@@ -102,56 +102,56 @@ const SEED_ROOMS: MassageRoom[] = [
     id: "rm1", name: "Room 1", type: "room", capacity: 1,
     floor: "Ground Floor",
     description: "Standard treatment room with calming ambient lighting.",
-    image: "https://images.unsplash.com/photo-1540555700478-4be289fbec6e?w=400&h=300&fit=crop",
+    image: "https://images.pexels.com/photos/11774389/pexels-photo-11774389.jpeg?auto=compress&cs=tinysrgb&w=600",
     isActive: true,
   },
   {
     id: "rm2", name: "Room 2", type: "room", capacity: 1,
     floor: "Ground Floor",
     description: "Standard treatment room facing the garden.",
-    image: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400&h=300&fit=crop",
+    image: "https://images.pexels.com/photos/3865792/pexels-photo-3865792.jpeg?auto=compress&cs=tinysrgb&w=600",
     isActive: true,
   },
   {
     id: "rm3", name: "Room 3", type: "room", capacity: 1,
     floor: "Ground Floor",
     description: "Standard treatment room with extra ventilation.",
-    image: "https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=400&h=300&fit=crop",
+    image: "https://images.pexels.com/photos/35546242/pexels-photo-35546242.jpeg?auto=compress&cs=tinysrgb&w=600",
     isActive: true,
   },
   {
     id: "rm4", name: "VIP Suite A", type: "suite", capacity: 1,
     floor: "1st Floor",
     description: "Luxury private suite with rainfall shower and dedicated relaxation lounge.",
-    image: "https://images.unsplash.com/photo-1591343395082-e120087004b4?w=400&h=300&fit=crop",
+    image: "https://images.pexels.com/photos/5240818/pexels-photo-5240818.jpeg?auto=compress&cs=tinysrgb&w=600",
     isActive: true,
   },
   {
     id: "rm5", name: "VIP Suite B", type: "suite", capacity: 1,
     floor: "1st Floor",
     description: "Luxury private suite with panoramic garden view and en-suite bath.",
-    image: "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?w=400&h=300&fit=crop",
+    image: "https://images.pexels.com/photos/5240808/pexels-photo-5240808.jpeg?auto=compress&cs=tinysrgb&w=600",
     isActive: true,
   },
   {
     id: "rm6", name: "Couples Suite", type: "couple", capacity: 2,
     floor: "1st Floor",
     description: "Spacious double-bed room designed for couples sessions side by side.",
-    image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=400&h=300&fit=crop",
+    image: "https://images.pexels.com/photos/3760262/pexels-photo-3760262.jpeg?auto=compress&cs=tinysrgb&w=600",
     isActive: true,
   },
   {
     id: "rm7", name: "Bed 1", type: "bed", capacity: 1,
     floor: "Ground Floor",
     description: "Open-plan relaxation bed in the main wellness area.",
-    image: "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=400&h=300&fit=crop",
+    image: "https://images.pexels.com/photos/9146378/pexels-photo-9146378.jpeg?auto=compress&cs=tinysrgb&w=600",
     isActive: true,
   },
   {
     id: "rm8", name: "Bed 2", type: "bed", capacity: 1,
     floor: "Ground Floor",
     description: "Open-plan relaxation bed in the main wellness area.",
-    image: "https://images.unsplash.com/photo-1596178060671-7a80dc8059ea?w=400&h=300&fit=crop",
+    image: "https://images.pexels.com/photos/6628599/pexels-photo-6628599.jpeg?auto=compress&cs=tinysrgb&w=600",
     isActive: true,
   },
 ]
@@ -160,7 +160,7 @@ const SEED_ROOMS: MassageRoom[] = [
 
 const SERVICES_KEY = "koko-services"
 const ADDONS_KEY   = "koko-addons"
-const ROOMS_KEY    = "koko-rooms"
+const ROOMS_KEY    = "koko-rooms-v2"
 
 // ─── Context ──────────────────────────────────────────────────────────────────
 

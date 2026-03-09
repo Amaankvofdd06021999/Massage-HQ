@@ -560,7 +560,7 @@ function BookingFlowInner() {
                   >
                     {room.image && (
                       <div className="relative h-24 w-full">
-                        <img src={room.image} alt={room.name} className="h-full w-full object-cover" />
+                        <img src={room.image} alt={room.name} className="h-full w-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }} />
                       </div>
                     )}
                     <div className="p-3.5">

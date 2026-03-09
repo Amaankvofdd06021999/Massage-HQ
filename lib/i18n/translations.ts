@@ -218,6 +218,9 @@ export const translations = {
     roomTypeVIP: "VIP Suite",
     roomTypeCouple: "Couples Suite",
     roomImage: "Room Image",
+    uploadFromDevice: "Upload from device",
+    uploading: "Uploading…",
+    removeImage: "Remove image",
 
     // ── Booking Status ────────────────────────────────────────────────────
     statusConfirmed: "Confirmed",
@@ -957,6 +960,9 @@ export const translations = {
     roomTypeVIP: "ห้อง VIP",
     roomTypeCouple: "ห้องคู่",
     roomImage: "รูปภาพห้อง",
+    uploadFromDevice: "อัปโหลดจากอุปกรณ์",
+    uploading: "กำลังอัปโหลด…",
+    removeImage: "ลบรูปภาพ",
 
     // ── Booking Status ────────────────────────────────────────────────────
     statusConfirmed: "ยืนยัน",
@@ -1696,6 +1702,9 @@ export const translations = {
     roomTypeVIP: "VIP 스위트",
     roomTypeCouple: "커플 스위트",
     roomImage: "룸 이미지",
+    uploadFromDevice: "기기에서 업로드",
+    uploading: "업로드 중…",
+    removeImage: "이미지 제거",
 
     // ── Booking Status ────────────────────────────────────────────────────
     statusConfirmed: "확정",
@@ -2435,6 +2444,9 @@ export const translations = {
     roomTypeVIP: "VIPスイート",
     roomTypeCouple: "カップルスイート",
     roomImage: "ルーム画像",
+    uploadFromDevice: "デバイスからアップロード",
+    uploading: "アップロード中…",
+    removeImage: "画像を削除",
 
     // ── Booking Status ────────────────────────────────────────────────────
     statusConfirmed: "確定",
