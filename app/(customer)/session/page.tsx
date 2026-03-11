@@ -45,7 +45,7 @@ function ReviewModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-t-3xl bg-background p-6 pb-10 animate-in slide-in-from-bottom-4 duration-300">
+      <div className="w-full max-w-lg rounded-t-3xl bg-background p-6 pb-28 animate-in slide-in-from-bottom-4 duration-300 max-h-[90dvh] overflow-y-auto">
         {/* Header */}
         <div className="mb-5 text-center">
           <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-primary/10">
