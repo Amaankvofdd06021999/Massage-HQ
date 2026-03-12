@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import { RotateCcw, Save, Eye, Palette, Type, Globe, Clock, Languages } from "lucide-react"
+import { RotateCcw, Save, Eye, Palette, Type, Globe, Clock, Languages, ChevronDown } from "lucide-react"
 import { useBrand } from "@/lib/theme/theme-provider"
 import { useLanguage } from "@/lib/i18n/language-context"
+import type { Language } from "@/lib/i18n/translations"
 import { kokoBrandConfig } from "@/lib/theme/brand-config"
 import type { BrandConfig } from "@/lib/types"
 import { cn } from "@/lib/utils"
@@ -280,26 +281,25 @@ function LanguageTab() {
         <div className="flex items-center gap-3">
           <Languages size={20} className="text-brand-text-tertiary" />
           <span className="flex-1 text-sm font-medium text-brand-text-primary">{t("chooseLanguage")}</span>
-          <div className="flex flex-wrap gap-2">
-            {([
-              { code: "en" as const, label: t("english") },
-              { code: "th" as const, label: t("thai") },
-              { code: "ko" as const, label: t("korean") },
-              { code: "ja" as const, label: t("japanese") },
-            ]).map((lang) => (
-              <button
-                key={lang.code}
-                type="button"
-                onClick={() => setLanguage(lang.code)}
-                className={`rounded-xl px-4 py-2 text-sm font-semibold transition-colors ${
-                  language === lang.code
-                    ? "bg-brand-primary text-primary-foreground"
-                    : "border border-brand-border text-brand-text-secondary hover:bg-brand-bg-tertiary"
-                }`}
-              >
-                {lang.label}
-              </button>
-            ))}
+          <div className="relative">
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value as Language)}
+              className="appearance-none rounded-xl border border-brand-border bg-brand-bg-tertiary pl-4 pr-9 py-2 text-sm font-semibold text-brand-text-primary outline-none focus:border-brand-primary/50 cursor-pointer"
+            >
+              {([
+                { code: "en" as const, label: t("english") },
+                { code: "th" as const, label: t("thai") },
+                { code: "ko" as const, label: t("korean") },
+                { code: "ja" as const, label: t("japanese") },
+                { code: "de" as const, label: t("german") },
+              ]).map((lang) => (
+                <option key={lang.code} value={lang.code}>
+                  {lang.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-brand-text-tertiary" />
           </div>
         </div>
       </div>

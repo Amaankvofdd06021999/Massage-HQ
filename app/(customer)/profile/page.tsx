@@ -5,13 +5,14 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import {
   Calendar, Star, Gift, Settings, HelpCircle,
-  ChevronRight, LogOut, Shield, Bell, CreditCard, Languages,
+  ChevronRight, ChevronDown, LogOut, Shield, Bell, CreditCard, Languages,
   Stamp, Wallet, Activity, AlertTriangle, Gauge, Pencil, Plus, X,
 } from "lucide-react"
 import { customers, formatPrice } from "@/lib/data/mock-data"
 import { useBrand } from "@/lib/theme/theme-provider"
 import { useAuth } from "@/lib/auth/auth-context"
 import { useLanguage } from "@/lib/i18n/language-context"
+import type { Language } from "@/lib/i18n/translations"
 import { useLoyalty } from "@/lib/data/loyalty-store"
 import { useGiftCards } from "@/lib/data/giftcards-store"
 import { usePromotions } from "@/lib/data/promotions-store"
@@ -431,26 +432,25 @@ export default function ProfilePage() {
           <div className="flex items-center gap-3 px-4 py-3.5">
             <Languages size={18} className="text-brand-text-tertiary" />
             <span className="flex-1 text-sm text-brand-text-primary">{t("chooseLanguage")}</span>
-            <div className="flex flex-wrap gap-1.5">
-              {([
-                { code: "en" as const, label: "EN" },
-                { code: "th" as const, label: "TH" },
-                { code: "ko" as const, label: "KO" },
-                { code: "ja" as const, label: "JA" },
-              ]).map((lang) => (
-                <button
-                  key={lang.code}
-                  type="button"
-                  onClick={() => setLanguage(lang.code)}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                    language === lang.code
-                      ? "bg-brand-primary text-primary-foreground"
-                      : "border border-brand-border text-brand-text-secondary hover:bg-brand-bg-tertiary"
-                  }`}
-                >
-                  {lang.label}
-                </button>
-              ))}
+            <div className="relative">
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as Language)}
+                className="appearance-none rounded-xl border border-brand-border bg-brand-bg-tertiary pl-3 pr-8 py-1.5 text-sm font-semibold text-brand-text-primary outline-none focus:border-brand-primary/50 cursor-pointer"
+              >
+                {([
+                  { code: "en" as const, label: "English" },
+                  { code: "th" as const, label: "ภาษาไทย" },
+                  { code: "ko" as const, label: "한국어" },
+                  { code: "ja" as const, label: "日本語" },
+                  { code: "de" as const, label: "Deutsch" },
+                ]).map((lang) => (
+                  <option key={lang.code} value={lang.code}>
+                    {lang.label}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={14} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-brand-text-tertiary" />
             </div>
           </div>
         </div>

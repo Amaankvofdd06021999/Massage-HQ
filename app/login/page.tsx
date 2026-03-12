@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Mail, Lock, LayoutDashboard, User, Eye, EyeOff, Sparkles, Heart } from "lucide-react"
+import { Mail, Lock, LayoutDashboard, User, Eye, EyeOff, Sparkles, Heart, ChevronDown } from "lucide-react"
 import { useAuth, DEMO_MANAGER, DEMO_CUSTOMER, DEMO_STAFF } from "@/lib/auth/auth-context"
 import { useLanguage } from "@/lib/i18n/language-context"
+import type { Language } from "@/lib/i18n/translations"
 
 export default function LoginPage() {
   const { user, isLoading, login } = useAuth()
@@ -46,27 +47,27 @@ export default function LoginPage() {
 
       <div className="relative w-full max-w-sm">
 
-        {/* Language toggle */}
-        <div className="mb-4 flex justify-end gap-1.5">
-          {([
-            { code: "en" as const, label: "EN" },
-            { code: "th" as const, label: "TH" },
-            { code: "ko" as const, label: "KO" },
-            { code: "ja" as const, label: "JA" },
-          ]).map((lang) => (
-            <button
-              key={lang.code}
-              type="button"
-              onClick={() => setLanguage(lang.code)}
-              className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors ${
-                language === lang.code
-                  ? "bg-[#FACC15]/20 text-[#FACC15]"
-                  : "text-[#6B6B7B] hover:text-[#A0A0B0]"
-              }`}
+        <div className="mb-4 flex justify-end">
+          <div className="relative">
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value as Language)}
+              className="appearance-none rounded-lg border border-[#2A2A35] bg-[#141419] pl-3 pr-7 py-1.5 text-xs font-medium text-[#A0A0B0] outline-none focus:border-[#FACC15]/50 cursor-pointer"
             >
-              {lang.label}
-            </button>
-          ))}
+              {([
+                { code: "en" as const, label: "EN" },
+                { code: "th" as const, label: "TH" },
+                { code: "ko" as const, label: "KO" },
+                { code: "ja" as const, label: "JA" },
+                { code: "de" as const, label: "DE" },
+              ]).map((lang) => (
+                <option key={lang.code} value={lang.code}>
+                  {lang.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[#6B6B7B]" />
+          </div>
         </div>
 
         {/* Brand */}

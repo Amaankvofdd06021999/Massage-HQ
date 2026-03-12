@@ -5,13 +5,14 @@ import { usePathname, useRouter } from "next/navigation"
 import { useEffect } from "react"
 import {
   LayoutDashboard, Calendar, BookOpen, Users, Tag,
-  Palette, ChevronLeft, ChevronRight, Menu, X, Sun, Moon, LogOut, Sparkles, Star,
+  Palette, ChevronLeft, ChevronRight, ChevronDown, Menu, X, Sun, Moon, LogOut, Sparkles, Star,
   Scale, MessageSquare, Heart, DollarSign, Languages,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ThemeProvider, useBrand } from "@/lib/theme/theme-provider"
 import { useAuth } from "@/lib/auth/auth-context"
 import { useLanguage } from "@/lib/i18n/language-context"
+import type { Language } from "@/lib/i18n/translations"
 import { useState } from "react"
 import Image from "next/image"
 
@@ -126,34 +127,24 @@ function AdminSidebar({ collapsed, setCollapsed }: { collapsed: boolean; setColl
         {!collapsed ? (
           <div className="flex items-center gap-1.5 px-3 py-1.5">
             <Languages size={14} className="shrink-0 text-brand-text-tertiary" />
-            <div className="flex flex-wrap gap-1">
-              {([
-                { code: "en" as const, label: "EN" },
-                { code: "th" as const, label: "TH" },
-                { code: "ko" as const, label: "KO" },
-                { code: "ja" as const, label: "JA" },
-              ]).map((lang) => (
-                <button
-                  key={lang.code}
-                  type="button"
-                  onClick={() => setLanguage(lang.code)}
-                  className={cn(
-                    "rounded-md px-1.5 py-0.5 text-[10px] font-semibold transition-colors",
-                    language === lang.code
-                      ? "bg-brand-primary text-brand-primary-foreground"
-                      : "text-brand-text-tertiary hover:bg-brand-bg-tertiary hover:text-brand-text-primary"
-                  )}
-                >
-                  {lang.label}
-                </button>
-              ))}
+            <div className="relative flex-1">
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as Language)}
+                className="appearance-none w-full rounded-md border border-brand-border bg-brand-bg-tertiary pl-1.5 pr-5 py-0.5 text-[10px] font-semibold text-brand-text-primary outline-none focus:border-brand-primary/50 cursor-pointer"
+              >
+                {(["en", "th", "ko", "ja", "de"] as const).map((code) => (
+                  <option key={code} value={code}>{code.toUpperCase()}</option>
+                ))}
+              </select>
+              <ChevronDown size={10} className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-brand-text-tertiary" />
             </div>
           </div>
         ) : (
           <button
             type="button"
             onClick={() => {
-              const langs = ["en", "th", "ko", "ja"] as const
+              const langs = ["en", "th", "ko", "ja", "de"] as const
               const idx = langs.indexOf(language)
               setLanguage(langs[(idx + 1) % langs.length])
             }}
@@ -289,27 +280,17 @@ function MobileHeader() {
             <div className="shrink-0 border-t border-brand-border pt-3 space-y-1">
               <div className="flex items-center gap-2 px-3 py-2">
                 <Languages size={16} className="shrink-0 text-brand-text-tertiary" />
-                <div className="flex flex-wrap gap-1.5">
-                  {([
-                    { code: "en" as const, label: "EN" },
-                    { code: "th" as const, label: "TH" },
-                    { code: "ko" as const, label: "KO" },
-                    { code: "ja" as const, label: "JA" },
-                  ]).map((lang) => (
-                    <button
-                      key={lang.code}
-                      type="button"
-                      onClick={() => setLanguage(lang.code)}
-                      className={cn(
-                        "rounded-lg px-2.5 py-1 text-xs font-semibold transition-colors",
-                        language === lang.code
-                          ? "bg-brand-primary text-primary-foreground"
-                          : "border border-brand-border text-brand-text-secondary hover:bg-brand-bg-tertiary"
-                      )}
-                    >
-                      {lang.label}
-                    </button>
-                  ))}
+                <div className="relative flex-1">
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value as Language)}
+                    className="appearance-none w-full rounded-lg border border-brand-border bg-brand-bg-tertiary pl-2.5 pr-7 py-1 text-xs font-semibold text-brand-text-primary outline-none focus:border-brand-primary/50 cursor-pointer"
+                  >
+                    {(["en", "th", "ko", "ja", "de"] as const).map((code) => (
+                      <option key={code} value={code}>{code.toUpperCase()}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={12} className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-brand-text-tertiary" />
                 </div>
               </div>
               <Link
