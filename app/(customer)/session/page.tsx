@@ -7,7 +7,9 @@ import { StaffAvatar } from "@/components/shared/staff-avatar"
 import { RatingStars } from "@/components/shared/rating-stars"
 import { LateArrivalDialog } from "@/components/shared/late-arrival-dialog"
 import { TranslationChat } from "@/components/shared/translation-chat"
-import { bookings, staffMembers, formatPrice } from "@/lib/data/mock-data"
+import { bookings, staffMembers } from "@/lib/data/mock-data"
+import { formatPrice } from "@/lib/utils/formatters"
+import { TIP_PRESETS } from "@/lib/constants"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { useAuth } from "@/lib/auth/auth-context"
 import { cn } from "@/lib/utils"
@@ -33,8 +35,6 @@ function ReviewModal({
   const [tip, setTip] = useState<number | null>(null)
   const [customTip, setCustomTip] = useState("")
   const [showCustom, setShowCustom] = useState(false)
-
-  const TIP_PRESETS = [50, 100, 200, 500]
 
   const handleSubmit = () => {
     const finalTip = showCustom

@@ -12,7 +12,7 @@ import { GiftCardPurchaseForm } from "@/components/shared/gift-card-purchase-for
 import { useGiftCards } from "@/lib/data/giftcards-store"
 import { useAuth } from "@/lib/auth/auth-context"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { formatPrice, formatMassageType } from "@/lib/data/mock-data"
+import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
 import { cn } from "@/lib/utils"
 import type { GiftCard } from "@/lib/types"
 

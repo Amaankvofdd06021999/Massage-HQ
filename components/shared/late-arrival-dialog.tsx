@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/select"
 import { useBookings } from "@/lib/data/bookings-store"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { formatPrice } from "@/lib/data/mock-data"
+import { formatPrice } from "@/lib/utils/formatters"
 import { cn } from "@/lib/utils"
 import type { Booking, CompensationType } from "@/lib/types"
 

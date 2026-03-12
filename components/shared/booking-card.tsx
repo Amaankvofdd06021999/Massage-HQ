@@ -9,7 +9,7 @@ import { RatingStars } from "./rating-stars"
 import { CancelBookingDialog } from "./cancel-booking-dialog"
 import { LateArrivalDialog } from "./late-arrival-dialog"
 import type { Booking } from "@/lib/types"
-import { formatPrice } from "@/lib/data/mock-data"
+import { formatPrice } from "@/lib/utils/formatters"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { useRouter } from "next/navigation"
 

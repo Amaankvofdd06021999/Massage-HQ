@@ -7,13 +7,7 @@ import { useAuth } from "@/lib/auth/auth-context"
 import { useBookings } from "@/lib/data/bookings-store"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { BookingCard } from "@/components/shared/booking-card"
-
-function toDateString(date: Date): string {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, "0")
-  const d = String(date.getDate()).padStart(2, "0")
-  return `${y}-${m}-${d}`
-}
+import { toDateStr } from "@/lib/utils/time"
 
 type TabKey = "today" | "pending" | "upcoming" | "past"
 
@@ -24,7 +18,7 @@ export default function StaffBookingsPage() {
   const [activeTab, setActiveTab] = useState<TabKey>("today")
 
   const allBookings = useMemo(() => (user ? getBookingsForStaff(user.id) : []), [user, getBookingsForStaff])
-  const todayStr = toDateString(new Date())
+  const todayStr = toDateStr(new Date())
 
   const todayBookings = useMemo(
     () =>

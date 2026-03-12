@@ -12,8 +12,8 @@ import { useLanguage } from "@/lib/i18n/language-context"
 import type { TranslationKey } from "@/lib/i18n/translations"
 import {
   staffMembers, promotions, bookings,
-  formatPrice, formatMassageType,
 } from "@/lib/data/mock-data"
+import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
 
 function getGreeting(t: (k: TranslationKey) => string) {
   const hour = new Date().getHours()

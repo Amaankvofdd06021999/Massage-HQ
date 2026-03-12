@@ -2,7 +2,7 @@
 
 import { CheckCircle2, Circle } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { formatMassageType } from "@/lib/data/mock-data"
+import { formatMassageType } from "@/lib/utils/formatters"
 import { cn } from "@/lib/utils"
 import type { Promotion, PromoSessionUsage } from "@/lib/types"
 

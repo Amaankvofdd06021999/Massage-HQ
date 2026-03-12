@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button"
 import { StatusBadge, bookingStatusVariant } from "@/components/shared/status-badge"
 import { StaffAvatar } from "@/components/shared/staff-avatar"
 import { useBookings } from "@/lib/data/bookings-store"
-import { formatPrice, formatMassageType, customers } from "@/lib/data/mock-data"
+import { customers } from "@/lib/data/mock-data"
+import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
 import { cn } from "@/lib/utils"
 import {
   Bell, XCircle, StickyNote, Clock, DollarSign, Calendar,

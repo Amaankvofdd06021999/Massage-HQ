@@ -5,7 +5,7 @@ import { Coins, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { formatPrice } from "@/lib/data/mock-data"
+import { formatPrice } from "@/lib/utils/formatters"
 import { cn } from "@/lib/utils"
 
 interface LoyaltyPointsDisplayProps {

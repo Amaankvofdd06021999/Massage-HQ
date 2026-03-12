@@ -7,9 +7,10 @@ import { RatingDisplay } from "@/components/shared/rating-stars"
 import { StatusBadge } from "@/components/shared/status-badge"
 import { SearchBar } from "@/components/shared/search-bar"
 import {
-  staffMembers, formatPrice, formatMassageType, getBookingsForStaff,
+  staffMembers, getBookingsForStaff,
   staffBlockedDates, getBlockedDatesForStaff,
 } from "@/lib/data/mock-data"
+import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { cn } from "@/lib/utils"
 import type { StaffMember, StaffBlockedDate, DayOfWeek } from "@/lib/types"

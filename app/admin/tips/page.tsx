@@ -6,7 +6,8 @@ import { useTips } from "@/lib/data/tips-store"
 import { useBookings } from "@/lib/data/bookings-store"
 import { useAuth } from "@/lib/auth/auth-context"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { formatPrice, staffMembers } from "@/lib/data/mock-data"
+import { staffMembers } from "@/lib/data/mock-data"
+import { formatPrice } from "@/lib/utils/formatters"
 import { cn } from "@/lib/utils"
 
 export default function AdminTipClaimsPage() {

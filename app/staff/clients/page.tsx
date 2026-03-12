@@ -7,7 +7,8 @@ import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth/auth-context"
 import { useBookings } from "@/lib/data/bookings-store"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { customers, formatMassageType } from "@/lib/data/mock-data"
+import { customers } from "@/lib/data/mock-data"
+import { formatMassageType } from "@/lib/utils/formatters"
 import { SearchBar } from "@/components/shared/search-bar"
 
 export default function StaffClientsPage() {

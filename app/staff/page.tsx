@@ -10,7 +10,9 @@ import { useAuth } from "@/lib/auth/auth-context"
 import { useBookings } from "@/lib/data/bookings-store"
 import { useTips } from "@/lib/data/tips-store"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { formatPrice, formatMassageType, staffMembers } from "@/lib/data/mock-data"
+import { staffMembers } from "@/lib/data/mock-data"
+import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
+import { toDateStr } from "@/lib/utils/time"
 import { StatusBadge, bookingStatusVariant } from "@/components/shared/status-badge"
 
 function formatDateDisplay(date: Date): string {
@@ -28,13 +30,6 @@ function formatDateDisplay(date: Date): string {
   return date.toLocaleDateString("en", { weekday: "short", month: "short", day: "numeric" })
 }
 
-function toDateString(date: Date): string {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, "0")
-  const d = String(date.getDate()).padStart(2, "0")
-  return `${y}-${m}-${d}`
-}
-
 export default function StaffSchedulePage() {
   const { user } = useAuth()
   const { t } = useLanguage()
@@ -45,7 +40,7 @@ export default function StaffSchedulePage() {
   const staffMember = staffMembers.find((s) => s.id === user?.id)
   const allBookings = useMemo(() => (user ? getBookingsForStaff(user.id) : []), [user, getBookingsForStaff])
 
-  const dateStr = toDateString(selectedDate)
+  const dateStr = toDateStr(selectedDate)
   const dayBookings = useMemo(
     () =>
       allBookings
@@ -54,7 +49,7 @@ export default function StaffSchedulePage() {
     [allBookings, dateStr]
   )
 
-  const todayStr = toDateString(new Date())
+  const todayStr = toDateStr(new Date())
   const todayBookings = useMemo(
     () => allBookings.filter((b) => b.date === todayStr && b.status !== "cancelled" && b.status !== "no-show"),
     [allBookings, todayStr]
@@ -62,7 +57,7 @@ export default function StaffSchedulePage() {
 
   const nextBooking = useMemo(() => {
     const now = new Date()
-    const nowStr = toDateString(now)
+    const nowStr = toDateStr(now)
     const nowTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`
     return allBookings
       .filter(

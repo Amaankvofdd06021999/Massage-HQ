@@ -5,9 +5,9 @@ import { ChevronLeft, Check, Circle, CreditCard } from "lucide-react"
 import { usePromotions } from "@/lib/data/promotions-store"
 import { useAuth } from "@/lib/auth/auth-context"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { formatMassageType, formatPrice } from "@/lib/data/mock-data"
-import { cn } from "@/lib/utils"
 import { customers } from "@/lib/data/mock-data"
+import { formatMassageType, formatPrice } from "@/lib/utils/formatters"
+import { cn } from "@/lib/utils"
 
 export default function MyPromotionsPage() {
   const router = useRouter()

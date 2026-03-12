@@ -15,7 +15,8 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { useBookings } from "@/lib/data/bookings-store"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { formatPrice, cancellationPolicy } from "@/lib/data/mock-data"
+import { cancellationPolicy } from "@/lib/data/mock-data"
+import { formatPrice } from "@/lib/utils/formatters"
 import { cn } from "@/lib/utils"
 import type { Booking } from "@/lib/types"
 

@@ -13,9 +13,10 @@ import { StatusBadge } from "@/components/shared/status-badge"
 import { PillButton, PillButtonRow } from "@/components/shared/pill-button"
 import { useLanguage } from "@/lib/i18n/language-context"
 import {
-  staffMembers, services, bookings, generateTimeSlots,
-  formatPrice, formatMassageType,
+  staffMembers, services, bookings,
 } from "@/lib/data/mock-data"
+import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
+import { generateTimeSlots } from "@/lib/utils/time"
 
 const highlightIcons: Record<HighlightIcon, typeof Star> = {
   massage: HandHeart,

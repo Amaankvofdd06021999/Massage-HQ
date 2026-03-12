@@ -7,7 +7,7 @@ import { useBookings } from "@/lib/data/bookings-store"
 import { usePromotions } from "@/lib/data/promotions-store"
 import { useAuth } from "@/lib/auth/auth-context"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { formatPrice } from "@/lib/data/mock-data"
+import { formatPrice } from "@/lib/utils/formatters"
 import { cn } from "@/lib/utils"
 import { TranslationChat } from "@/components/shared/translation-chat"
 
