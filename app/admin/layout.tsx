@@ -11,6 +11,7 @@ import {
 import { cn } from "@/lib/utils"
 import { ThemeProvider, useBrand } from "@/lib/theme/theme-provider"
 import { useAuth } from "@/lib/auth/auth-context"
+import { useShop } from "@/lib/shop/shop-context"
 import { useLanguage } from "@/lib/i18n/language-context"
 import type { Language } from "@/lib/i18n/translations"
 import { useState } from "react"
@@ -133,7 +134,7 @@ function AdminSidebar({ collapsed, setCollapsed }: { collapsed: boolean; setColl
                 onChange={(e) => setLanguage(e.target.value as Language)}
                 className="appearance-none w-full rounded-md border border-brand-border bg-brand-bg-tertiary pl-1.5 pr-5 py-0.5 text-[10px] font-semibold text-brand-text-primary outline-none focus:border-brand-primary/50 cursor-pointer"
               >
-                {(["en", "th", "ko", "ja", "de"] as const).map((code) => (
+                {(["en", "th", "ko", "ja", "de", "ru"] as const).map((code) => (
                   <option key={code} value={code}>{code.toUpperCase()}</option>
                 ))}
               </select>
@@ -144,7 +145,7 @@ function AdminSidebar({ collapsed, setCollapsed }: { collapsed: boolean; setColl
           <button
             type="button"
             onClick={() => {
-              const langs = ["en", "th", "ko", "ja", "de"] as const
+              const langs = ["en", "th", "ko", "ja", "de", "ru"] as const
               const idx = langs.indexOf(language)
               setLanguage(langs[(idx + 1) % langs.length])
             }}
@@ -286,7 +287,7 @@ function MobileHeader() {
                     onChange={(e) => setLanguage(e.target.value as Language)}
                     className="appearance-none w-full rounded-lg border border-brand-border bg-brand-bg-tertiary pl-2.5 pr-7 py-1 text-xs font-semibold text-brand-text-primary outline-none focus:border-brand-primary/50 cursor-pointer"
                   >
-                    {(["en", "th", "ko", "ja", "de"] as const).map((code) => (
+                    {(["en", "th", "ko", "ja", "de", "ru"] as const).map((code) => (
                       <option key={code} value={code}>{code.toUpperCase()}</option>
                     ))}
                   </select>
@@ -319,7 +320,12 @@ function MobileHeader() {
 function AdminLayoutInner({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false)
   const { user, isLoading } = useAuth()
+  const { isShopSelected } = useShop()
   const router = useRouter()
+
+  useEffect(() => {
+    if (!isShopSelected) router.replace("/shops")
+  }, [isShopSelected, router])
 
   useEffect(() => {
     if (!isLoading) {
@@ -329,10 +335,10 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
     }
   }, [user, isLoading, router])
 
-  if (isLoading || !user || user.role !== "manager") {
+  if (!isShopSelected || isLoading || !user || user.role !== "manager") {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-[#0A0A0F]">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#FACC15] border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     )
   }

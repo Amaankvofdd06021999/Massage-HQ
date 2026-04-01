@@ -4,7 +4,7 @@ import { Calendar, DollarSign, Users, Star } from "lucide-react"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, AreaChart, Area } from "recharts"
 import { StatusBadge, bookingStatusVariant } from "@/components/shared/status-badge"
 import { StaffAvatar } from "@/components/shared/staff-avatar"
-import { dashboardStats, bookings, staffMembers } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice } from "@/lib/utils/formatters"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { cn } from "@/lib/utils"
@@ -30,6 +30,7 @@ function StatCard({
 
 function TodayBookings() {
   const { t } = useLanguage()
+  const { bookings } = useShopData()
   const todayBookings = bookings.filter((b) => b.date === "2026-02-23")
 
   return (
@@ -64,6 +65,7 @@ function TodayBookings() {
 
 function WeeklyChart() {
   const { t } = useLanguage()
+  const { dashboardStats } = useShopData()
   return (
     <div className="rounded-2xl border border-brand-border bg-card p-4">
       <h2 className="text-sm font-semibold text-brand-text-primary">{t("weeklyRevenue")}</h2>
@@ -93,6 +95,7 @@ function WeeklyChart() {
 
 function MonthlyTrend() {
   const { t } = useLanguage()
+  const { dashboardStats } = useShopData()
   return (
     <div className="rounded-2xl border border-brand-border bg-card p-4">
       <h2 className="text-sm font-semibold text-brand-text-primary">{t("monthlyRevenueTrend")}</h2>
@@ -128,6 +131,7 @@ function MonthlyTrend() {
 
 function TopPerformers() {
   const { t } = useLanguage()
+  const { dashboardStats, staffMembers } = useShopData()
   return (
     <div className="rounded-2xl border border-brand-border bg-card p-4">
       <h2 className="text-sm font-semibold text-brand-text-primary">{t("topPerformers")}</h2>
@@ -158,6 +162,7 @@ function TopPerformers() {
 
 export default function AdminDashboard() {
   const { t } = useLanguage()
+  const { dashboardStats } = useShopData()
   return (
     <div>
       <h1 className="text-2xl font-bold text-brand-text-primary">{t("dashboard")}</h1>

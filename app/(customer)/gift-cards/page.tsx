@@ -129,13 +129,15 @@ export default function GiftCardsPage() {
   return (
     <div className="px-5 pb-24 pt-12">
       {/* Page header */}
-      <div className="flex items-center gap-2">
-        <Gift size={20} className="text-brand-primary" />
-        <h1 className="text-2xl font-bold text-brand-text-primary">{t("giftCards")}</h1>
+      <div className="pr-10">
+        <div className="flex items-center gap-2">
+          <Gift size={20} className="text-brand-primary" />
+          <h1 className="text-2xl font-bold text-brand-text-primary">{t("giftCards")}</h1>
+        </div>
+        <p className="mt-1 text-sm text-brand-text-secondary">
+          Send or redeem gift cards for massage sessions
+        </p>
       </div>
-      <p className="mt-1 text-sm text-brand-text-secondary">
-        Send or redeem gift cards for massage sessions
-      </p>
 
       {/* Tabs */}
       <Tabs defaultValue="buy" className="mt-5">

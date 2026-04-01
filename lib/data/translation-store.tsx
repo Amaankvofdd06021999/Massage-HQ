@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
 import type { TranslationMessage, ChatLanguage } from "@/lib/types"
 import { mockTranslate } from "./mock-data"
+import { useShop } from "@/lib/shop/shop-context"
 
 interface TranslationContextType {
   messages: TranslationMessage[]
@@ -13,17 +14,20 @@ interface TranslationContextType {
 
 const TranslationContext = createContext<TranslationContextType | null>(null)
 
-const STORAGE_KEY = "koko-translation-messages"
-
 export function TranslationProvider({ children }: { children: React.ReactNode }) {
+  const { shopId } = useShop()
+  const prefix = shopId ?? "koko"
+  const STORAGE_KEY = `${prefix}-translation-messages`
+
   const [messages, setMessages] = useState<TranslationMessage[]>([])
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
+    setReady(false)
     const stored = localStorage.getItem(STORAGE_KEY)
     setMessages(stored ? JSON.parse(stored) : [])
     setReady(true)
-  }, [])
+  }, [shopId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (ready) localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))

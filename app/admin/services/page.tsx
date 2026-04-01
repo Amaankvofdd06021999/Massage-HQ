@@ -76,7 +76,7 @@ export default function ServicesPage() {
           <p className="mt-0.5 text-sm text-brand-text-secondary">{t("massageTypes")}, {t("addOnsTab")}, {t("roomsBedsTab")}</p>
         </div>
         <button type="button" onClick={() => setModal(newButtonModal)}
-          className="flex items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-semibold text-[#0A0A0F] hover:opacity-90 transition-opacity">
+          className="flex items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity">
           <Plus size={16} /> {newButtonLabel}
         </button>
       </div>
@@ -91,10 +91,10 @@ export default function ServicesPage() {
           <button key={tabItem.id} type="button" onClick={() => setTab(tabItem.id)}
             className={cn(
               "flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition-colors",
-              tab === tabItem.id ? "bg-brand-primary text-[#0A0A0F]" : "text-brand-text-secondary hover:text-brand-text-primary"
+              tab === tabItem.id ? "bg-brand-primary text-primary-foreground" : "text-brand-text-secondary hover:text-brand-text-primary"
             )}>
             {tabItem.icon} {tabItem.label}
-            <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] font-semibold", tab === tabItem.id ? "bg-[#0A0A0F]/20" : "bg-brand-bg-tertiary")}>
+            <span className={cn("rounded-full px-1.5 py-0.5 text-[10px] font-semibold", tab === tabItem.id ? "bg-primary-foreground/20" : "bg-brand-bg-tertiary")}>
               {tabItem.count}
             </span>
           </button>

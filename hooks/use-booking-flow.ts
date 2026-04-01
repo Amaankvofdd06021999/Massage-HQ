@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo, useCallback } from "react"
-import { staffMembers, customers } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { generateTimeSlots } from "@/lib/utils/time"
 import { useServices } from "@/lib/data/services-store"
 import { useBookings } from "@/lib/data/bookings-store"
@@ -9,7 +9,7 @@ import { usePromotions } from "@/lib/data/promotions-store"
 import { useAuth } from "@/lib/auth/auth-context"
 import { useGiftCards } from "@/lib/data/giftcards-store"
 import { useLanguage } from "@/lib/i18n/language-context"
-import type { StaffMember, ServiceOption, MassageRoom, MassageType, HealthCondition, PainArea } from "@/lib/types"
+import type { StaffMember, ServiceOption, MassageRoom, MassageType, HealthCondition, PainArea, BookingGuestDraft, BookingGuest } from "@/lib/types"
 
 // ─── Recommendation Maps ────────────────────────────────────────────────────
 
@@ -55,6 +55,7 @@ export function useBookingFlow(preselectedService: string | null, preselectedSta
   const { hasActivePromotionForService } = usePromotions()
   const { getGiftCardsForCustomer } = useGiftCards()
   const { user } = useAuth()
+  const { staffMembers, customers } = useShopData()
 
   const activeServices = services.filter((s) => s.isActive)
   const activeRooms = getActiveRooms()
@@ -84,6 +85,8 @@ export function useBookingFlow(preselectedService: string | null, preselectedSta
   const [selectedRoom, setSelectedRoom] = useState<MassageRoom | null>(null)
   const [isBooked, setIsBooked] = useState(false)
   const [useGiftCard, setUseGiftCard] = useState(false)
+  const [isGroupBooking, setIsGroupBooking] = useState(false)
+  const [guests, setGuests] = useState<BookingGuestDraft[]>([])
 
   // ── Derived data ────────────────────────────────────────────────────────
 
@@ -141,6 +144,13 @@ export function useBookingFlow(preselectedService: string | null, preselectedSta
   const totalPrice = basePrice + addOnTotal
   const activePromo = user ? hasActivePromotionForService(user.id, selectedService?.type as MassageType) : null
 
+  const guestsTotalPrice = useMemo(
+    () => guests.reduce((sum, g) => sum + (g.price ?? 0), 0),
+    [guests]
+  )
+  const groupTotalPrice = totalPrice + guestsTotalPrice
+  const groupSize = 1 + guests.length
+
   // ── Handlers ────────────────────────────────────────────────────────────
 
   function toggleAddOn(id: string) {
@@ -153,6 +163,32 @@ export function useBookingFlow(preselectedService: string | null, preselectedSta
     setSelectedService(svc)
     setSelectedDuration(svc.durations[0].minutes)
     setSelectedAddOnIds([])
+  }
+
+  function toggleGroupBooking() {
+    setIsGroupBooking((prev) => {
+      if (prev) setGuests([])
+      return !prev
+    })
+  }
+
+  function addGuest() {
+    if (guests.length >= 2) return // max 2 guests (3 total)
+    setGuests((prev) => [...prev, { id: crypto.randomUUID(), name: "" }])
+  }
+
+  function removeGuest(id: string) {
+    setGuests((prev) => prev.filter((g) => g.id !== id))
+  }
+
+  function updateGuest(id: string, partial: Partial<BookingGuestDraft>) {
+    setGuests((prev) => prev.map((g) => g.id === id ? { ...g, ...partial } : g))
+  }
+
+  function getFilteredStaffForGuest(guestId: string): StaffMember[] {
+    const guest = guests.find((g) => g.id === guestId)
+    if (!guest?.serviceType) return staffMembers
+    return staffMembers.filter((s) => s.specialties.includes(guest.serviceType!))
   }
 
   const handleBook = useCallback(() => {
@@ -181,10 +217,24 @@ export function useBookingFlow(preselectedService: string | null, preselectedSta
       price: activePromo ? 0 : totalPrice,
       status: "pending",
       roomId: selectedRoom?.id,
+      guests: guests.length > 0 ? guests.map((g): BookingGuest => ({
+        id: g.id,
+        name: g.name,
+        serviceId: g.serviceId ?? selectedService!.id,
+        serviceName: g.serviceName ?? selectedService!.name,
+        serviceType: g.serviceType ?? selectedService!.type,
+        staffId: g.staffId ?? selectedStaff!.id,
+        staffName: g.staffName ?? selectedStaff!.name,
+        staffAvatar: g.staffAvatar ?? selectedStaff!.avatar,
+        duration: g.duration ?? selectedDuration!,
+        price: g.price ?? 0,
+        roomId: g.roomId,
+      })) : undefined,
+      groupSize: guests.length > 0 ? 1 + guests.length : undefined,
       promotionId: activePromo?.id,
     })
     setIsBooked(true)
-  }, [selectedService, selectedStaff, selectedTime, selectedDuration, selectedAddOns, selectedRoom, selectedDate, dates, totalPrice, user, createBooking, activePromo])
+  }, [selectedService, selectedStaff, selectedTime, selectedDuration, selectedAddOns, selectedRoom, selectedDate, dates, totalPrice, user, createBooking, activePromo, guests])
 
   return {
     // Step
@@ -219,6 +269,17 @@ export function useBookingFlow(preselectedService: string | null, preselectedSta
     activeRooms,
     recommendedTypes,
     giftCardBalance,
+    // Group booking
+    isGroupBooking,
+    guests,
+    groupSize,
+    guestsTotalPrice,
+    groupTotalPrice,
+    toggleGroupBooking,
+    addGuest,
+    removeGuest,
+    updateGuest,
+    getFilteredStaffForGuest,
     // Handlers
     toggleAddOn,
     handleServiceSelect,

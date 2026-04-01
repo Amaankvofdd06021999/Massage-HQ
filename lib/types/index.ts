@@ -34,7 +34,7 @@ export interface BrandConfig {
 
 // --- Staff / Therapist ---
 export type MassageType = "thai" | "swedish" | "deep-tissue" | "aromatherapy" | "hot-stone" | "sports" | "reflexology" | "shiatsu" | "foot"
-export type Language = "english" | "thai" | "mandarin" | "japanese" | "korean" | "german"
+export type Language = "english" | "thai" | "mandarin" | "japanese" | "korean" | "german" | "french" | "russian"
 export type DayOfWeek = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun"
 
 export interface StaffEducation {
@@ -143,6 +143,38 @@ export interface Booking {
   rejectionReason?: string
   approvedBy?: string
   approvedAt?: string
+  roomId?: string
+  guests?: BookingGuest[]
+  groupSize?: number
+}
+
+// --- Booking Guest (for group bookings) ---
+export interface BookingGuest {
+  id: string
+  name: string
+  serviceId: string
+  serviceName: string
+  serviceType: MassageType
+  staffId: string
+  staffName: string
+  staffAvatar: string
+  duration: number
+  price: number
+  roomId?: string
+}
+
+// Draft state during booking flow — fields populated progressively per step
+export interface BookingGuestDraft {
+  id: string
+  name: string
+  serviceId?: string
+  serviceName?: string
+  serviceType?: MassageType
+  duration?: number
+  price?: number
+  staffId?: string
+  staffName?: string
+  staffAvatar?: string
   roomId?: string
 }
 
@@ -450,7 +482,7 @@ export interface TipClaim {
 }
 
 // --- Translation Chat ---
-export type ChatLanguage = "english" | "thai" | "mandarin" | "japanese" | "korean" | "german"
+export type ChatLanguage = "english" | "thai" | "mandarin" | "japanese" | "korean" | "german" | "french" | "russian"
 
 export interface TranslationMessage {
   id: string

@@ -4,8 +4,25 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { Globe, Mic, Send, ArrowLeftRight, ChevronDown, MessageCircle } from "lucide-react"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { cn } from "@/lib/utils"
-import { translationPhrases, mockTranslate } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import type { ChatLanguage } from "@/lib/types"
+
+function translateWithPhrases(
+  text: string, fromLang: string, toLang: string,
+  phrases: Record<string, Record<string, string>>,
+): string {
+  if (fromLang === toLang) return text
+  const fromPhrases = phrases[fromLang]
+  const toPhrases = phrases[toLang]
+  if (fromPhrases && toPhrases) {
+    for (const [engKey, localText] of Object.entries(fromPhrases)) {
+      if (localText.toLowerCase() === text.toLowerCase()) {
+        return toPhrases[engKey] || text
+      }
+    }
+  }
+  return `[${toLang}] ${text}`
+}
 
 interface TranslationChatProps {
   bookingId: string
@@ -33,6 +50,8 @@ const LANG_FLAGS: Record<ChatLanguage, string> = {
   mandarin: "CN",
   korean: "KR",
   german: "DE",
+  french: "FR",
+  russian: "RU",
 }
 
 const LANG_LABELS: Record<ChatLanguage, string> = {
@@ -42,62 +61,64 @@ const LANG_LABELS: Record<ChatLanguage, string> = {
   mandarin: "中文",
   korean: "한국어",
   german: "Deutsch",
+  french: "Français",
+  russian: "Русский",
 }
 
-const ALL_LANGUAGES: ChatLanguage[] = ["english", "thai", "japanese", "mandarin", "korean", "german"]
+const ALL_LANGUAGES: ChatLanguage[] = ["english", "thai", "japanese", "mandarin", "korean", "german", "french", "russian"]
 
 // Quick phrases grouped by category
 const QUICK_PHRASES: Record<string, { key: string; phrases: Record<ChatLanguage, string> }[]> = {
   pressure: [
     {
       key: "more-pressure",
-      phrases: { english: "More pressure please", thai: "กดแรงขึ้นหน่อยค่ะ", japanese: "もっと強くお願いします", mandarin: "请加大力度", korean: "더 세게 해주세요", german: "Bitte mehr Druck" },
+      phrases: { english: "More pressure please", thai: "กดแรงขึ้นหน่อยค่ะ", japanese: "もっと強くお願いします", mandarin: "请加大力度", korean: "더 세게 해주세요", german: "Bitte mehr Druck", french: "Plus de pression s'il vous plaît", russian: "Пожалуйста, нажмите сильнее" },
     },
     {
       key: "less-pressure",
-      phrases: { english: "Less pressure please", thai: "กดเบาลงหน่อยค่ะ", japanese: "もう少し弱くお願いします", mandarin: "请轻一点", korean: "좀 더 약하게 해주세요", german: "Bitte weniger Druck" },
+      phrases: { english: "Less pressure please", thai: "กดเบาลงหน่อยค่ะ", japanese: "もう少し弱くお願いします", mandarin: "请轻一点", korean: "좀 더 약하게 해주세요", german: "Bitte weniger Druck", french: "Moins de pression s'il vous plaît", russian: "Пожалуйста, нажмите мягче" },
     },
   ],
   focus: [
     {
       key: "focus-shoulders",
-      phrases: { english: "Can you focus on my shoulders?", thai: "ช่วยเน้นที่ไหล่หน่อยได้ไหมคะ?", japanese: "肩を重点的にお願いします", mandarin: "可以重点按摩肩膀吗？", korean: "어깨 위주로 해주세요", german: "Können Sie sich auf meine Schultern konzentrieren?" },
+      phrases: { english: "Can you focus on my shoulders?", thai: "ช่วยเน้นที่ไหล่หน่อยได้ไหมคะ?", japanese: "肩を重点的にお願いします", mandarin: "可以重点按摩肩膀吗？", korean: "어깨 위주로 해주세요", german: "Können Sie sich auf meine Schultern konzentrieren?", french: "Pouvez-vous vous concentrer sur mes épaules ?", russian: "Можете сосредоточиться на плечах?" },
     },
     {
       key: "focus-back",
-      phrases: { english: "Can you focus on my back?", thai: "ช่วยเน้นที่หลังหน่อยได้ไหมคะ?", japanese: "背中を重点的にお願いします", mandarin: "可以重点按摩背部吗？", korean: "등 위주로 해주세요", german: "Können Sie sich auf meinen Rücken konzentrieren?" },
+      phrases: { english: "Can you focus on my back?", thai: "ช่วยเน้นที่หลังหน่อยได้ไหมคะ?", japanese: "背中を重点的にお願いします", mandarin: "可以重点按摩背部吗？", korean: "등 위주로 해주세요", german: "Können Sie sich auf meinen Rücken konzentrieren?", french: "Pouvez-vous vous concentrer sur mon dos ?", russian: "Можете сосредоточиться на спине?" },
     },
     {
       key: "pain-here",
-      phrases: { english: "I have pain here", thai: "เจ็บตรงนี้ค่ะ", japanese: "ここが痛いです", mandarin: "这里疼", korean: "여기가 아파요", german: "Hier habe ich Schmerzen" },
+      phrases: { english: "I have pain here", thai: "เจ็บตรงนี้ค่ะ", japanese: "ここが痛いです", mandarin: "这里疼", korean: "여기가 아파요", german: "Hier habe ich Schmerzen", french: "J'ai mal ici", russian: "Здесь болит" },
     },
   ],
   comfort: [
     {
       key: "feels-great",
-      phrases: { english: "That feels wonderful", thai: "รู้สึกดีมากค่ะ", japanese: "とても気持ちいいです", mandarin: "感觉太好了", korean: "너무 좋아요", german: "Das fühlt sich wunderbar an" },
+      phrases: { english: "That feels wonderful", thai: "รู้สึกดีมากค่ะ", japanese: "とても気持ちいいです", mandarin: "感觉太好了", korean: "너무 좋아요", german: "Das fühlt sich wunderbar an", french: "C'est merveilleux", russian: "Чудесные ощущения" },
     },
     {
       key: "too-cold",
-      phrases: { english: "The room is too cold", thai: "ห้องเย็นเกินไปค่ะ", japanese: "部屋が寒すぎます", mandarin: "房间太冷了", korean: "방이 너무 추워요", german: "Der Raum ist zu kalt" },
+      phrases: { english: "The room is too cold", thai: "ห้องเย็นเกินไปค่ะ", japanese: "部屋が寒すぎます", mandarin: "房间太冷了", korean: "방이 너무 추워요", german: "Der Raum ist zu kalt", french: "La pièce est trop froide", russian: "В комнате слишком холодно" },
     },
     {
       key: "water",
-      phrases: { english: "Can I have some water?", thai: "ขอน้ำหน่อยได้ไหมคะ?", japanese: "お水をいただけますか？", mandarin: "可以给我一杯水吗？", korean: "물 좀 주시겠어요?", german: "Kann ich etwas Wasser haben?" },
+      phrases: { english: "Can I have some water?", thai: "ขอน้ำหน่อยได้ไหมคะ?", japanese: "お水をいただけますか？", mandarin: "可以给我一杯水吗？", korean: "물 좀 주시겠어요?", german: "Kann ich etwas Wasser haben?", french: "Puis-je avoir de l'eau ?", russian: "Можно воды?" },
     },
   ],
   general: [
     {
       key: "thank-you",
-      phrases: { english: "Thank you", thai: "ขอบคุณค่ะ", japanese: "ありがとうございます", mandarin: "谢谢", korean: "감사합니다", german: "Danke schön" },
+      phrases: { english: "Thank you", thai: "ขอบคุณค่ะ", japanese: "ありがとうございます", mandarin: "谢谢", korean: "감사합니다", german: "Danke schön", french: "Merci beaucoup", russian: "Спасибо" },
     },
     {
       key: "time-left",
-      phrases: { english: "How much time is left?", thai: "เหลือเวลาอีกเท่าไหร่คะ?", japanese: "残り時間はどのくらいですか？", mandarin: "还剩多少时间？", korean: "시간이 얼마나 남았나요?", german: "Wie viel Zeit ist noch übrig?" },
+      phrases: { english: "How much time is left?", thai: "เหลือเวลาอีกเท่าไหร่คะ?", japanese: "残り時間はどのくらいですか？", mandarin: "还剩多少时间？", korean: "시간이 얼마나 남았나요?", german: "Wie viel Zeit ist noch übrig?", french: "Combien de temps reste-t-il ?", russian: "Сколько времени осталось?" },
     },
     {
       key: "need-break",
-      phrases: { english: "I need a break", thai: "ขอพักหน่อยค่ะ", japanese: "少し休憩をください", mandarin: "我需要休息一下", korean: "잠깐 쉬어야 해요", german: "Ich brauche eine Pause" },
+      phrases: { english: "I need a break", thai: "ขอพักหน่อยค่ะ", japanese: "少し休憩をください", mandarin: "我需要休息一下", korean: "잠깐 쉬어야 해요", german: "Ich brauche eine Pause", french: "J'ai besoin d'une pause", russian: "Мне нужен перерыв" },
     },
   ],
 }
@@ -158,10 +179,29 @@ const THERAPIST_REPLIES: Record<string, string[]> = {
     "Kein Problem.",
     "Ist die Temperatur angenehm?",
   ],
+  french: [
+    "Bien sûr, je vais ajuster la pression.",
+    "Comment vous sentez-vous maintenant ?",
+    "N'hésitez pas si vous avez besoin de quoi que ce soit.",
+    "Il reste environ 30 minutes.",
+    "Je vais me concentrer sur cette zone.",
+    "Bien sûr, aucun problème.",
+    "La température est-elle confortable ?",
+  ],
+  russian: [
+    "Конечно, я отрегулирую давление.",
+    "Как вы себя чувствуете сейчас?",
+    "Дайте знать, если вам что-нибудь нужно.",
+    "Осталось примерно 30 минут.",
+    "Сосредоточусь на этой области.",
+    "Конечно, без проблем.",
+    "Вам комфортна температура?",
+  ],
 }
 
 export function TranslationChat({ bookingId, userRole, userId, userName, alwaysOpen }: TranslationChatProps) {
   const { t } = useLanguage()
+  const { translationPhrases } = useShopData()
   const [myLang, setMyLang] = useState<ChatLanguage>("english")
   const [theirLang, setTheirLang] = useState<ChatLanguage>("thai")
   const [input, setInput] = useState("")
@@ -198,7 +238,7 @@ export function TranslationChat({ bookingId, userRole, userId, userName, alwaysO
   const sendMessageText = useCallback((text: string) => {
     if (!text.trim()) return
 
-    const translated = mockTranslate(text.trim(), myLang, theirLang)
+    const translated = translateWithPhrases(text.trim(), myLang, theirLang, translationPhrases)
     const newMsg: ChatMessage = {
       id: `msg-${Date.now()}`,
       senderRole: userRole,
@@ -219,7 +259,7 @@ export function TranslationChat({ bookingId, userRole, userId, userName, alwaysO
     const otherName = userRole === "customer" ? "Therapist" : "Customer"
     const replies = THERAPIST_REPLIES[theirLang] || THERAPIST_REPLIES.english
     const randomReply = replies[Math.floor(Math.random() * replies.length)]
-    const replyTranslated = mockTranslate(randomReply, theirLang, myLang)
+    const replyTranslated = translateWithPhrases(randomReply, theirLang, myLang, translationPhrases)
 
     setTimeout(() => {
       const reply: ChatMessage = {
@@ -234,7 +274,7 @@ export function TranslationChat({ bookingId, userRole, userId, userName, alwaysO
       }
       setMessages((prev) => [...prev, reply])
     }, 1500)
-  }, [myLang, theirLang, userRole, userName])
+  }, [myLang, theirLang, userRole, userName, translationPhrases])
 
   const handleSend = useCallback(() => {
     sendMessageText(input)

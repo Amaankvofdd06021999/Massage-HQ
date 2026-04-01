@@ -1,12 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import { Check, Clock, Calendar, CreditCard, Package, DoorOpen, Clock3, Gift, Wallet } from "lucide-react"
+import { Check, Clock, Calendar, CreditCard, Package, DoorOpen, Clock3, Gift, Wallet, Users } from "lucide-react"
 import { StaffAvatar } from "@/components/shared/staff-avatar"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { formatPrice } from "@/lib/utils/formatters"
 import { cn } from "@/lib/utils"
-import type { StaffMember, ServiceOption, MassageRoom, ServiceAddOn } from "@/lib/types"
+import type { StaffMember, ServiceOption, MassageRoom, ServiceAddOn, BookingGuestDraft } from "@/lib/types"
 
 interface DateInfo {
   label: string
@@ -32,6 +32,10 @@ interface ConfirmationStepProps {
   useGiftCard: boolean
   onToggleGiftCard: () => void
   isBooked: boolean
+  isGroupBooking: boolean
+  guests: BookingGuestDraft[]
+  guestsTotalPrice: number
+  groupTotalPrice: number
 }
 
 export function ConfirmationStep({
@@ -51,6 +55,10 @@ export function ConfirmationStep({
   useGiftCard,
   onToggleGiftCard,
   isBooked,
+  isGroupBooking,
+  guests,
+  guestsTotalPrice,
+  groupTotalPrice,
 }: ConfirmationStepProps) {
   const { t } = useLanguage()
 
@@ -66,6 +74,11 @@ export function ConfirmationStep({
           {dates[selectedDate].label} {t("confirmedAt")} {selectedTime}
           {selectedRoom ? ` ${t("confirmedIn")} ${selectedRoom.name}` : ""}.
         </p>
+        {isGroupBooking && guests.length > 0 && (
+          <p className="mt-2 text-sm text-brand-text-secondary">
+            {t("bookingForGroup")} {1 + guests.length} {t("people")}
+          </p>
+        )}
         {selectedAddOns.length > 0 && (
           <p className="mt-1 text-xs text-brand-text-tertiary">
             + {selectedAddOns.map((a) => a.name).join(", ")}
@@ -91,7 +104,7 @@ export function ConfirmationStep({
         </p>
         <Link
           href="/bookings"
-          className="mt-8 inline-flex w-full max-w-xs items-center justify-center gap-2 rounded-full bg-brand-yellow px-8 py-3.5 text-sm font-bold text-black"
+          className="mt-8 inline-flex w-full max-w-xs items-center justify-center gap-2 rounded-full bg-brand-yellow px-8 py-3.5 text-sm font-bold text-primary-foreground"
         >
           {t("viewMyBookings")}
         </Link>
@@ -232,6 +245,30 @@ export function ConfirmationStep({
               </span>
             </div>
           </div>
+
+          {/* Guest line items */}
+          {isGroupBooking && guests.length > 0 && (
+            <div className="border-t border-brand-border pt-3 mt-3">
+              <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-brand-text-secondary">
+                <Users size={13} /> {t("guestsLabel")} ({guests.length})
+              </p>
+              {guests.map((guest) => (
+                <div key={guest.id} className="flex items-center justify-between text-sm py-1">
+                  <div>
+                    <span className="text-brand-text-primary font-medium">{guest.name || "Guest"}</span>
+                    <span className="text-brand-text-tertiary text-xs ml-2">
+                      {guest.serviceName} · {guest.duration} {t("minutes")} · {guest.staffName}
+                    </span>
+                  </div>
+                  <span className="font-medium text-brand-text-primary">{formatPrice(guest.price ?? 0)}</span>
+                </div>
+              ))}
+              <div className="flex items-center justify-between pt-2 mt-1 border-t border-brand-border">
+                <span className="font-semibold text-brand-text-primary">{t("groupTotal")}</span>
+                <span className="text-lg font-bold text-brand-primary">{formatPrice(groupTotalPrice)}</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import { PillButton, PillButtonRow } from "@/components/shared/pill-button"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { ROOM_TYPE_COLORS } from "@/lib/constants"
 import { cn } from "@/lib/utils"
-import type { StaffMember, MassageRoom, RoomType, TimeSlot } from "@/lib/types"
+import type { StaffMember, MassageRoom, RoomType, TimeSlot, BookingGuestDraft } from "@/lib/types"
 
 interface DateInfo {
   label: string
@@ -25,6 +25,9 @@ interface DateTimeStepProps {
   onSelectDate: (index: number) => void
   onSelectTime: (time: string | null) => void
   onSelectRoom: (room: MassageRoom | null) => void
+  isGroupBooking: boolean
+  guests: BookingGuestDraft[]
+  onUpdateGuest: (id: string, partial: Partial<BookingGuestDraft>) => void
 }
 
 export function DateTimeStep({
@@ -38,6 +41,9 @@ export function DateTimeStep({
   onSelectDate,
   onSelectTime,
   onSelectRoom,
+  isGroupBooking,
+  guests,
+  onUpdateGuest,
 }: DateTimeStepProps) {
   const { t } = useLanguage()
 
@@ -126,6 +132,38 @@ export function DateTimeStep({
               </button>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Per-guest room assignment */}
+      {isGroupBooking && guests.length > 0 && activeRooms.length > 0 && (
+        <div className="mt-4 space-y-3">
+          {guests.map((guest) => (
+            <div key={guest.id}>
+              <p className="text-xs font-semibold text-brand-text-secondary mb-2">
+                {t("roomFor")} {guest.name || "Guest"}
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                {activeRooms.map((room) => (
+                  <button
+                    key={room.id}
+                    type="button"
+                    onClick={() => onUpdateGuest(guest.id, {
+                      roomId: guest.roomId === room.id ? undefined : room.id,
+                    })}
+                    className={cn(
+                      "rounded-xl border p-2.5 text-center text-xs transition-all",
+                      guest.roomId === room.id
+                        ? "border-brand-primary bg-brand-primary/10 text-brand-primary font-medium"
+                        : "border-brand-border bg-card text-brand-text-secondary"
+                    )}
+                  >
+                    {room.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

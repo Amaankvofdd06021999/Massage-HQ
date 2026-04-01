@@ -8,7 +8,7 @@ import { PillButton, PillButtonRow } from "@/components/shared/pill-button"
 import { StaffAvatar } from "@/components/shared/staff-avatar"
 import { RatingDisplay } from "@/components/shared/rating-stars"
 import { StatusBadge } from "@/components/shared/status-badge"
-import { staffMembers } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
 import { useLanguage } from "@/lib/i18n/language-context"
 import type { MassageType } from "@/lib/types"
@@ -17,6 +17,7 @@ type SortOption = "rating" | "price-low" | "price-high" | "experience"
 
 export default function StaffPage() {
   const { t } = useLanguage()
+  const { staffMembers } = useShopData()
   const [search, setSearch] = useState("")
   const [typeFilter, setTypeFilter] = useState<MassageType | "all">("all")
   const [sort, setSort] = useState<SortOption>("rating")
@@ -77,8 +78,10 @@ export default function StaffPage() {
 
   return (
     <div className="px-5 pb-24 pt-12">
-      <h1 className="text-2xl font-bold text-brand-text-primary">{t("ourTherapists")}</h1>
-      <p className="mt-1 text-sm text-brand-text-secondary">{staffMembers.length} {t("expertTherapists")}</p>
+      <div className="pr-10">
+        <h1 className="text-2xl font-bold text-brand-text-primary">{t("ourTherapists")}</h1>
+        <p className="mt-1 text-sm text-brand-text-secondary">{staffMembers.length} {t("expertTherapists")}</p>
+      </div>
 
       <SearchBar
         value={search}

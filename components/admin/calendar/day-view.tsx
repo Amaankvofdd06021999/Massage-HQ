@@ -1,7 +1,7 @@
 "use client"
 
 import { StaffAvatar } from "@/components/shared/staff-avatar"
-import { staffMembers } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice } from "@/lib/utils/formatters"
 import { STATUS_STYLES } from "@/lib/constants"
 import { cn } from "@/lib/utils"
@@ -17,6 +17,8 @@ interface DayViewProps {
 }
 
 export function DayView({ dayBookings, currentDate, t }: DayViewProps) {
+  const { staffMembers } = useShopData()
+
   return (
     <>
       <div className="mt-5 overflow-x-auto rounded-2xl border border-brand-border">

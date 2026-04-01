@@ -12,9 +12,7 @@ import { RatingStars, RatingDisplay } from "@/components/shared/rating-stars"
 import { StatusBadge } from "@/components/shared/status-badge"
 import { PillButton, PillButtonRow } from "@/components/shared/pill-button"
 import { useLanguage } from "@/lib/i18n/language-context"
-import {
-  staffMembers, services, bookings,
-} from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
 import { generateTimeSlots } from "@/lib/utils/time"
 
@@ -32,6 +30,7 @@ const highlightIcons: Record<HighlightIcon, typeof Star> = {
 export default function StaffProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const { t } = useLanguage()
+  const { staffMembers, services, bookings } = useShopData()
   const staff = staffMembers.find((s) => s.id === id)
   const [selectedDate, setSelectedDate] = useState(0)
 

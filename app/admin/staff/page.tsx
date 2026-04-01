@@ -6,10 +6,7 @@ import { StaffAvatar } from "@/components/shared/staff-avatar"
 import { RatingDisplay } from "@/components/shared/rating-stars"
 import { StatusBadge } from "@/components/shared/status-badge"
 import { SearchBar } from "@/components/shared/search-bar"
-import {
-  staffMembers, getBookingsForStaff,
-  staffBlockedDates, getBlockedDatesForStaff,
-} from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { cn } from "@/lib/utils"
@@ -29,10 +26,11 @@ function AvailabilityModal({
   onClose: () => void
 }) {
   const { t } = useLanguage()
+  const { staffBlockedDates } = useShopData()
 
-  // Local state for blocked dates (starts from mock data)
+  // Local state for blocked dates (starts from shop-specific data)
   const [blocked, setBlocked] = useState<StaffBlockedDate[]>(
-    getBlockedDatesForStaff(staff.id)
+    staffBlockedDates.filter((b) => b.staffId === staff.id)
   )
 
   // Form state for adding a new block
@@ -254,11 +252,16 @@ function AvailabilityModal({
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function AdminStaffPage() {
   const { t } = useLanguage()
+  const { staffMembers, bookings, staffBlockedDates } = useShopData()
   const [search, setSearch] = useState("")
-  const [availability, setAvailability] = useState<Record<string, boolean>>(
-    Object.fromEntries(staffMembers.map((s) => [s.id, s.isAvailableToday]))
-  )
+  const [availability, setAvailability] = useState<Record<string, boolean>>({})
   const [calendarStaff, setCalendarStaff] = useState<StaffMember | null>(null)
+
+  // Initialize availability from staff data
+  const effectiveAvailability = staffMembers.reduce((acc, s) => {
+    acc[s.id] = availability[s.id] ?? s.isAvailableToday
+    return acc
+  }, {} as Record<string, boolean>)
 
   const filtered = search
     ? staffMembers.filter(
@@ -274,7 +277,7 @@ export default function AdminStaffPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-brand-text-primary">{t("staffManagement")}</h1>
-            <p className="mt-1 text-sm text-brand-text-secondary">{staffMembers.length} {t("therapistsCount")}</p>
+            <p className="mt-1 text-sm text-brand-text-secondary">{filtered.length} {t("therapistsCount")}</p>
           </div>
           <button
             type="button"
@@ -289,9 +292,9 @@ export default function AdminStaffPage() {
 
         <div className="mt-5 grid gap-4 lg:grid-cols-2">
           {filtered.map((staff) => {
-            const staffBookings = getBookingsForStaff(staff.id)
+            const staffBookings = bookings.filter((b) => b.staffId === staff.id)
             const completedBookings = staffBookings.filter((b) => b.status === "completed")
-            const isAvailable = availability[staff.id]
+            const isAvailable = effectiveAvailability[staff.id]
             const blockedCount = staffBlockedDates.filter((b) => b.staffId === staff.id).length
 
             return (

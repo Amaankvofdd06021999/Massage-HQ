@@ -5,7 +5,7 @@ import { ChevronLeft, Check, Circle, CreditCard } from "lucide-react"
 import { usePromotions } from "@/lib/data/promotions-store"
 import { useAuth } from "@/lib/auth/auth-context"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { customers } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatMassageType, formatPrice } from "@/lib/utils/formatters"
 import { cn } from "@/lib/utils"
 
@@ -14,6 +14,7 @@ export default function MyPromotionsPage() {
   const { t } = useLanguage()
   const { user } = useAuth()
   const { getPromotionsForCustomer } = usePromotions()
+  const { customers } = useShopData()
 
   if (!user) return null
 

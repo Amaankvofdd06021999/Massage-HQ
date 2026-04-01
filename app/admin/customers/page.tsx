@@ -4,7 +4,7 @@ import { useState } from "react"
 import { SearchBar } from "@/components/shared/search-bar"
 import { StatusBadge } from "@/components/shared/status-badge"
 import { ClientNotesPanel } from "@/components/admin/client-notes-panel"
-import { customers } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { usePromotions } from "@/lib/data/promotions-store"
@@ -15,6 +15,7 @@ import type { Customer } from "@/lib/types"
 
 export default function AdminCustomersPage() {
   const { t } = useLanguage()
+  const { customers } = useShopData()
   const [search, setSearch] = useState("")
   const [notesCustomer, setNotesCustomer] = useState<Customer | null>(null)
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)

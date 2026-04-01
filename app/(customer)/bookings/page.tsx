@@ -6,7 +6,7 @@ import { BookingCard } from "@/components/shared/booking-card"
 import { PackageSessionTracker } from "@/components/shared/package-session-tracker"
 import { PillButton, PillButtonRow } from "@/components/shared/pill-button"
 import { useBookings } from "@/lib/data/bookings-store"
-import { promotions, promoSessionUsages } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice } from "@/lib/utils/formatters"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { useAuth } from "@/lib/auth/auth-context"
@@ -17,6 +17,7 @@ export default function BookingsPage() {
   const { t } = useLanguage()
   const { user } = useAuth()
   const { bookings } = useBookings()
+  const { promotions, promoSessionUsages } = useShopData()
   const [tab, setTab] = useState<Tab>("upcoming")
 
   // Sort: in-progress first, then by date ascending (soonest first)
@@ -38,7 +39,7 @@ export default function BookingsPage() {
 
   return (
     <div className="px-5 pb-24 pt-12">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 pr-10">
         <Calendar size={20} className="text-brand-primary" />
         <h1 className="text-2xl font-bold text-brand-text-primary">{t("myBookings")}</h1>
       </div>

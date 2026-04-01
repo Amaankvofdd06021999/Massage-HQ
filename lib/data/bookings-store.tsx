@@ -6,19 +6,8 @@ import {
 import type {
   Booking, CancellationRecord, CancellationPolicy, BookingReminder, LateArrivalClaim,
 } from "@/lib/types"
-import {
-  bookings as SEED_BOOKINGS,
-  cancellationPolicy as SEED_POLICY,
-  cancellationRecords as SEED_CANCELLATIONS,
-  bookingReminders as SEED_REMINDERS,
-  lateArrivalClaims as SEED_CLAIMS,
-} from "@/lib/data/mock-data"
-
-// ─── Storage keys ────────────────────────────────────────────────────────────
-const BOOKINGS_KEY = "koko-bookings"
-const CANCELLATIONS_KEY = "koko-cancellations"
-const REMINDERS_KEY = "koko-reminders"
-const CLAIMS_KEY = "koko-claims"
+import { getSeedsForShop } from "@/lib/data/seeds"
+import { useShop } from "@/lib/shop/shop-context"
 
 // ─── Context ─────────────────────────────────────────────────────────────────
 interface BookingsContextType {
@@ -64,19 +53,30 @@ function save<T>(key: string, value: T) {
 
 // ─── Provider ────────────────────────────────────────────────────────────────
 export function BookingsProvider({ children }: { children: ReactNode }) {
-  const [bookings, setBookings] = useState<Booking[]>(SEED_BOOKINGS)
-  const [cancellations, setCancellations] = useState<CancellationRecord[]>(SEED_CANCELLATIONS)
-  const [reminders, setReminders] = useState<BookingReminder[]>(SEED_REMINDERS)
-  const [claims, setClaims] = useState<LateArrivalClaim[]>(SEED_CLAIMS)
+  const { shopId } = useShop()
+  const prefix = shopId ?? "koko"
+  const BOOKINGS_KEY = `${prefix}-bookings`
+  const CANCELLATIONS_KEY = `${prefix}-cancellations`
+  const REMINDERS_KEY = `${prefix}-reminders`
+  const CLAIMS_KEY = `${prefix}-claims`
+
+  const [bookings, setBookings] = useState<Booking[]>([])
+  const [cancellations, setCancellations] = useState<CancellationRecord[]>([])
+  const [policy, setPolicy] = useState<CancellationPolicy>({ id: "cp-default", name: "Standard", freeWindowHours: 24, lateCancelFeePercent: 50, noShowFeePercent: 100, staffCompensationPercent: 30, isActive: true })
+  const [reminders, setReminders] = useState<BookingReminder[]>([])
+  const [claims, setClaims] = useState<LateArrivalClaim[]>([])
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    setBookings(load(BOOKINGS_KEY, SEED_BOOKINGS))
-    setCancellations(load(CANCELLATIONS_KEY, SEED_CANCELLATIONS))
-    setReminders(load(REMINDERS_KEY, SEED_REMINDERS))
-    setClaims(load(CLAIMS_KEY, SEED_CLAIMS))
+    setReady(false)
+    const seeds = getSeedsForShop(prefix)
+    setBookings(load(BOOKINGS_KEY, seeds.bookings))
+    setCancellations(load(CANCELLATIONS_KEY, seeds.cancellationRecords))
+    setPolicy(seeds.cancellationPolicy)
+    setReminders(load(REMINDERS_KEY, seeds.bookingReminders))
+    setClaims(load(CLAIMS_KEY, seeds.lateArrivalClaims))
     setReady(true)
-  }, [])
+  }, [shopId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { if (ready) save(BOOKINGS_KEY, bookings) }, [bookings, ready])
   useEffect(() => { if (ready) save(CANCELLATIONS_KEY, cancellations) }, [cancellations, ready])
@@ -104,10 +104,10 @@ export function BookingsProvider({ children }: { children: ReactNode }) {
     const now = new Date()
     const bookingStart = new Date(`${booking.date}T${booking.startTime}:00`)
     const hoursUntil = (bookingStart.getTime() - now.getTime()) / (1000 * 60 * 60)
-    const isLate = hoursUntil < SEED_POLICY.freeWindowHours
+    const isLate = hoursUntil < policy.freeWindowHours
 
-    const fee = isLate ? Math.round(booking.price * SEED_POLICY.lateCancelFeePercent / 100) : 0
-    const staffComp = isLate ? Math.round(fee * SEED_POLICY.staffCompensationPercent / 100) : 0
+    const fee = isLate ? Math.round(booking.price * policy.lateCancelFeePercent / 100) : 0
+    const staffComp = isLate ? Math.round(fee * policy.staffCompensationPercent / 100) : 0
 
     const record: CancellationRecord = {
       id: genId("cr"),
@@ -126,7 +126,7 @@ export function BookingsProvider({ children }: { children: ReactNode }) {
       prev.map((b) => (b.id === id ? { ...b, status: "cancelled" as const, cancellationFee: fee } : b))
     )
     return record
-  }, [bookings])
+  }, [bookings, policy])
 
   const approveBooking = useCallback((id: string, approvedBy?: string) => {
     setBookings((prev) =>
@@ -236,7 +236,7 @@ export function BookingsProvider({ children }: { children: ReactNode }) {
   return (
     <BookingsContext.Provider
       value={{
-        bookings, cancellations, cancellationPolicy: SEED_POLICY,
+        bookings, cancellations, cancellationPolicy: policy,
         reminders, lateArrivalClaims: claims,
         updateBooking, cancelBooking, createBooking, approveBooking, rejectBooking,
         sendReminder, submitLateArrivalClaim, resolveLateArrivalClaim,

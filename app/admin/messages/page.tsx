@@ -6,12 +6,13 @@ import { StaffAvatar } from "@/components/shared/staff-avatar"
 import { Button } from "@/components/ui/button"
 import { useMessages } from "@/lib/data/messages-store"
 import { useAuth } from "@/lib/auth/auth-context"
-import { staffMembers } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { cn } from "@/lib/utils"
 
 export default function AdminMessagesPage() {
   const { t } = useLanguage()
+  const { staffMembers } = useShopData()
   const { user } = useAuth()
   const {
     getConversation, sendMessage, markConversationRead, getConversationPartners,

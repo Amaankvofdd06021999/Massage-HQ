@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { StatusBadge, bookingStatusVariant } from "@/components/shared/status-badge"
 import { StaffAvatar } from "@/components/shared/staff-avatar"
 import { useBookings } from "@/lib/data/bookings-store"
-import { customers } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
 import { cn } from "@/lib/utils"
 import {
@@ -31,6 +31,7 @@ export function BookingDetailSheet({
   onViewNotes?: (customerId: string, customerName: string) => void
 }) {
   const { cancellations, lateArrivalClaims, cancelBooking, approveBooking, rejectBooking } = useBookings()
+  const { customers } = useShopData()
   const [cancelConfirm, setCancelConfirm] = useState(false)
 
   if (!booking) return null

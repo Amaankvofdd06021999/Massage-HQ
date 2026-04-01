@@ -11,7 +11,7 @@ import { useAuth } from "@/lib/auth/auth-context"
 import { useBookings } from "@/lib/data/bookings-store"
 import { useNotes } from "@/lib/data/notes-store"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { customers } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
 import { BookingCard } from "@/components/shared/booking-card"
 import { RatingStars } from "@/components/shared/rating-stars"
@@ -36,6 +36,7 @@ export default function StaffClientDetailPage() {
   const { t } = useLanguage()
   const { getBookingsForStaff } = useBookings()
   const { getNotesForCustomer, getPinnedNotes, addNote } = useNotes()
+  const { customers } = useShopData()
 
   const [activeTab, setActiveTab] = useState<TabKey>("bookings")
   const [newNoteContent, setNewNoteContent] = useState("")

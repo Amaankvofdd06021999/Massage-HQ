@@ -11,9 +11,11 @@ import { TipsProvider } from "@/lib/data/tips-store"
 import { TranslationProvider } from "@/lib/data/translation-store"
 import { MessagesProvider } from "@/lib/data/messages-store"
 import { LanguageProvider } from "@/lib/i18n/language-context"
+import { ShopProvider } from "@/lib/shop/shop-context"
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
+    <ShopProvider>
     <LanguageProvider>
       <AuthProvider>
         <ServicesProvider>
@@ -37,5 +39,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
         </ServicesProvider>
       </AuthProvider>
     </LanguageProvider>
+    </ShopProvider>
   )
 }

@@ -7,7 +7,7 @@ import {
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth/auth-context"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { staffMembers, getBlockedDatesForStaff } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import type { DayOfWeek, StaffBlockedDate } from "@/lib/types"
 
 const dayLabels: Record<DayOfWeek, string> = {
@@ -31,11 +31,12 @@ const reasonConfig = {
 export default function StaffAvailabilityPage() {
   const { user } = useAuth()
   const { t } = useLanguage()
+  const { staffMembers, staffBlockedDates } = useShopData()
 
   const staffMember = staffMembers.find((s) => s.id === user?.id)
   const blockedDates = useMemo(
-    () => (user ? getBlockedDatesForStaff(user.id) : []),
-    [user]
+    () => (user ? staffBlockedDates.filter((b) => b.staffId === user.id) : []),
+    [user, staffBlockedDates]
   )
 
   // Local state for added blocks (UI only, not persisted)

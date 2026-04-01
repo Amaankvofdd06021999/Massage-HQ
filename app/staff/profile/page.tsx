@@ -12,7 +12,7 @@ import { useBookings } from "@/lib/data/bookings-store"
 import { useLanguage } from "@/lib/i18n/language-context"
 import type { Language } from "@/lib/i18n/translations"
 import { useBrand } from "@/lib/theme/theme-provider"
-import { staffMembers } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
 import { RatingStars, RatingDisplay } from "@/components/shared/rating-stars"
 import Image from "next/image"
@@ -22,6 +22,7 @@ export default function StaffProfilePage() {
   const { t, language, setLanguage } = useLanguage()
   const { brandConfig } = useBrand()
   const { getBookingsForStaff } = useBookings()
+  const { staffMembers } = useShopData()
   const router = useRouter()
 
   const staffMember = staffMembers.find((s) => s.id === user?.id)
@@ -224,6 +225,7 @@ export default function StaffProfilePage() {
                   { code: "ko" as const, label: "한국어" },
                   { code: "ja" as const, label: "日本語" },
                   { code: "de" as const, label: "Deutsch" },
+                  { code: "ru" as const, label: "Русский" },
                 ]).map((lang) => (
                   <option key={lang.code} value={lang.code}>
                     {lang.label}

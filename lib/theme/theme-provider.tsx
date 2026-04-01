@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react"
 import type { BrandConfig } from "@/lib/types"
 import { kokoDarkBrandConfig, kokoLightBrandConfig, brandConfigToCSSVars } from "./brand-config"
+import { useShop } from "@/lib/shop/shop-context"
 
 export type ThemeMode = "dark" | "light"
 
@@ -26,24 +27,30 @@ function applyThemeToDOM(config: BrandConfig, mode: ThemeMode) {
 }
 
 export function ThemeProvider({ children, initialConfig }: { children: ReactNode; initialConfig?: BrandConfig }) {
+  const { shopConfig } = useShop()
+  const baseBrand = shopConfig?.brand ?? kokoDarkBrandConfig
+  const lightBrand = shopConfig?.lightBrand ?? kokoLightBrandConfig
+
   const [mode, setMode] = useState<ThemeMode>("dark")
   const [brandConfig, setBrandConfig] = useState<BrandConfig>(
     initialConfig ?? kokoDarkBrandConfig
   )
 
-  // Restore saved mode from localStorage on first mount
+  // Re-apply brand when shop changes or on mount
+  // eslint-disable-line: initialConfig intentionally excluded — it's a one-time prop
   useEffect(() => {
     try {
       const saved = localStorage.getItem("koko-theme-mode") as ThemeMode | null
       if (saved === "light" || saved === "dark") {
-        const baseConfig = saved === "light" ? kokoLightBrandConfig : kokoDarkBrandConfig
         setMode(saved)
-        setBrandConfig(initialConfig ?? baseConfig)
+        setBrandConfig(initialConfig ?? (saved === "light" ? lightBrand : baseBrand))
+      } else {
+        setBrandConfig(initialConfig ?? baseBrand)
       }
     } catch {
-      // localStorage unavailable (private browsing, SSR)
+      setBrandConfig(initialConfig ?? baseBrand)
     }
-  }, [initialConfig])
+  }, [baseBrand, lightBrand]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     applyThemeToDOM(brandConfig, mode)
@@ -53,18 +60,18 @@ export function ThemeProvider({ children, initialConfig }: { children: ReactNode
     setMode((prev) => {
       const next: ThemeMode = prev === "dark" ? "light" : "dark"
       try { localStorage.setItem("koko-theme-mode", next) } catch { /* ignore */ }
-      setBrandConfig(next === "light" ? kokoLightBrandConfig : kokoDarkBrandConfig)
+      setBrandConfig(next === "light" ? lightBrand : baseBrand)
       return next
     })
-  }, [])
+  }, [baseBrand, lightBrand])
 
   const updateBrandConfig = useCallback((partial: Partial<BrandConfig>) => {
     setBrandConfig((prev) => ({ ...prev, ...partial }))
   }, [])
 
   const resetBrandConfig = useCallback(() => {
-    setBrandConfig(mode === "light" ? kokoLightBrandConfig : kokoDarkBrandConfig)
-  }, [mode])
+    setBrandConfig(mode === "light" ? lightBrand : baseBrand)
+  }, [mode, baseBrand, lightBrand])
 
   return (
     <ThemeContext.Provider value={{ brandConfig, mode, updateBrandConfig, resetBrandConfig, toggleMode }}>

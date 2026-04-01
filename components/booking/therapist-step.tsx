@@ -8,13 +8,18 @@ import { StaffReviewsDialog } from "@/components/shared/staff-reviews-dialog"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
 import { cn } from "@/lib/utils"
-import type { StaffMember, ServiceOption } from "@/lib/types"
+import type { StaffMember, ServiceOption, BookingGuestDraft } from "@/lib/types"
 
 interface TherapistStepProps {
   filteredStaff: StaffMember[]
   selectedStaff: StaffMember | null
   selectedService: ServiceOption | null
   onSelectStaff: (staff: StaffMember) => void
+  // Group booking
+  isGroupBooking: boolean
+  guests: BookingGuestDraft[]
+  onUpdateGuest: (id: string, partial: Partial<BookingGuestDraft>) => void
+  getFilteredStaffForGuest: (guestId: string) => StaffMember[]
 }
 
 export function TherapistStep({
@@ -22,6 +27,10 @@ export function TherapistStep({
   selectedStaff,
   selectedService,
   onSelectStaff,
+  isGroupBooking,
+  guests,
+  onUpdateGuest,
+  getFilteredStaffForGuest,
 }: TherapistStepProps) {
   const { t } = useLanguage()
   const [reviewStaff, setReviewStaff] = useState<StaffMember | null>(null)
@@ -75,6 +84,58 @@ export function TherapistStep({
         open={!!reviewStaff}
         onOpenChange={(open) => { if (!open) setReviewStaff(null) }}
       />
+
+      {/* Guest therapist selection */}
+      {isGroupBooking && guests.length > 0 && (
+        <div className="mt-6 space-y-4">
+          {guests.map((guest) => {
+            const guestStaff = getFilteredStaffForGuest(guest.id)
+            return (
+              <div key={guest.id}>
+                <h3 className="text-sm font-semibold text-brand-text-primary mb-2">
+                  {t("selectTherapistFor")} {guest.name || "Guest"}
+                </h3>
+                <div className="flex flex-col gap-2">
+                  {guestStaff.map((staff) => {
+                    const isAssigned = staff.id === guest.staffId
+                    const assignedTo = staff.id === selectedStaff?.id
+                      ? t("primaryBooker")
+                      : guests.find((g) => g.id !== guest.id && g.staffId === staff.id)?.name
+                    return (
+                      <button
+                        key={staff.id}
+                        type="button"
+                        onClick={() => onUpdateGuest(guest.id, {
+                          staffId: staff.id,
+                          staffName: staff.name,
+                          staffAvatar: staff.avatar,
+                        })}
+                        className={cn(
+                          "flex items-center gap-3 rounded-xl border p-3 text-left transition-all",
+                          isAssigned
+                            ? "border-brand-primary bg-brand-primary/5"
+                            : "border-brand-border bg-card"
+                        )}
+                      >
+                        <StaffAvatar src={staff.avatar} name={staff.name} size="sm" available={staff.isAvailableToday} />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-brand-text-primary">{staff.nickname}</p>
+                          {assignedTo && (
+                            <p className="text-[10px] text-brand-text-tertiary">
+                              {t("alsoServing")} {assignedTo}
+                            </p>
+                          )}
+                        </div>
+                        <p className="text-xs font-medium text-brand-primary">{formatPrice(staff.pricePerHour)}/hr</p>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }

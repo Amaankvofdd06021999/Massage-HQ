@@ -7,6 +7,7 @@ import { Activity, Calendar, ClipboardList, Users, MessageSquare, User, Sun, Moo
 import { cn } from "@/lib/utils"
 import { ThemeProvider, useBrand } from "@/lib/theme/theme-provider"
 import { useAuth } from "@/lib/auth/auth-context"
+import { useShop } from "@/lib/shop/shop-context"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { useMessages } from "@/lib/data/messages-store"
 
@@ -77,7 +78,12 @@ function ModeToggle() {
 
 function StaffLayoutInner({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth()
+  const { isShopSelected } = useShop()
   const router = useRouter()
+
+  useEffect(() => {
+    if (!isShopSelected) router.replace("/shops")
+  }, [isShopSelected, router])
 
   useEffect(() => {
     if (!isLoading) {
@@ -87,7 +93,7 @@ function StaffLayoutInner({ children }: { children: React.ReactNode }) {
     }
   }, [user, isLoading, router])
 
-  if (isLoading || !user || user.role !== "staff") {
+  if (!isShopSelected || isLoading || !user || user.role !== "staff") {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-background">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-primary border-t-transparent" />

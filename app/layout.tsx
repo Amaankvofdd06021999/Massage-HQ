@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
 
 export const metadata: Metadata = {
-  title: 'Koko Massage | Premium Wellness Booking',
+  title: 'Massage Pro | Premium Wellness Booking',
   description: 'Book your perfect massage experience. Discover talented therapists, exclusive promotions, and personalised wellness journeys.',
   generator: 'v0.app',
   icons: {
@@ -47,7 +47,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${geistMono.variable}`}>
       {/* Prevent flash of wrong theme by reading localStorage before first paint */}
       <head>
-        <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem('koko-theme-mode')==='light')document.documentElement.classList.add('light')}catch(e){}` }} />
+        <script dangerouslySetInnerHTML={{ __html: `try{var s=localStorage.getItem('active-shop-id')||'koko';if(localStorage.getItem(s+'-theme-mode')==='light')document.documentElement.classList.add('light')}catch(e){}` }} />
       </head>
       <body className="font-sans antialiased">
         <Providers>{children}</Providers>

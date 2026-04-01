@@ -7,18 +7,12 @@ import { StaffAvatar } from "@/components/shared/staff-avatar"
 import { RatingStars } from "@/components/shared/rating-stars"
 import { LateArrivalDialog } from "@/components/shared/late-arrival-dialog"
 import { TranslationChat } from "@/components/shared/translation-chat"
-import { bookings, staffMembers } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice } from "@/lib/utils/formatters"
 import { TIP_PRESETS } from "@/lib/constants"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { useAuth } from "@/lib/auth/auth-context"
 import { cn } from "@/lib/utils"
-
-// Find the in-progress booking (simulated as b4)
-const activeBooking = bookings.find((b) => b.status === "in-progress")
-const activeStaff = activeBooking
-  ? staffMembers.find((s) => s.id === activeBooking.staffId)
-  : null
 
 // ─── Review + Tip Modal ───────────────────────────────────────────────────────
 function ReviewModal({
@@ -250,10 +244,17 @@ export default function SessionPage() {
   const { t } = useLanguage()
   const { user } = useAuth()
   const router = useRouter()
+  const { bookings, staffMembers } = useShopData()
   const [showReview, setShowReview] = useState(false)
   const [lateOpen, setLateOpen] = useState(false)
   const [chatOpen, setChatOpen] = useState(false)
   const [submitted, setSubmitted] = useState<{ rating: number; tip: number } | null>(null)
+
+  // Find the in-progress booking (simulated as b4)
+  const activeBooking = bookings.find((b) => b.status === "in-progress")
+  const activeStaff = activeBooking
+    ? staffMembers.find((s) => s.id === activeBooking.staffId)
+    : null
 
   const elapsed = useElapsedMinutes(
     activeBooking?.startTime ?? "10:00",
@@ -293,7 +294,7 @@ export default function SessionPage() {
     <>
       <div className="min-h-dvh bg-background px-5 pb-24 pt-12">
         {/* Header */}
-        <div className="mb-6 text-center">
+        <div className="mb-6 text-center pr-10">
           <div className="inline-flex items-center gap-2 rounded-full bg-brand-green/10 px-4 py-1.5">
             <span className="h-2 w-2 animate-pulse rounded-full bg-brand-green" />
             <span className="text-xs font-semibold text-brand-green">{t("sessionInProgress")}</span>

@@ -5,7 +5,7 @@ import { Sparkles, Check, Package, ChevronRight } from "lucide-react"
 import { PromoCard } from "@/components/shared/promo-card"
 import { PillButton, PillButtonRow } from "@/components/shared/pill-button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { promotions } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { usePromotions } from "@/lib/data/promotions-store"
@@ -16,6 +16,7 @@ export default function PromotionsPage() {
   const { t } = useLanguage()
   const { purchasePromotion, getActivePromotionsForCustomer } = usePromotions()
   const { user } = useAuth()
+  const { promotions } = useShopData()
   const [filter, setFilter] = useState<PromoType | "all">("all")
   const [purchaseDialog, setPurchaseDialog] = useState<Promotion | null>(null)
   const [purchaseSuccess, setPurchaseSuccess] = useState(false)
@@ -58,11 +59,13 @@ export default function PromotionsPage() {
 
   return (
     <div className="px-5 pb-24 pt-12">
-      <div className="flex items-center gap-2">
-        <Sparkles size={20} className="text-brand-coral" />
-        <h1 className="text-2xl font-bold text-brand-text-primary">{t("promotions")}</h1>
+      <div className="pr-10">
+        <div className="flex items-center gap-2">
+          <Sparkles size={20} className="text-brand-coral" />
+          <h1 className="text-2xl font-bold text-brand-text-primary">{t("promotions")}</h1>
+        </div>
+        <p className="mt-1 text-sm text-brand-text-secondary">{t("exclusiveDeals")}</p>
       </div>
-      <p className="mt-1 text-sm text-brand-text-secondary">{t("exclusiveDeals")}</p>
 
       {/* Active Purchased Promotions */}
       {activePromos.length > 0 && (

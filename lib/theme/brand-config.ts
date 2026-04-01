@@ -69,6 +69,64 @@ export const kokoLightBrandConfig: BrandConfig = {
 // Backward-compat alias
 export const kokoBrandConfig = kokoDarkBrandConfig
 
+// CK Footworks — Default theme (white & blue — clean, modern)
+export const ckDarkBrandConfig: BrandConfig = {
+  shopName: "CK Footworks",
+  tagline: "Step into relaxation",
+  logo: "/logo-ck.svg",
+  logoIcon: "/logo-ck-icon.svg",
+  primaryColor: "#2563EB",
+  primaryForeground: "#FFFFFF",
+  secondaryColor: "#F8FAFC",
+  accentColor: "#60A5FA",
+  bgPrimary: "#FFFFFF",
+  bgSecondary: "#F8FAFC",
+  bgTertiary: "#F1F5F9",
+  borderColor: "#E2E8F0",
+  textPrimary: "#0F172A",
+  textSecondary: "#475569",
+  textTertiary: "#94A3B8",
+  accentGreen: "#16A34A",
+  accentCoral: "#E94560",
+  accentYellow: "#F59E0B",
+  accentBlue: "#2563EB",
+  fontFamily: "Inter",
+  borderRadius: 0.75,
+  currency: "CAD",
+  currencySymbol: "$",
+  operatingHours: { open: "10:00", close: "21:00" },
+  socialLinks: { instagram: "https://instagram.com/ckfootworks" },
+}
+
+// CK Footworks — Dark mode (blue on dark)
+export const ckLightBrandConfig: BrandConfig = {
+  shopName: "CK Footworks",
+  tagline: "Step into relaxation",
+  logo: "/logo-ck.svg",
+  logoIcon: "/logo-ck-icon.svg",
+  primaryColor: "#3B82F6",
+  primaryForeground: "#FFFFFF",
+  secondaryColor: "#1E293B",
+  accentColor: "#60A5FA",
+  bgPrimary: "#0F172A",
+  bgSecondary: "#1E293B",
+  bgTertiary: "#334155",
+  borderColor: "#475569",
+  textPrimary: "#F8FAFC",
+  textSecondary: "#CBD5E1",
+  textTertiary: "#64748B",
+  accentGreen: "#4ADE80",
+  accentCoral: "#E94560",
+  accentYellow: "#FBBF24",
+  accentBlue: "#3B82F6",
+  fontFamily: "Inter",
+  borderRadius: 0.75,
+  currency: "CAD",
+  currencySymbol: "$",
+  operatingHours: { open: "10:00", close: "21:00" },
+  socialLinks: { instagram: "https://instagram.com/ckfootworks" },
+}
+
 // Generate CSS custom properties from brand config
 export function brandConfigToCSSVars(config: BrandConfig): Record<string, string> {
   return {

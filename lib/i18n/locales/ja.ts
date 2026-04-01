@@ -125,6 +125,7 @@ const ja: Record<string, string> = {
     korean: "한국어",
     japanese: "日本語",
     german: "ドイツ語",
+    russian: "Русский",
     poweredBy: "v1.0 - Koko Platform",
 
     // ── Staff Page ────────────────────────────────────────────────────────
@@ -739,6 +740,26 @@ const ja: Record<string, string> = {
     // ── Staff Session ───────────────────────────────────────────────────────
     staffSession: "セッション",
     navSession: "セッション",
+
+    // ── Group Booking ─────────────────────────────────────────────────────
+    justMe: "Just me",
+    groupBooking: "Group booking",
+    addGuest: "Add guest",
+    removeGuest: "Remove",
+    guestName: "Guest name",
+    guestNamePlaceholder: "Enter guest's name",
+    guestService: "Service for",
+    alsoServing: "Also serving",
+    groupSubtotal: "Group subtotal",
+    groupTotal: "Group total",
+    guestsLabel: "guests",
+    maxGuestsReached: "Maximum 3 people per booking",
+    noRoomsWarning: "Not enough rooms available for group size",
+    bookingForGroup: "Booking for",
+    people: "people",
+    primaryBooker: "You",
+    selectTherapistFor: "Select therapist for",
+    roomFor: "Room for",
 }
 
 export default ja

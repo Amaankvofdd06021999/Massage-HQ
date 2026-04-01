@@ -48,6 +48,10 @@ function BookingFlowInner() {
         useGiftCard={bk.useGiftCard}
         onToggleGiftCard={() => bk.setUseGiftCard(!bk.useGiftCard)}
         isBooked={true}
+        isGroupBooking={bk.isGroupBooking}
+        guests={bk.guests}
+        guestsTotalPrice={bk.guestsTotalPrice}
+        groupTotalPrice={bk.groupTotalPrice}
       />
     )
   }
@@ -55,7 +59,7 @@ function BookingFlowInner() {
   return (
     <div className="pb-44 pt-12">
       {/* Header */}
-      <div className="flex items-center gap-3 px-5">
+      <div className="flex items-center gap-3 px-5 pr-14">
         <button
           type="button"
           onClick={() => (bk.step > 1 ? bk.setStep(bk.step - 1) : window.history.back())}
@@ -105,6 +109,12 @@ function BookingFlowInner() {
           onSelectService={bk.handleServiceSelect}
           onSelectDuration={bk.setSelectedDuration}
           onToggleAddOn={bk.toggleAddOn}
+          isGroupBooking={bk.isGroupBooking}
+          guests={bk.guests}
+          onToggleGroupBooking={bk.toggleGroupBooking}
+          onAddGuest={bk.addGuest}
+          onRemoveGuest={bk.removeGuest}
+          onUpdateGuest={bk.updateGuest}
         />
       )}
 
@@ -114,6 +124,10 @@ function BookingFlowInner() {
           selectedStaff={bk.selectedStaff}
           selectedService={bk.selectedService}
           onSelectStaff={bk.setSelectedStaff}
+          isGroupBooking={bk.isGroupBooking}
+          guests={bk.guests}
+          onUpdateGuest={bk.updateGuest}
+          getFilteredStaffForGuest={bk.getFilteredStaffForGuest}
         />
       )}
 
@@ -129,6 +143,9 @@ function BookingFlowInner() {
           onSelectDate={bk.setSelectedDate}
           onSelectTime={bk.setSelectedTime}
           onSelectRoom={bk.setSelectedRoom}
+          isGroupBooking={bk.isGroupBooking}
+          guests={bk.guests}
+          onUpdateGuest={bk.updateGuest}
         />
       )}
 
@@ -150,23 +167,27 @@ function BookingFlowInner() {
           useGiftCard={bk.useGiftCard}
           onToggleGiftCard={() => bk.setUseGiftCard(!bk.useGiftCard)}
           isBooked={false}
+          isGroupBooking={bk.isGroupBooking}
+          guests={bk.guests}
+          guestsTotalPrice={bk.guestsTotalPrice}
+          groupTotalPrice={bk.groupTotalPrice}
         />
       )}
 
       {/* Bottom CTA */}
       <div className="fixed bottom-[4.25rem] left-0 right-0 z-[55] border-t border-brand-border bg-brand-bg-secondary/95 p-4 backdrop-blur-lg">
         <div className="mx-auto flex max-w-lg items-center gap-3">
-          {bk.totalPrice > 0 && bk.step < 4 && (
+          {(bk.groupTotalPrice > 0 || bk.totalPrice > 0) && bk.step < 4 && (
             <div className="flex-1">
               <p className="text-xs text-brand-text-tertiary">{t("total")}</p>
-              <p className="text-lg font-bold text-brand-primary">{formatPrice(bk.totalPrice)}</p>
+              <p className="text-lg font-bold text-brand-primary">{formatPrice(bk.isGroupBooking ? bk.groupTotalPrice : bk.totalPrice)}</p>
             </div>
           )}
           <button
             type="button"
             disabled={
-              (bk.step === 1 && (!bk.selectedService || !bk.selectedDuration)) ||
-              (bk.step === 2 && !bk.selectedStaff) ||
+              (bk.step === 1 && (!bk.selectedService || !bk.selectedDuration || (bk.isGroupBooking && bk.guests.some(g => !g.name || !g.serviceId)))) ||
+              (bk.step === 2 && (!bk.selectedStaff || (bk.isGroupBooking && bk.guests.some(g => !g.staffId)))) ||
               (bk.step === 3 && !bk.selectedTime)
             }
             onClick={() => (bk.step === 4 ? bk.handleBook() : bk.setStep(bk.step + 1))}

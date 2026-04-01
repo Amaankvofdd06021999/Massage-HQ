@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react"
+import { useShop } from "@/lib/shop/shop-context"
 
 export type UserRole = "manager" | "customer" | "staff"
 
@@ -20,8 +21,6 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
-const STORAGE_KEY = "koko-auth-user"
 
 // ── Demo users ─────────────────────────────────────────────
 export const DEMO_MANAGER: AuthUser = {
@@ -50,19 +49,25 @@ export const DEMO_STAFF: AuthUser = {
 
 // ── Provider ───────────────────────────────────────────────
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const { shopId } = useShop()
+  const prefix = shopId ?? "koko"
+  const STORAGE_KEY = `${prefix}-auth-user`
+
   const [user, setUser] = useState<AuthUser | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    setIsLoading(true)
     try {
       const stored = localStorage.getItem(STORAGE_KEY)
       if (stored) setUser(JSON.parse(stored) as AuthUser)
+      else setUser(null)
     } catch {
-      // ignore malformed data
+      setUser(null)
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [shopId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const login = useCallback((newUser: AuthUser) => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser)) } catch { /* ignore */ }

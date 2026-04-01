@@ -6,12 +6,13 @@ import { useTips } from "@/lib/data/tips-store"
 import { useBookings } from "@/lib/data/bookings-store"
 import { useAuth } from "@/lib/auth/auth-context"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { staffMembers } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice } from "@/lib/utils/formatters"
 import { cn } from "@/lib/utils"
 
 export default function AdminTipClaimsPage() {
   const { t } = useLanguage()
+  const { staffMembers } = useShopData()
   const { user } = useAuth()
   const { tipClaims, resolveTipClaim, getPendingClaims } = useTips()
   const { bookings } = useBookings()

@@ -8,7 +8,7 @@ import { StaffAvatar } from "@/components/shared/staff-avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useBookings } from "@/lib/data/bookings-store"
-import { staffMembers, customers } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice } from "@/lib/utils/formatters"
 import { useLanguage } from "@/lib/i18n/language-context"
 import type { ClaimStatus } from "@/lib/types"
@@ -31,6 +31,7 @@ function claimStatusVariant(status: ClaimStatus) {
 
 export default function AdminClaimsPage() {
   const { t } = useLanguage()
+  const { staffMembers, customers } = useShopData()
   const { lateArrivalClaims, resolveLateArrivalClaim, bookings } = useBookings()
   const [filter, setFilter] = useState<ClaimStatus | "all">("all")
   const [managerNotes, setManagerNotes] = useState<Record<string, string>>({})

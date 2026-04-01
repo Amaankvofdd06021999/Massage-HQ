@@ -4,13 +4,14 @@ import { useState } from "react"
 import { Plus, Edit2, Eye, EyeOff } from "lucide-react"
 import { StatusBadge } from "@/components/shared/status-badge"
 import { PromotionFormDialog } from "@/components/admin/promotion-form-dialog"
-import { promotions } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
 import { useLanguage } from "@/lib/i18n/language-context"
 import type { Promotion } from "@/lib/types"
 
 export default function AdminPromotionsPage() {
   const { t } = useLanguage()
+  const { promotions } = useShopData()
   const [formOpen, setFormOpen] = useState(false)
   const [editingPromo, setEditingPromo] = useState<Promotion | null>(null)
 

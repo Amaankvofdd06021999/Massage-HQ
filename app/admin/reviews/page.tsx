@@ -5,13 +5,14 @@ import { Star } from "lucide-react"
 import { StaffAvatar } from "@/components/shared/staff-avatar"
 import { RatingStars, RatingDisplay } from "@/components/shared/rating-stars"
 import { PillButton, PillButtonRow } from "@/components/shared/pill-button"
-import { staffMembers, bookings } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice } from "@/lib/utils/formatters"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { cn } from "@/lib/utils"
 
 export default function AdminReviewsPage() {
   const { t } = useLanguage()
+  const { staffMembers, bookings } = useShopData()
   const [selectedStaff, setSelectedStaff] = useState<string>("all")
 
   // All bookings that have a rating

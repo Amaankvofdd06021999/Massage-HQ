@@ -15,7 +15,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { useBookings } from "@/lib/data/bookings-store"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { cancellationPolicy } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice } from "@/lib/utils/formatters"
 import { cn } from "@/lib/utils"
 import type { Booking } from "@/lib/types"
@@ -33,6 +33,7 @@ export function CancelBookingDialog({
 }: CancelBookingDialogProps) {
   const { t } = useLanguage()
   const { cancelBooking } = useBookings()
+  const { cancellationPolicy } = useShopData()
   const [reason, setReason] = useState("")
   const [result, setResult] = useState<{
     refund: number

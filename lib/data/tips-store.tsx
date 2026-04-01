@@ -2,7 +2,8 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
 import type { TipClaim } from "@/lib/types"
-import { tipClaims as seedClaims } from "./mock-data"
+import { getSeedsForShop } from "@/lib/data/seeds"
+import { useShop } from "@/lib/shop/shop-context"
 
 interface TipsContextType {
   tipClaims: TipClaim[]
@@ -14,17 +15,21 @@ interface TipsContextType {
 
 const TipsContext = createContext<TipsContextType | null>(null)
 
-const STORAGE_KEY = "koko-tip-claims"
-
 export function TipsProvider({ children }: { children: React.ReactNode }) {
+  const { shopId } = useShop()
+  const prefix = shopId ?? "koko"
+  const STORAGE_KEY = `${prefix}-tip-claims`
+
   const [claims, setClaims] = useState<TipClaim[]>([])
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
+    setReady(false)
+    const seeds = getSeedsForShop(prefix)
     const stored = localStorage.getItem(STORAGE_KEY)
-    setClaims(stored ? JSON.parse(stored) : seedClaims)
+    setClaims(stored ? JSON.parse(stored) : seeds.tipClaims)
     setReady(true)
-  }, [])
+  }, [shopId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (ready) localStorage.setItem(STORAGE_KEY, JSON.stringify(claims))

@@ -4,9 +4,8 @@ import {
   createContext, useContext, useState, useCallback, useEffect, type ReactNode,
 } from "react"
 import type { StaffMessage } from "@/lib/types"
-import { staffMessages as SEED_MESSAGES } from "@/lib/data/mock-data"
-
-const MESSAGES_KEY = "koko-messages"
+import { getSeedsForShop } from "@/lib/data/seeds"
+import { useShop } from "@/lib/shop/shop-context"
 
 interface MessagesContextType {
   messages: StaffMessage[]
@@ -36,13 +35,19 @@ function save<T>(key: string, value: T) {
 }
 
 export function MessagesProvider({ children }: { children: ReactNode }) {
-  const [messages, setMessages] = useState<StaffMessage[]>(SEED_MESSAGES)
+  const { shopId } = useShop()
+  const prefix = shopId ?? "koko"
+  const MESSAGES_KEY = `${prefix}-messages`
+
+  const [messages, setMessages] = useState<StaffMessage[]>([])
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    setMessages(load(MESSAGES_KEY, SEED_MESSAGES))
+    setReady(false)
+    const seeds = getSeedsForShop(prefix)
+    setMessages(load(MESSAGES_KEY, seeds.staffMessages))
     setReady(true)
-  }, [])
+  }, [shopId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { if (ready) save(MESSAGES_KEY, messages) }, [messages, ready])
 

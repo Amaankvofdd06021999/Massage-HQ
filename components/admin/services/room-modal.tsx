@@ -160,7 +160,7 @@ export function RoomModal({ initial, onSave, onClose }: {
         <div className="mt-5 flex gap-2">
           <button type="button" onClick={onClose} className="flex-1 rounded-xl border border-brand-border py-2.5 text-sm font-medium text-brand-text-secondary hover:bg-brand-bg-tertiary transition-colors">{t("cancel")}</button>
           <button type="button" onClick={() => valid && onSave(draft)} disabled={!valid}
-            className="flex-1 rounded-xl bg-brand-primary py-2.5 text-sm font-semibold text-[#0A0A0F] disabled:opacity-40 hover:opacity-90 transition-opacity">
+            className="flex-1 rounded-xl bg-brand-primary py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-40 hover:opacity-90 transition-opacity">
             {initial ? t("saveChanges") : t("addRoom")}
           </button>
         </div>

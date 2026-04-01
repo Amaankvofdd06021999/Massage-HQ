@@ -4,9 +4,8 @@ import {
   createContext, useContext, useState, useCallback, useEffect, type ReactNode,
 } from "react"
 import type { ClientNote, NoteCategory } from "@/lib/types"
-import { clientNotes as SEED_NOTES } from "@/lib/data/mock-data"
-
-const NOTES_KEY = "koko-client-notes"
+import { getSeedsForShop } from "@/lib/data/seeds"
+import { useShop } from "@/lib/shop/shop-context"
 
 interface NotesContextType {
   clientNotes: ClientNote[]
@@ -36,13 +35,19 @@ function save<T>(key: string, value: T) {
 }
 
 export function NotesProvider({ children }: { children: ReactNode }) {
-  const [notes, setNotes] = useState<ClientNote[]>(SEED_NOTES)
+  const { shopId } = useShop()
+  const prefix = shopId ?? "koko"
+  const NOTES_KEY = `${prefix}-client-notes`
+
+  const [notes, setNotes] = useState<ClientNote[]>([])
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    setNotes(load(NOTES_KEY, SEED_NOTES))
+    setReady(false)
+    const seeds = getSeedsForShop(prefix)
+    setNotes(load(NOTES_KEY, seeds.clientNotes))
     setReady(true)
-  }, [])
+  }, [shopId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { if (ready) save(NOTES_KEY, notes) }, [notes, ready])
 

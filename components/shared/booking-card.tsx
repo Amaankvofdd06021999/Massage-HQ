@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { cn } from "@/lib/utils"
-import { Calendar, Clock, XCircle, AlertTriangle } from "lucide-react"
+import { Calendar, Clock, XCircle, AlertTriangle, Users } from "lucide-react"
 import { StatusBadge, bookingStatusVariant } from "./status-badge"
 import { StaffAvatar } from "./staff-avatar"
 import { RatingStars } from "./rating-stars"
@@ -59,6 +59,12 @@ export function BookingCard({
               <div>
                 <p className="font-semibold text-brand-text-primary">{booking.serviceName}</p>
                 <p className="text-sm text-brand-text-secondary">{t("with")} {booking.staffName}</p>
+                {booking.groupSize && booking.groupSize > 1 && (
+                  <span className="flex items-center gap-1 text-xs text-brand-text-tertiary">
+                    <Users size={11} />
+                    {booking.groupSize} {t("people")}
+                  </span>
+                )}
               </div>
               {booking.status === "in-progress" ? (
                 <span className="flex items-center gap-1 rounded-full bg-brand-green/15 px-2.5 py-0.5 text-[10px] font-semibold text-brand-green">

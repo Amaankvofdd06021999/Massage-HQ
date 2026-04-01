@@ -4,9 +4,8 @@ import {
   createContext, useContext, useState, useCallback, useEffect, type ReactNode,
 } from "react"
 import type { GiftCard, MassageType } from "@/lib/types"
-import { giftCards as SEED_CARDS } from "@/lib/data/mock-data"
-
-const GIFTCARDS_KEY = "koko-giftcards"
+import { getSeedsForShop } from "@/lib/data/seeds"
+import { useShop } from "@/lib/shop/shop-context"
 
 interface GiftCardsContextType {
   giftCards: GiftCard[]
@@ -50,13 +49,19 @@ function save<T>(key: string, value: T) {
 }
 
 export function GiftCardsProvider({ children }: { children: ReactNode }) {
-  const [cards, setCards] = useState<GiftCard[]>(SEED_CARDS)
+  const { shopId } = useShop()
+  const prefix = shopId ?? "koko"
+  const GIFTCARDS_KEY = `${prefix}-giftcards`
+
+  const [cards, setCards] = useState<GiftCard[]>([])
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    setCards(load(GIFTCARDS_KEY, SEED_CARDS))
+    setReady(false)
+    const seeds = getSeedsForShop(prefix)
+    setCards(load(GIFTCARDS_KEY, seeds.giftCards))
     setReady(true)
-  }, [])
+  }, [shopId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { if (ready) save(GIFTCARDS_KEY, cards) }, [cards, ready])
 

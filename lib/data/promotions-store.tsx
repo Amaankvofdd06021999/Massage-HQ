@@ -2,7 +2,8 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
 import type { PurchasedPromotion, MassageType } from "@/lib/types"
-import { purchasedPromotions as seedPromotions } from "./mock-data"
+import { getSeedsForShop } from "@/lib/data/seeds"
+import { useShop } from "@/lib/shop/shop-context"
 
 interface PromotionsContextType {
   purchasedPromotions: PurchasedPromotion[]
@@ -15,17 +16,21 @@ interface PromotionsContextType {
 
 const PromotionsContext = createContext<PromotionsContextType | null>(null)
 
-const STORAGE_KEY = "koko-purchased-promotions"
-
 export function PromotionsProvider({ children }: { children: React.ReactNode }) {
+  const { shopId } = useShop()
+  const prefix = shopId ?? "koko"
+  const STORAGE_KEY = `${prefix}-purchased-promotions`
+
   const [purchasedPromos, setPurchasedPromos] = useState<PurchasedPromotion[]>([])
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
+    setReady(false)
+    const seeds = getSeedsForShop(prefix)
     const stored = localStorage.getItem(STORAGE_KEY)
-    setPurchasedPromos(stored ? JSON.parse(stored) : seedPromotions)
+    setPurchasedPromos(stored ? JSON.parse(stored) : seeds.purchasedPromotions)
     setReady(true)
-  }, [])
+  }, [shopId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (ready) localStorage.setItem(STORAGE_KEY, JSON.stringify(purchasedPromos))

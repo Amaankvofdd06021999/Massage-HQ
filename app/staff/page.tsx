@@ -10,7 +10,7 @@ import { useAuth } from "@/lib/auth/auth-context"
 import { useBookings } from "@/lib/data/bookings-store"
 import { useTips } from "@/lib/data/tips-store"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { staffMembers } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
 import { toDateStr } from "@/lib/utils/time"
 import { StatusBadge, bookingStatusVariant } from "@/components/shared/status-badge"
@@ -35,6 +35,7 @@ export default function StaffSchedulePage() {
   const { t } = useLanguage()
   const { getBookingsForStaff, bookings } = useBookings()
   const { submitTipClaim, getClaimsForStaff } = useTips()
+  const { staffMembers } = useShopData()
   const [selectedDate, setSelectedDate] = useState(new Date())
 
   const staffMember = staffMembers.find((s) => s.id === user?.id)

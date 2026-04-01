@@ -6,17 +6,8 @@ import {
 import type {
   LoyaltyConfig, LoyaltyStamp, LoyaltyRedemption, LoyaltyPointRedemption, MassageType,
 } from "@/lib/types"
-import {
-  loyaltyConfig as SEED_CONFIG,
-  loyaltyStamps as SEED_STAMPS,
-  loyaltyRedemptions as SEED_REDEMPTIONS,
-  loyaltyPointRedemptions as SEED_POINT_REDEMPTIONS,
-} from "@/lib/data/mock-data"
-
-const CONFIG_KEY = "koko-loyalty-config"
-const STAMPS_KEY = "koko-loyalty-stamps"
-const REDEMPTIONS_KEY = "koko-loyalty-redemptions"
-const POINT_REDEMPTIONS_KEY = "koko-loyalty-point-redemptions"
+import { getSeedsForShop } from "@/lib/data/seeds"
+import { useShop } from "@/lib/shop/shop-context"
 
 interface LoyaltyContextType {
   config: LoyaltyConfig
@@ -57,19 +48,28 @@ function save<T>(key: string, value: T) {
 }
 
 export function LoyaltyProvider({ children }: { children: ReactNode }) {
-  const [config, setConfig] = useState<LoyaltyConfig>(SEED_CONFIG)
-  const [stamps, setStamps] = useState<LoyaltyStamp[]>(SEED_STAMPS)
-  const [redemptions, setRedemptions] = useState<LoyaltyRedemption[]>(SEED_REDEMPTIONS)
-  const [pointRedemptions, setPointRedemptions] = useState<LoyaltyPointRedemption[]>(SEED_POINT_REDEMPTIONS)
+  const { shopId } = useShop()
+  const prefix = shopId ?? "koko"
+  const CONFIG_KEY = `${prefix}-loyalty-config`
+  const STAMPS_KEY = `${prefix}-loyalty-stamps`
+  const REDEMPTIONS_KEY = `${prefix}-loyalty-redemptions`
+  const POINT_REDEMPTIONS_KEY = `${prefix}-loyalty-point-redemptions`
+
+  const [config, setConfig] = useState<LoyaltyConfig>({} as LoyaltyConfig)
+  const [stamps, setStamps] = useState<LoyaltyStamp[]>([])
+  const [redemptions, setRedemptions] = useState<LoyaltyRedemption[]>([])
+  const [pointRedemptions, setPointRedemptions] = useState<LoyaltyPointRedemption[]>([])
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    setConfig(load(CONFIG_KEY, SEED_CONFIG))
-    setStamps(load(STAMPS_KEY, SEED_STAMPS))
-    setRedemptions(load(REDEMPTIONS_KEY, SEED_REDEMPTIONS))
-    setPointRedemptions(load(POINT_REDEMPTIONS_KEY, SEED_POINT_REDEMPTIONS))
+    setReady(false)
+    const seeds = getSeedsForShop(prefix)
+    setConfig(load(CONFIG_KEY, seeds.loyaltyConfig))
+    setStamps(load(STAMPS_KEY, seeds.loyaltyStamps))
+    setRedemptions(load(REDEMPTIONS_KEY, seeds.loyaltyRedemptions))
+    setPointRedemptions(load(POINT_REDEMPTIONS_KEY, seeds.loyaltyPointRedemptions))
     setReady(true)
-  }, [])
+  }, [shopId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { if (ready) save(CONFIG_KEY, config) }, [config, ready])
   useEffect(() => { if (ready) save(STAMPS_KEY, stamps) }, [stamps, ready])

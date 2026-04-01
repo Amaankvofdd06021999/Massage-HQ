@@ -293,6 +293,7 @@ function LanguageTab() {
                 { code: "ko" as const, label: t("korean") },
                 { code: "ja" as const, label: t("japanese") },
                 { code: "de" as const, label: t("german") },
+                { code: "ru" as const, label: t("russian") },
               ]).map((lang) => (
                 <option key={lang.code} value={lang.code}>
                   {lang.label}

@@ -1,31 +1,44 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Sparkles, Check, ChevronRight } from "lucide-react"
 import { StaffAvatar } from "@/components/shared/staff-avatar"
 import { RatingStars } from "@/components/shared/rating-stars"
 import { StatusBadge } from "@/components/shared/status-badge"
-import { activeTrialRotation } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatMassageType } from "@/lib/utils/formatters"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { useShop } from "@/lib/shop/shop-context"
 import { cn } from "@/lib/utils"
 
 export default function TrialPage() {
   const { t } = useLanguage()
+  const { shopConfig } = useShop()
+  const router = useRouter()
+  const { activeTrialRotation } = useShopData()
   const trial = activeTrialRotation
   const [ratingSession, setRatingSession] = useState<string | null>(null)
   const [tempRating, setTempRating] = useState(0)
+
+  useEffect(() => {
+    if (shopConfig && !shopConfig.features.trialRotation) router.replace("/")
+  }, [shopConfig, router])
+
+  if (shopConfig && !shopConfig.features.trialRotation) return null
 
   const progress = (trial.completedSessions / trial.totalSessions) * 100
 
   return (
     <div className="px-5 pb-24 pt-12">
-      <div className="flex items-center gap-2">
-        <Sparkles size={20} className="text-brand-blue" />
-        <h1 className="text-2xl font-bold text-brand-text-primary">{t("discoveryTrial")}</h1>
+      <div className="pr-10">
+        <div className="flex items-center gap-2">
+          <Sparkles size={20} className="text-brand-blue" />
+          <h1 className="text-2xl font-bold text-brand-text-primary">{t("discoveryTrial")}</h1>
+        </div>
+        <p className="mt-1 text-sm text-brand-text-secondary">{t("trialSubtitle")}</p>
       </div>
-      <p className="mt-1 text-sm text-brand-text-secondary">{t("trialSubtitle")}</p>
 
       {/* Progress Card */}
       <div className="mt-5 rounded-2xl border border-brand-blue/20 bg-brand-blue/5 p-5">

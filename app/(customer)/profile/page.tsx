@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation"
 import {
   Calendar, Star, Gift, Settings, HelpCircle,
   ChevronRight, ChevronDown, LogOut, Shield, Bell, CreditCard, Languages,
-  Stamp, Wallet,
+  Stamp, Wallet, Store,
 } from "lucide-react"
-import { customers } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice } from "@/lib/utils/formatters"
 import { useBrand } from "@/lib/theme/theme-provider"
 import { useAuth } from "@/lib/auth/auth-context"
 import { useLanguage } from "@/lib/i18n/language-context"
+import { useShop } from "@/lib/shop/shop-context"
 import type { Language } from "@/lib/i18n/translations"
 import { useLoyalty } from "@/lib/data/loyalty-store"
 import { useGiftCards } from "@/lib/data/giftcards-store"
@@ -23,10 +24,12 @@ export default function ProfilePage() {
   const { brandConfig } = useBrand()
   const { user, logout } = useAuth()
   const { t, language, setLanguage } = useLanguage()
+  const { shopConfig } = useShop()
   const router = useRouter()
   const { getStampCount, getPointsBalance } = useLoyalty()
   const { getGiftCardsForCustomer } = useGiftCards()
   const { getActivePromotionsForCustomer } = usePromotions()
+  const { customers } = useShopData()
 
   const customerData = customers.find((c) => c.id === user?.id) ?? customers[0]
   const stampCount = user ? getStampCount(user.id) : 0
@@ -48,8 +51,12 @@ export default function ProfilePage() {
         { label: t("favourites"), href: "#", icon: Star },
         { label: t("promotionsRewards"), href: "/promotions", icon: Gift, badge: `${pointsBalance} pts` },
         { label: t("giftCards"), href: "/gift-cards", icon: Wallet, badge: giftCardBalance > 0 ? formatPrice(giftCardBalance) : undefined },
-        { label: t("loyaltyProgram"), href: "/loyalty", icon: Stamp, badge: `${stampCount}/10` },
-        { label: t("trialRotation"), href: "/trial", icon: Star },
+        ...(shopConfig?.features.loyalty ? [
+          { label: t("loyaltyProgram"), href: "/loyalty", icon: Stamp, badge: `${stampCount}/10` },
+        ] : []),
+        ...(shopConfig?.features.trialRotation ? [
+          { label: t("trialRotation"), href: "/trial", icon: Star },
+        ] : []),
       ],
     },
     {
@@ -72,7 +79,7 @@ export default function ProfilePage() {
   return (
     <div className="px-5 pb-24 pt-12">
       {/* Profile Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 pr-10">
         <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full ring-2 ring-brand-primary/30 bg-brand-bg-tertiary">
           {user?.avatar ? (
             <Image src={user.avatar} alt={user.name} fill className="object-cover" sizes="64px" />
@@ -174,6 +181,7 @@ export default function ProfilePage() {
                   { code: "ko" as const, label: "한국어" },
                   { code: "ja" as const, label: "日本語" },
                   { code: "de" as const, label: "Deutsch" },
+                  { code: "ru" as const, label: "Русский" },
                 ]).map((lang) => (
                   <option key={lang.code} value={lang.code}>
                     {lang.label}
@@ -214,6 +222,18 @@ export default function ProfilePage() {
           </div>
         </div>
       ))}
+
+      {/* Switch Shop */}
+      <Link
+        href="/shops"
+        className="mt-6 flex w-full items-center gap-3 rounded-xl border border-brand-border bg-brand-bg-secondary px-4 py-3 transition-all active:scale-[0.98]"
+      >
+        <Store size={16} className="text-brand-text-secondary" />
+        <span className="text-sm font-medium text-brand-text-primary">{t("switchShop")}</span>
+        {shopConfig && (
+          <span className="ml-auto text-xs text-brand-text-tertiary">{shopConfig.name}</span>
+        )}
+      </Link>
 
       {/* Sign Out */}
       <button

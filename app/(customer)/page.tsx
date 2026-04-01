@@ -8,11 +8,10 @@ import { BookingCard } from "@/components/shared/booking-card"
 import { RatingDisplay } from "@/components/shared/rating-stars"
 import { StatusBadge } from "@/components/shared/status-badge"
 import { useBrand } from "@/lib/theme/theme-provider"
+import { useShop } from "@/lib/shop/shop-context"
 import { useLanguage } from "@/lib/i18n/language-context"
 import type { TranslationKey } from "@/lib/i18n/translations"
-import {
-  staffMembers, promotions, bookings,
-} from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
 
 function getGreeting(t: (k: TranslationKey) => string) {
@@ -26,7 +25,7 @@ function HeroSection() {
   const { brandConfig } = useBrand()
   const { t } = useLanguage()
   return (
-    <section className="relative overflow-hidden px-5 pb-6 pt-12">
+    <section className="relative overflow-hidden px-5 pb-6 pt-12 pr-14">
       <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/5 to-transparent" />
       <div className="relative">
         <p className="text-sm text-brand-text-secondary">{getGreeting(t)}</p>
@@ -46,6 +45,7 @@ function HeroSection() {
 
 function QuickRebook() {
   const { t } = useLanguage()
+  const { bookings } = useShopData()
   const pastBookings = bookings.filter((b) => b.status === "completed").slice(0, 3)
   if (pastBookings.length === 0) return null
 
@@ -78,6 +78,7 @@ function QuickRebook() {
 
 function FeaturedStaff() {
   const { t } = useLanguage()
+  const { staffMembers } = useShopData()
   const featured = staffMembers.filter((s) => s.isFeatured)
 
   return (
@@ -113,6 +114,7 @@ function FeaturedStaff() {
 
 function ActivePromos() {
   const { t } = useLanguage()
+  const { promotions } = useShopData()
   const activePromos = promotions.filter((p) => p.isActive).slice(0, 3)
 
   return (
@@ -137,6 +139,7 @@ function ActivePromos() {
 
 function UpcomingBookings() {
   const { t } = useLanguage()
+  const { bookings } = useShopData()
   const today = new Date().toISOString().split("T")[0]
   const upcoming = bookings.filter((b) => b.status === "confirmed" && b.date >= today).slice(0, 2)
   if (upcoming.length === 0) return null
@@ -160,6 +163,7 @@ function UpcomingBookings() {
 
 function TodayAvailability() {
   const { t } = useLanguage()
+  const { staffMembers } = useShopData()
   const available = staffMembers.filter((s) => s.isAvailableToday)
 
   return (
@@ -197,6 +201,8 @@ function TodayAvailability() {
 }
 
 export default function HomePage() {
+  const { shopConfig } = useShop()
+
   return (
     <div>
       <HeroSection />

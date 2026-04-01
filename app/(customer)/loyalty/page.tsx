@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Trophy, Star, Coins, History, CheckCircle2, Sparkles,
 } from "lucide-react"
@@ -20,16 +20,21 @@ import { PillButton, PillButtonRow } from "@/components/shared/pill-button"
 import { useLoyalty } from "@/lib/data/loyalty-store"
 import { useAuth } from "@/lib/auth/auth-context"
 import { useLanguage } from "@/lib/i18n/language-context"
-import { customers } from "@/lib/data/mock-data"
+import { useShopData } from "@/lib/data/shop-data"
 import { formatPrice, formatMassageType } from "@/lib/utils/formatters"
+import { useShop } from "@/lib/shop/shop-context"
+import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import type { MassageType } from "@/lib/types"
 
 type HistoryTab = "stamps" | "points" | "redemptions"
 
 export default function LoyaltyPage() {
+  const { shopConfig } = useShop()
+  const router = useRouter()
   const { t } = useLanguage()
   const { user } = useAuth()
+  const { customers } = useShopData()
   const {
     config,
     stamps,
@@ -48,6 +53,12 @@ export default function LoyaltyPage() {
   const [redeemDialogOpen, setRedeemDialogOpen] = useState(false)
   const [selectedService, setSelectedService] = useState<MassageType>(config.freeSessionServices[0])
   const [redeemSuccess, setRedeemSuccess] = useState(false)
+
+  useEffect(() => {
+    if (shopConfig && !shopConfig.features.loyalty) router.replace("/")
+  }, [shopConfig, router])
+
+  if (shopConfig && !shopConfig.features.loyalty) return null
 
   const customerId = user?.id ?? "c1"
   const customerData = customers.find((c) => c.id === customerId) ?? customers[0]
@@ -114,7 +125,7 @@ export default function LoyaltyPage() {
   if (!config.programActive) {
     return (
       <div className="px-5 pb-24 pt-12">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 pr-10">
           <Trophy size={20} className="text-brand-yellow" />
           <h1 className="text-2xl font-bold text-brand-text-primary">{t("loyaltyProgram")}</h1>
         </div>
@@ -129,13 +140,15 @@ export default function LoyaltyPage() {
   return (
     <div className="px-5 pb-24 pt-12">
       {/* Page header */}
-      <div className="flex items-center gap-2">
-        <Trophy size={20} className="text-brand-yellow" />
-        <h1 className="text-2xl font-bold text-brand-text-primary">{t("loyaltyProgram")}</h1>
+      <div className="pr-10">
+        <div className="flex items-center gap-2">
+          <Trophy size={20} className="text-brand-yellow" />
+          <h1 className="text-2xl font-bold text-brand-text-primary">{t("loyaltyProgram")}</h1>
+        </div>
+        <p className="mt-1 text-sm text-brand-text-secondary">
+          {t("earnStampPerVisit")} &bull; {t("earnPointsDesc")}
+        </p>
       </div>
-      <p className="mt-1 text-sm text-brand-text-secondary">
-        {t("earnStampPerVisit")} &bull; {t("earnPointsDesc")}
-      </p>
 
       {/* Section 1: Stamp Card */}
       {config.stampEnabled && (
@@ -439,7 +452,7 @@ export default function LoyaltyPage() {
                 </Button>
                 <Button
                   onClick={handleConfirmRedeem}
-                  className="bg-brand-yellow font-semibold text-black hover:bg-brand-yellow/90"
+                  className="bg-brand-yellow font-semibold text-primary-foreground hover:bg-brand-yellow/90"
                 >
                   {t("redeemFreeSession")}
                 </Button>

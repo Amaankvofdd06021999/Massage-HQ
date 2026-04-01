@@ -98,7 +98,7 @@ export function LoyaltyStampCard({
         <Button
           onClick={onRedeem}
           className={cn(
-            "mt-4 w-full bg-brand-yellow text-black font-semibold hover:bg-brand-yellow/90",
+            "mt-4 w-full bg-brand-yellow text-primary-foreground font-semibold hover:bg-brand-yellow/90",
             "shadow-[0_0_20px_rgba(var(--brand-accent-yellow-rgb,234,179,8),0.3)]",
             "animate-pulse"
           )}
