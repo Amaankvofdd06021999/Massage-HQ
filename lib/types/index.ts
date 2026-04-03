@@ -146,6 +146,8 @@ export interface Booking {
   roomId?: string
   guests?: BookingGuest[]
   groupSize?: number
+  source?: "online" | "phone"
+  addOns?: { addOnId: string; name: string; price: number; extraMinutes: number }[]
 }
 
 // --- Booking Guest (for group bookings) ---
