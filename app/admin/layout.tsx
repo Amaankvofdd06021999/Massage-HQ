@@ -6,7 +6,7 @@ import { useEffect } from "react"
 import {
   LayoutDashboard, Calendar, BookOpen, Users, Tag,
   Palette, ChevronLeft, ChevronRight, ChevronDown, Menu, X, Sun, Moon, LogOut, Sparkles, Star,
-  Scale, MessageSquare, Heart, DollarSign, Languages,
+  Scale, MessageSquare, Heart, DollarSign, Languages, Phone,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ThemeProvider, useBrand } from "@/lib/theme/theme-provider"
@@ -27,6 +27,7 @@ function AdminSidebar({ collapsed, setCollapsed }: { collapsed: boolean; setColl
   const navItems = [
     { label: t("navDashboard"), href: "/admin", icon: LayoutDashboard },
     { label: t("navCalendar"), href: "/admin/calendar", icon: Calendar },
+    { label: t("navPhoneBooking"), href: "/admin/phone-booking", icon: Phone },
     { label: t("navBookings"), href: "/admin/bookings", icon: BookOpen },
     { label: t("navStaff"), href: "/admin/staff", icon: Users },
     { label: t("navReviews"), href: "/admin/reviews", icon: Star },
@@ -190,6 +191,7 @@ function MobileHeader() {
   const navItems = [
     { label: t("navDashboard"), href: "/admin", icon: LayoutDashboard },
     { label: t("navCalendar"), href: "/admin/calendar", icon: Calendar },
+    { label: t("navPhoneBooking"), href: "/admin/phone-booking", icon: Phone },
     { label: t("navBookings"), href: "/admin/bookings", icon: BookOpen },
     { label: t("navStaff"), href: "/admin/staff", icon: Users },
     { label: t("navReviews"), href: "/admin/reviews", icon: Star },
