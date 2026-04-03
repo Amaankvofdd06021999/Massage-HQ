@@ -10,6 +10,7 @@ import { PromotionsProvider } from "@/lib/data/promotions-store"
 import { TipsProvider } from "@/lib/data/tips-store"
 import { TranslationProvider } from "@/lib/data/translation-store"
 import { MessagesProvider } from "@/lib/data/messages-store"
+import { CustomersProvider } from "@/lib/data/customers-store"
 import { LanguageProvider } from "@/lib/i18n/language-context"
 import { ShopProvider } from "@/lib/shop/shop-context"
 
@@ -27,7 +28,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
                     <TipsProvider>
                       <TranslationProvider>
                         <MessagesProvider>
-                          {children}
+                          <CustomersProvider>
+                            {children}
+                          </CustomersProvider>
                         </MessagesProvider>
                       </TranslationProvider>
                     </TipsProvider>
