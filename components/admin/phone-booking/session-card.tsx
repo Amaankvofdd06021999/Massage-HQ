@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react"
 import { ChevronDown, ChevronUp, Plus, X } from "lucide-react"
-import { ServiceOption, StaffMember, Booking, ServiceAddOn } from "@/lib/types"
+import { ServiceOption, StaffMember, Booking, ServiceAddOn, DayOfWeek } from "@/lib/types"
 import { useLanguage } from "@/lib/i18n/language-context"
 import { formatPrice } from "@/lib/utils/formatters"
 import { TherapistTimeline } from "./therapist-timeline"
@@ -68,7 +68,7 @@ export function SessionCard({
   const sortedStaff = useMemo(() => {
     if (!session.date) return qualifiedStaff
     return [...qualifiedStaff].sort((a, b) => {
-      const dayKey = new Date(session.date).toLocaleDateString("en-US", { weekday: "short" }).toLowerCase().slice(0, 3) as any
+      const dayKey = new Date(session.date).toLocaleDateString("en-US", { weekday: "short" }).toLowerCase().slice(0, 3) as DayOfWeek
       const aOff = !a.availability[dayKey]
       const bOff = !b.availability[dayKey]
       if (aOff && !bOff) return 1

@@ -91,7 +91,7 @@ export function usePhoneBooking() {
       let resolvedStaffName = session.staffName
       if (session.staffId === "any") {
         // Find therapist with most free slots on this date who offers the selected service
-        const dayKey = new Date(session.date).toLocaleDateString("en-US", { weekday: "short" }).toLowerCase().slice(0, 3) as any
+        const dayKey = new Date(session.date).toLocaleDateString("en-US", { weekday: "short" }).toLowerCase().slice(0, 3) as "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun"
         const candidates = (services.find(s => s.id === session.serviceId)?.type
           ? staffMembers.filter(s => s.specialties.includes(services.find(sv => sv.id === session.serviceId)!.type) && s.availability[dayKey])
           : staffMembers.filter(s => s.availability[dayKey])
